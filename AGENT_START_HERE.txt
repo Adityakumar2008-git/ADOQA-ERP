@@ -1,0 +1,14 @@
+ADOQA ERP AI BUILD PACK v2
+
+1. Put this pack in the Antigravity project/repository.
+2. Read every numbered document.
+3. Read build_manifest.json.
+4. Read the actual repository before modifying anything.
+5. Use 17_MASTER_AGENT_PROMPT.md as the master instruction.
+6. Execute Phase 0 only.
+7. Pass the Phase 0 gate.
+8. Continue phase-by-phase.
+9. Never guess about product policy.
+10. Never bypass security or testing.
+11. Never claim "100% bug-free".
+12. Release only when 18_RELEASE_CHECKLIST.md passes.
