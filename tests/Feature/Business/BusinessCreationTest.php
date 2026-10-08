@@ -15,6 +15,7 @@ use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\ValidationException;
 use Tests\TestCase;
 
 class BusinessCreationTest extends TestCase
@@ -71,6 +72,36 @@ class BusinessCreationTest extends TestCase
             'owner_email' => 'owner@attempted.local',
             'owner_password' => 'SecurePass123!',
         ]);
+    }
+
+    public function test_user_with_business_permissions_cannot_provision_business(): void
+    {
+        $existingBusiness = Business::factory()->create();
+        $businessOwner = User::factory()->create();
+        BusinessMember::create([
+            'business_id' => $existingBusiness->id,
+            'user_id' => $businessOwner->id,
+            'is_owner' => true,
+            'status' => MembershipStatus::Active,
+        ]);
+        $ownerRole = Role::where('slug', 'owner')->whereNull('business_id')->firstOrFail();
+        UserRole::create([
+            'user_id' => $businessOwner->id,
+            'role_id' => $ownerRole->id,
+            'business_id' => $existingBusiness->id,
+        ]);
+
+        $this->actingAs($businessOwner);
+
+        $response = $this->postJson('/admin/businesses', [
+            'name' => 'Unauthorized New Store',
+            'slug' => 'unauth-new-store',
+            'owner_name' => 'New Owner',
+            'owner_email' => 'newowner@store.local',
+            'owner_password' => 'SecurePass123!',
+        ]);
+
+        $response->assertStatus(403);
     }
 
     public function test_platform_admin_can_create_business_with_owner_and_canonical_role(): void
@@ -146,6 +177,21 @@ class BusinessCreationTest extends TestCase
 
         $this->assertNotNull($userRole);
         $this->assertSame($ownerRole->id, $userRole->role_id);
+
+        // Invariant: Platform admin is NOT a member of the newly created business
+        $this->assertDatabaseMissing('business_members', [
+            'business_id' => $business->id,
+            'user_id' => $platformAdmin->id,
+        ]);
+
+        // Audit log verified
+        $this->assertDatabaseHas('audit_logs', [
+            'business_id' => $business->id,
+            'user_id' => $platformAdmin->id,
+            'action' => 'business.provisioned',
+            'auditable_type' => Business::class,
+            'auditable_id' => $business->id,
+        ]);
     }
 
     public function test_business_creation_rolls_back_atomically_if_role_provisioning_fails(): void
@@ -168,9 +214,10 @@ class BusinessCreationTest extends TestCase
                 'owner_password' => 'SecurePass123!',
             ]);
         } finally {
-            // Verify atomic rollback: neither business, membership, nor user persisted
+            // Verify atomic rollback: neither business, membership, role, nor user persisted
             $this->assertDatabaseMissing('businesses', ['slug' => 'rollback-test-business']);
             $this->assertDatabaseMissing('users', ['email' => 'rollback@owner.local']);
+            $this->assertSame(0, BusinessMember::whereHas('user', fn ($q) => $q->where('email', 'rollback@owner.local'))->count());
         }
     }
 
@@ -219,5 +266,63 @@ class BusinessCreationTest extends TestCase
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors('owner_email');
+    }
+
+    public function test_cannot_use_owner_phone_already_registered_to_another_business_member(): void
+    {
+        $platformAdmin = User::factory()->withPlatformRole()->create();
+        $existingBusiness = Business::factory()->create();
+        $existingOwner = User::factory()->create([
+            'email' => 'phoneowner@adoqa.local',
+            'phone' => '+919999988888',
+        ]);
+
+        BusinessMember::create([
+            'business_id' => $existingBusiness->id,
+            'user_id' => $existingOwner->id,
+            'is_owner' => true,
+            'status' => MembershipStatus::Active,
+        ]);
+
+        $action = app(CreateBusiness::class);
+
+        $this->expectException(ValidationException::class);
+
+        $action->execute($platformAdmin, [
+            'name' => 'Phone Collision Business',
+            'slug' => 'phone-collision-biz',
+            'owner_name' => 'Duplicate Phone User',
+            'owner_email' => 'newemail@different.local',
+            'owner_phone' => '+919999988888',
+            'owner_password' => 'SecurePass123!',
+        ]);
+    }
+
+    public function test_actor_cannot_override_relationships_through_request_payload(): void
+    {
+        $platformAdmin = User::factory()->withPlatformRole()->create();
+        $otherBusiness = Business::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $action = app(CreateBusiness::class);
+
+        $business = $action->execute($platformAdmin, [
+            'name' => 'Tamper Test Store',
+            'slug' => 'tamper-test-store',
+            'owner_name' => 'Real Owner',
+            'owner_email' => 'realowner@tamper.local',
+            'owner_password' => 'SecurePass123!',
+            'business_id' => $otherBusiness->id, // Malicious override attempt
+            'user_id' => $otherUser->id,         // Malicious override attempt
+            'is_platform_admin' => true,         // Malicious privilege escalation attempt
+        ]);
+
+        // Verified: The newly created business has its own ULID, not the injected ID
+        $this->assertNotEquals($otherBusiness->id, $business->id);
+
+        // Verified: Owner is the newly created owner user, not otherUser
+        $this->assertNotEquals($otherUser->id, $business->owner->id);
+        $this->assertEquals('realowner@tamper.local', $business->owner->email);
+        $this->assertFalse($business->owner->isPlatformAdmin());
     }
 }

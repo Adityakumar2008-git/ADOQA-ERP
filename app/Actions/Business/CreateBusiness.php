@@ -5,6 +5,7 @@ namespace App\Actions\Business;
 use App\Enums\BusinessStatus;
 use App\Enums\MembershipStatus;
 use App\Enums\UserStatus;
+use App\Models\AuditLog;
 use App\Models\Business;
 use App\Models\BusinessMember;
 use App\Models\Role;
@@ -25,7 +26,7 @@ class CreateBusiness
     ) {}
 
     /**
-     * Create a new business, initialize owner membership, and assign canonical owner role.
+     * Authoritatively provision a new ADOQA business, owner identity, membership, and RBAC role.
      * Can only be executed by a platform administrator possessing the 'businesses.create' permission.
      *
      * @param  array<string, mixed>  $data
@@ -35,10 +36,12 @@ class CreateBusiness
      */
     public function execute(User $actor, array $data): Business
     {
+        // 1. Authorize actor strictly via platform RBAC permission
         if ($this->authorizationService->cannot($actor, 'businesses.create')) {
-            throw new AuthorizationException('Only platform administrators with [businesses.create] permission can create a business.');
+            throw new AuthorizationException('Only platform administrators with [businesses.create] permission can provision a business.');
         }
 
+        // 2. Business slug validation
         $slug = Str::slug($data['slug'] ?? $data['name']);
 
         if (Business::query()->where('slug', $slug)->exists()) {
@@ -47,8 +50,8 @@ class CreateBusiness
             ]);
         }
 
+        // 3. Owner email & single-business policy validation
         $ownerEmail = strtolower(trim($data['owner_email']));
-
         $existingUser = User::query()->where('email', $ownerEmail)->first();
 
         if ($existingUser && $existingUser->membership()->exists()) {
@@ -57,8 +60,19 @@ class CreateBusiness
             ]);
         }
 
-        return DB::transaction(function () use ($data, $slug, $ownerEmail, $existingUser) {
-            // 1. Resolve canonical owner role
+        // 4. Owner phone duplicate validation across memberships
+        if (! empty($data['owner_phone'])) {
+            $ownerPhone = trim($data['owner_phone']);
+            $existingPhoneUser = User::query()->where('phone', $ownerPhone)->first();
+            if ($existingPhoneUser && $existingPhoneUser->membership()->exists()) {
+                throw ValidationException::withMessages([
+                    'owner_phone' => 'This phone number is already registered to a member of another business.',
+                ]);
+            }
+        }
+
+        return DB::transaction(function () use ($actor, $data, $slug, $ownerEmail, $existingUser) {
+            // 5. Resolve canonical owner role
             $ownerRole = Role::query()
                 ->where('slug', 'owner')
                 ->whereNull('business_id')
@@ -68,17 +82,17 @@ class CreateBusiness
                 throw new RuntimeException('Canonical business owner role has not been seeded.');
             }
 
-            // 2. Create or reuse owner user
+            // 6. Provision owner user (never platform admin)
             $owner = $existingUser ?? User::create([
                 'name' => trim($data['owner_name']),
                 'email' => $ownerEmail,
-                'phone' => $data['owner_phone'] ?? null,
+                'phone' => isset($data['owner_phone']) ? trim($data['owner_phone']) : null,
                 'password' => Hash::make($data['owner_password']),
                 'status' => UserStatus::Active,
                 'is_platform_admin' => false,
             ]);
 
-            // 3. Create Business
+            // 7. Provision Business in active status
             $business = Business::create([
                 'name' => trim($data['name']),
                 'legal_name' => isset($data['legal_name']) ? trim($data['legal_name']) : null,
@@ -98,7 +112,7 @@ class CreateBusiness
                 'status' => BusinessStatus::Active,
             ]);
 
-            // 4. Create owner BusinessMember
+            // 8. Provision owner BusinessMember (Master Admin is NEVER added as a member)
             BusinessMember::create([
                 'business_id' => $business->id,
                 'user_id' => $owner->id,
@@ -107,12 +121,31 @@ class CreateBusiness
                 'joined_at' => now(),
             ]);
 
-            // 5. Assign canonical owner role in this business context
+            // 9. Assign canonical owner role to owner
             UserRole::create([
                 'user_id' => $owner->id,
                 'role_id' => $ownerRole->id,
                 'business_id' => $business->id,
             ]);
+
+            // 10. Record immutable audit log
+            AuditLog::create([
+                'business_id' => $business->id,
+                'user_id' => $actor->id,
+                'action' => 'business.provisioned',
+                'auditable_type' => Business::class,
+                'auditable_id' => $business->id,
+                'payload' => [
+                    'name' => $business->name,
+                    'slug' => $business->slug,
+                    'owner_id' => $owner->id,
+                    'owner_email' => $owner->email,
+                    'status' => $business->status->value,
+                ],
+            ]);
+
+            // 11. Invalidate memoized permissions
+            $this->authorizationService->clearMemoized();
 
             return $business->load(['members.user', 'userRoles.role']);
         });
