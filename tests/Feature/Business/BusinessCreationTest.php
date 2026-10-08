@@ -7,7 +7,11 @@ use App\Enums\BusinessStatus;
 use App\Enums\MembershipStatus;
 use App\Models\Business;
 use App\Models\BusinessMember;
+use App\Models\Role;
 use App\Models\User;
+use App\Models\UserRole;
+use Database\Seeders\RbacSeeder;
+use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +20,12 @@ use Tests\TestCase;
 class BusinessCreationTest extends TestCase
 {
     use DatabaseTransactions;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->seed(RbacSeeder::class);
+    }
 
     public function test_unauthenticated_user_cannot_create_business(): void
     {
@@ -63,9 +73,9 @@ class BusinessCreationTest extends TestCase
         ]);
     }
 
-    public function test_platform_admin_can_create_business_with_owner(): void
+    public function test_platform_admin_can_create_business_with_owner_and_canonical_role(): void
     {
-        $platformAdmin = User::factory()->platformAdmin()->create();
+        $platformAdmin = User::factory()->withPlatformRole()->create();
 
         $this->actingAs($platformAdmin);
 
@@ -127,11 +137,46 @@ class BusinessCreationTest extends TestCase
         $this->assertSame(MembershipStatus::Active, $membership->status);
 
         $this->assertEquals($business->id, $owner->business->id);
+
+        // Verify atomic canonical owner role assignment
+        $ownerRole = Role::where('slug', 'owner')->whereNull('business_id')->firstOrFail();
+        $userRole = UserRole::where('user_id', $owner->id)
+            ->where('business_id', $business->id)
+            ->first();
+
+        $this->assertNotNull($userRole);
+        $this->assertSame($ownerRole->id, $userRole->role_id);
+    }
+
+    public function test_business_creation_rolls_back_atomically_if_role_provisioning_fails(): void
+    {
+        $platformAdmin = User::factory()->withPlatformRole()->create();
+
+        // Temporarily delete canonical owner role to trigger provisioning failure inside the transaction
+        Role::where('slug', 'owner')->whereNull('business_id')->delete();
+
+        $action = app(CreateBusiness::class);
+
+        $this->expectException(Exception::class);
+
+        try {
+            $action->execute($platformAdmin, [
+                'name' => 'Rollback Test Business',
+                'slug' => 'rollback-test-business',
+                'owner_name' => 'Rollback Owner',
+                'owner_email' => 'rollback@owner.local',
+                'owner_password' => 'SecurePass123!',
+            ]);
+        } finally {
+            // Verify atomic rollback: neither business, membership, nor user persisted
+            $this->assertDatabaseMissing('businesses', ['slug' => 'rollback-test-business']);
+            $this->assertDatabaseMissing('users', ['email' => 'rollback@owner.local']);
+        }
     }
 
     public function test_duplicate_slug_is_rejected(): void
     {
-        $platformAdmin = User::factory()->platformAdmin()->create();
+        $platformAdmin = User::factory()->withPlatformRole()->create();
         Business::factory()->create(['slug' => 'existing-slug']);
 
         $this->actingAs($platformAdmin);
@@ -150,7 +195,7 @@ class BusinessCreationTest extends TestCase
 
     public function test_cannot_assign_owner_who_already_belongs_to_another_business(): void
     {
-        $platformAdmin = User::factory()->platformAdmin()->create();
+        $platformAdmin = User::factory()->withPlatformRole()->create();
         $existingBusiness = Business::factory()->create();
         $existingOwner = User::factory()->create(['email' => 'existing@adoqa.local']);
 

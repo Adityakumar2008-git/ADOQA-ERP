@@ -20,9 +20,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
 });
 
-// Platform Admin Routes (Restricted strictly to platform administrators)
+// Platform Admin Routes (Restricted strictly to platform administrators with required platform permissions)
 Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class])->group(function () {
-    Route::post('/businesses', [AdminBusinessController::class, 'store'])->name('admin.businesses.store');
+    Route::post('/businesses', [AdminBusinessController::class, 'store'])
+        ->middleware('permission.platform:businesses.create')
+        ->name('admin.businesses.store');
 });
 
 // Business Tenant Surface (Restricted strictly via server-authoritative tenant context)
@@ -36,4 +38,14 @@ Route::middleware(['auth', EnsureTenantContext::class])->group(function () {
             'tenant_slug' => $tenant->slug,
         ]);
     })->name('tenant.current');
+
+    Route::get('/tenant/profile', function (Request $request) {
+        $tenant = $request->attributes->get('tenant');
+
+        return response()->json([
+            'tenant_id' => $tenant->id,
+            'tenant_name' => $tenant->name,
+            'currency' => $tenant->currency,
+        ]);
+    })->middleware('permission.business:business.view')->name('tenant.profile');
 });

@@ -3,7 +3,9 @@
 namespace Database\Factories;
 
 use App\Enums\UserStatus;
+use App\Models\Role;
 use App\Models\User;
+use App\Models\UserRole;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -75,5 +77,22 @@ class UserFactory extends Factory
         return $this->state(fn (array $attributes) => [
             'is_platform_admin' => true,
         ]);
+    }
+
+    /**
+     * Indicate that the user is a platform administrator with assigned canonical platform_admin role.
+     */
+    public function withPlatformRole(): static
+    {
+        return $this->platformAdmin()->afterCreating(function (User $user) {
+            $platformRole = Role::where('slug', 'platform_admin')->whereNull('business_id')->first();
+            if ($platformRole) {
+                UserRole::firstOrCreate([
+                    'user_id' => $user->id,
+                    'role_id' => $platformRole->id,
+                    'business_id' => null,
+                ]);
+            }
+        });
     }
 }

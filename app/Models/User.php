@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\MembershipStatus;
 use App\Enums\UserStatus;
+use App\Services\Auth\AuthorizationService;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -105,6 +106,14 @@ class User extends Authenticatable
     public function isPlatformAdmin(): bool
     {
         return $this->is_platform_admin === true;
+    }
+
+    /**
+     * Determine if the user has a specific permission within an optional business context.
+     */
+    public function hasPermission(string $permission, ?Business $businessContext = null): bool
+    {
+        return app(AuthorizationService::class)->can($this, $permission, $businessContext);
     }
 
     /**
