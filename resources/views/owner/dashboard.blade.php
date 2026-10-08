@@ -134,7 +134,7 @@
         <x-section-header
             title="Today's Commercial Operations"
             description="Operational sales, cashier register, and financial flow."
-            badge="Phase 3 & 4 Scheduled"
+            badge="Upcoming & Phase 4"
             badgeVariant="slate" />
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -142,10 +142,10 @@
             <div class="bg-white p-4 rounded-xl border border-slate-200">
                 <div class="flex items-center justify-between">
                     <p class="text-xs font-semibold text-slate-500">Today's Sales</p>
-                    <x-badge variant="slate" size="sm">Phase 3</x-badge>
+                    <x-badge variant="slate" size="sm">Upcoming</x-badge>
                 </div>
                 <p class="text-sm font-semibold text-slate-500 mt-2 italic">{{ $metrics['today_sales'] }}</p>
-                <p class="text-[11px] text-slate-500 mt-1">POS & Invoicing module scheduled for Phase 3</p>
+                <p class="text-[11px] text-slate-500 mt-1">POS and Invoicing modules are currently unavailable</p>
             </div>
 
             <!-- Operating Profit -->
@@ -184,8 +184,8 @@
     <div>
         <x-section-header
             title="Commerce & Customer Directory"
-            description="Customers, catalogue stock, and vendor payables."
-            badge="Phase 3 & 4 Scheduled"
+            description="Customers, inventory stock, and vendor payables."
+            badge="Upcoming & Phase 4"
             badgeVariant="slate" />
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -193,20 +193,20 @@
             <div class="bg-white p-4 rounded-xl border border-slate-200">
                 <div class="flex items-center justify-between">
                     <p class="text-xs font-semibold text-slate-500">Registered Customers</p>
-                    <x-badge variant="slate" size="sm">Phase 3</x-badge>
+                    <x-badge variant="slate" size="sm">Upcoming</x-badge>
                 </div>
                 <p class="text-sm font-semibold text-slate-500 mt-2 italic">{{ $metrics['customer_count'] }}</p>
-                <p class="text-[11px] text-slate-500 mt-1">Customer CRM profiles activate in Phase 3</p>
+                <p class="text-[11px] text-slate-500 mt-1">Customer directory module is currently unavailable</p>
             </div>
 
             <!-- Inventory Alerts -->
             <div class="bg-white p-4 rounded-xl border border-slate-200">
                 <div class="flex items-center justify-between">
                     <p class="text-xs font-semibold text-slate-500">Stock & Inventory Alerts</p>
-                    <x-badge variant="slate" size="sm">Phase 3</x-badge>
+                    <x-badge variant="slate" size="sm">Phase 4</x-badge>
                 </div>
                 <p class="text-sm font-semibold text-slate-500 mt-2 italic">{{ $metrics['inventory_alerts'] }}</p>
-                <p class="text-[11px] text-slate-500 mt-1">Inventory stock auditing activates in Phase 3</p>
+                <p class="text-[11px] text-slate-500 mt-1">Inventory stock auditing scheduled for Phase 4</p>
             </div>
 
             <!-- Outstanding Payables -->
@@ -227,16 +227,59 @@
         <x-card title="Sales & Revenue Performance" subtitle="Real-time commercial transaction analytics">
             <x-empty-state
                 title="Analytics awaiting commercial activity"
-                description="Visual performance charts will populate here automatically as sales orders and invoices are generated through the POS module in Phase 3."
-                badge="Phase 3" />
+                description="Visual performance charts will populate here automatically once sales orders and invoices are generated through the upcoming POS module."
+                badge="Upcoming" />
         </x-card>
 
-        <!-- Product Catalogue Placeholder -->
-        <x-card title="Fast Moving Products" subtitle="Catalogue sales velocity & inventory turnover">
-            <x-empty-state
-                title="Catalogue not initialized yet"
-                description="Top-selling products and stock velocity insights will appear here once your item catalogue is configured in Phase 3."
-                badge="Phase 3" />
+        <!-- Product Catalogue Available Card -->
+        <x-card title="Product Catalogue" subtitle="Items, categories, brands, and measurement units" badge="Available" badgeVariant="emerald">
+            <div class="space-y-3">
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Catalogue foundation is active and server-authoritative. Manage master items, classification categories, manufacturer brands, and measurement units.
+                </p>
+
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                    <a href="{{ route('owner.catalogue.items.index') }}"
+                       class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Items</span>
+                        </div>
+                        <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                    </a>
+
+                    <a href="{{ route('owner.catalogue.categories.index') }}"
+                       class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Categories</span>
+                        </div>
+                        <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                    </a>
+
+                    <a href="{{ route('owner.catalogue.brands.index') }}"
+                       class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Brands</span>
+                        </div>
+                        <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                    </a>
+
+                    <a href="{{ route('owner.catalogue.units.index') }}"
+                       class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                        <div class="flex items-center space-x-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                            <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Units</span>
+                        </div>
+                        <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                    </a>
+                </div>
+
+                <p class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                    Stock movements, velocity rankings, and POS checkout links will activate with Inventory and Sales modules.
+                </p>
+            </div>
         </x-card>
     </div>
 </div>

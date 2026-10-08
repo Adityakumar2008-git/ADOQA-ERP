@@ -280,6 +280,38 @@ class OwnerErpFoundationTest extends TestCase
         $response->assertDontSee('₹0.00');
     }
 
+    public function test_owner_dashboard_marks_implemented_catalogue_as_available_and_removes_stale_phase_3_claims(): void
+    {
+        [$business, $owner] = $this->createMemberWithRole('owner', isOwner: true);
+
+        $this->actingAs($owner);
+
+        $response = $this->get('/owner/dashboard');
+
+        $response->assertOk();
+
+        // Implemented catalogue functionality is marked available with direct links
+        $response->assertSee('Product Catalogue');
+        $response->assertSee('Available');
+        $response->assertSee(route('owner.catalogue.items.index'));
+        $response->assertSee(route('owner.catalogue.categories.index'));
+        $response->assertSee(route('owner.catalogue.brands.index'));
+        $response->assertSee(route('owner.catalogue.units.index'));
+
+        // Stale Phase 3 roadmap claims must be absent
+        $response->assertDontSee('Catalogue not initialized yet');
+        $response->assertDontSee('configured in Phase 3');
+        $response->assertDontSee('POS & Invoicing module scheduled for Phase 3');
+        $response->assertDontSee('Customer CRM profiles activate in Phase 3');
+        $response->assertDontSee('Inventory stock auditing activates in Phase 3');
+
+        // Unimplemented modules remain clearly marked as unavailable / upcoming / Phase 4
+        $response->assertSee('POS and Invoicing modules are currently unavailable');
+        $response->assertSee('Customer directory module is currently unavailable');
+        $response->assertSee('Inventory stock auditing scheduled for Phase 4');
+        $response->assertSee('Financial ledger scheduled for Phase 4');
+    }
+
     // ==================================================
     // 5. LOGIN REDIRECT BEHAVIOR
     // ==================================================
