@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\Admin\BusinessController as AdminBusinessController;
+use App\Http\Controllers\Admin\RoleController as AdminRoleController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Tenant\MemberRoleController;
+use App\Http\Controllers\Tenant\RoleController;
 use App\Http\Middleware\EnsurePlatformAdmin;
 use App\Http\Middleware\EnsureTenantContext;
 use Illuminate\Http\Request;
@@ -25,6 +28,10 @@ Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class])->group(
     Route::post('/businesses', [AdminBusinessController::class, 'store'])
         ->middleware('permission.platform:businesses.create')
         ->name('admin.businesses.store');
+
+    Route::get('/roles', [AdminRoleController::class, 'index'])
+        ->middleware('permission.platform:platform.roles.manage')
+        ->name('admin.roles.index');
 });
 
 // Business Tenant Surface (Restricted strictly via server-authoritative tenant context)
@@ -48,4 +55,39 @@ Route::middleware(['auth', EnsureTenantContext::class])->group(function () {
             'currency' => $tenant->currency,
         ]);
     })->middleware('permission.business:business.view')->name('tenant.profile');
+
+    // Role & Permission Administration (Tenant Surface)
+    Route::prefix('tenant')->group(function () {
+        Route::get('/roles', [RoleController::class, 'index'])
+            ->middleware('permission.business:staff.manage')
+            ->name('tenant.roles.index');
+
+        Route::post('/roles', [RoleController::class, 'store'])
+            ->middleware('permission.business:staff.manage')
+            ->name('tenant.roles.store');
+
+        Route::get('/roles/{role}', [RoleController::class, 'show'])
+            ->middleware('permission.business:staff.manage')
+            ->name('tenant.roles.show');
+
+        Route::put('/roles/{role}', [RoleController::class, 'update'])
+            ->middleware('permission.business:staff.manage')
+            ->name('tenant.roles.update');
+
+        Route::delete('/roles/{role}', [RoleController::class, 'destroy'])
+            ->middleware('permission.business:staff.manage')
+            ->name('tenant.roles.destroy');
+
+        Route::put('/roles/{role}/permissions', [RoleController::class, 'syncPermissions'])
+            ->middleware('permission.business:staff.manage')
+            ->name('tenant.roles.permissions.sync');
+
+        Route::post('/members/{user}/roles', [MemberRoleController::class, 'store'])
+            ->middleware('permission.business:staff.manage')
+            ->name('tenant.members.roles.store');
+
+        Route::delete('/members/{user}/roles/{role}', [MemberRoleController::class, 'destroy'])
+            ->middleware('permission.business:staff.manage')
+            ->name('tenant.members.roles.destroy');
+    });
 });
