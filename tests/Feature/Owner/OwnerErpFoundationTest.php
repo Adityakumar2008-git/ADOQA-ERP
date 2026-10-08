@@ -209,6 +209,20 @@ class OwnerErpFoundationTest extends TestCase
         $response->assertSee('Finance');
         $response->assertSee('People & HR');
         $response->assertSee('System');
+
+        // Active Phase 3 Catalogue modules are accessible links
+        $response->assertSee(route('owner.catalogue.items.index'));
+        $response->assertSee(route('owner.catalogue.categories.index'));
+        $response->assertSee(route('owner.catalogue.brands.index'));
+        $response->assertSee(route('owner.catalogue.units.index'));
+        $response->assertSee('Items Catalogue');
+        $response->assertSee('Categories');
+        $response->assertSee('Brands');
+        $response->assertSee('Units');
+
+        // Phase 4 modules remain locked / coming soon
+        $response->assertSee('Finance Ledger');
+        $response->assertSee('Payroll Runs');
     }
 
     public function test_manager_navigation_hides_unauthorized_finance_sections(): void
