@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\BusinessController as AdminBusinessController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\RoleController as AdminRoleController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Admin\SubscriptionPlanController as AdminSubscriptionPlanController;
@@ -28,27 +29,59 @@ Route::middleware('auth')->group(function () {
 
 // Platform Admin Routes (Restricted strictly to platform administrators with required platform permissions)
 Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class])->group(function () {
+    // System Overview Dashboard
+    Route::get('/', [AdminDashboardController::class, 'index'])
+        ->middleware('permission.platform:businesses.view')
+        ->name('admin.dashboard');
+
+    Route::get('/overview', [AdminDashboardController::class, 'index'])
+        ->middleware('permission.platform:businesses.view')
+        ->name('admin.overview');
+
+    // Tenant / Business Management
+    Route::get('/businesses', [AdminBusinessController::class, 'index'])
+        ->middleware('permission.platform:businesses.view')
+        ->name('admin.businesses.index');
+
+    Route::get('/businesses/create', [AdminBusinessController::class, 'create'])
+        ->middleware('permission.platform:businesses.create')
+        ->name('admin.businesses.create');
+
     Route::post('/businesses', [AdminBusinessController::class, 'store'])
         ->middleware('permission.platform:businesses.create')
         ->name('admin.businesses.store');
 
+    Route::get('/businesses/{business}', [AdminBusinessController::class, 'show'])
+        ->middleware('permission.platform:businesses.view')
+        ->name('admin.businesses.show');
+
+    // Platform Roles Inspection
     Route::get('/roles', [AdminRoleController::class, 'index'])
         ->middleware('permission.platform:platform.roles.manage')
         ->name('admin.roles.index');
 
-    // Subscription Administration (Platform Surface)
+    // Subscription Plans Administration
     Route::get('/subscription-plans', [AdminSubscriptionPlanController::class, 'index'])
         ->middleware('permission.platform:subscriptions.manage')
         ->name('admin.subscription-plans.index');
+
+    Route::get('/subscription-plans/create', [AdminSubscriptionPlanController::class, 'create'])
+        ->middleware('permission.platform:subscriptions.manage')
+        ->name('admin.subscription-plans.create');
 
     Route::post('/subscription-plans', [AdminSubscriptionPlanController::class, 'store'])
         ->middleware('permission.platform:subscriptions.manage')
         ->name('admin.subscription-plans.store');
 
+    Route::get('/subscription-plans/{plan}/edit', [AdminSubscriptionPlanController::class, 'edit'])
+        ->middleware('permission.platform:subscriptions.manage')
+        ->name('admin.subscription-plans.edit');
+
     Route::put('/subscription-plans/{plan}', [AdminSubscriptionPlanController::class, 'update'])
         ->middleware('permission.platform:subscriptions.manage')
         ->name('admin.subscription-plans.update');
 
+    // Subscription Provisioning & Transitions
     Route::post('/subscriptions', [AdminSubscriptionController::class, 'store'])
         ->middleware('permission.platform:subscriptions.manage')
         ->name('admin.subscriptions.store');

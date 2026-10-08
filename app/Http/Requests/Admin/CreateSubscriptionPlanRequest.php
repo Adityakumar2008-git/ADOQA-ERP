@@ -13,6 +13,29 @@ class CreateSubscriptionPlanRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $merge = [];
+
+        if (is_string($this->features)) {
+            $decoded = json_decode($this->features, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $merge['features'] = $decoded;
+            } else {
+                $lines = array_values(array_filter(array_map('trim', explode("\n", $this->features))));
+                $merge['features'] = $lines;
+            }
+        }
+
+        if ($this->has('is_active')) {
+            $merge['is_active'] = filter_var($this->is_active, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true;
+        }
+
+        if (! empty($merge)) {
+            $this->merge($merge);
+        }
+    }
+
     /**
      * @return array<string, mixed>
      */

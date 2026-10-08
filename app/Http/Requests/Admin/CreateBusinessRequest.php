@@ -42,6 +42,8 @@ class CreateBusinessRequest extends FormRequest
             'owner_email' => ['required', 'email', 'max:255'],
             'owner_phone' => ['nullable', 'string', 'max:32'],
             'owner_password' => ['required', 'string', 'min:8'],
+            'plan_id' => ['nullable', 'string', 'exists:subscription_plans,id'],
+            'skip_trial' => ['nullable', 'boolean'],
         ];
     }
 }
