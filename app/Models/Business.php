@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\BusinessStatus;
+use App\Enums\SubscriptionStatus;
 use Database\Factories\BusinessFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -103,6 +104,28 @@ class Business extends Model
     public function userRoles(): HasMany
     {
         return $this->hasMany(UserRole::class);
+    }
+
+    /**
+     * Subscriptions belonging to this business.
+     */
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    /**
+     * The current usable/active subscription for this business.
+     */
+    public function activeSubscription(): HasOne
+    {
+        return $this->hasOne(Subscription::class)
+            ->whereIn('status', [
+                SubscriptionStatus::Trial,
+                SubscriptionStatus::Active,
+                SubscriptionStatus::PastDue,
+            ])
+            ->latest('starts_at');
     }
 
     /**

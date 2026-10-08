@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\Admin\BusinessController as AdminBusinessController;
 use App\Http\Controllers\Admin\RoleController as AdminRoleController;
+use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
+use App\Http\Controllers\Admin\SubscriptionPlanController as AdminSubscriptionPlanController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Tenant\MemberRoleController;
 use App\Http\Controllers\Tenant\RoleController;
+use App\Http\Controllers\Tenant\SubscriptionController as TenantSubscriptionController;
 use App\Http\Middleware\EnsurePlatformAdmin;
 use App\Http\Middleware\EnsureTenantContext;
 use Illuminate\Http\Request;
@@ -32,6 +35,27 @@ Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class])->group(
     Route::get('/roles', [AdminRoleController::class, 'index'])
         ->middleware('permission.platform:platform.roles.manage')
         ->name('admin.roles.index');
+
+    // Subscription Administration (Platform Surface)
+    Route::get('/subscription-plans', [AdminSubscriptionPlanController::class, 'index'])
+        ->middleware('permission.platform:subscriptions.manage')
+        ->name('admin.subscription-plans.index');
+
+    Route::post('/subscription-plans', [AdminSubscriptionPlanController::class, 'store'])
+        ->middleware('permission.platform:subscriptions.manage')
+        ->name('admin.subscription-plans.store');
+
+    Route::put('/subscription-plans/{plan}', [AdminSubscriptionPlanController::class, 'update'])
+        ->middleware('permission.platform:subscriptions.manage')
+        ->name('admin.subscription-plans.update');
+
+    Route::post('/subscriptions', [AdminSubscriptionController::class, 'store'])
+        ->middleware('permission.platform:subscriptions.manage')
+        ->name('admin.subscriptions.store');
+
+    Route::post('/subscriptions/{subscription}/transition', [AdminSubscriptionController::class, 'transition'])
+        ->middleware('permission.platform:subscriptions.manage')
+        ->name('admin.subscriptions.transition');
 });
 
 // Business Tenant Surface (Restricted strictly via server-authoritative tenant context)
@@ -55,6 +79,15 @@ Route::middleware(['auth', EnsureTenantContext::class])->group(function () {
             'currency' => $tenant->currency,
         ]);
     })->middleware('permission.business:business.view')->name('tenant.profile');
+
+    // Subscription Inspection & Cancellation (Tenant Surface)
+    Route::get('/tenant/subscription', [TenantSubscriptionController::class, 'show'])
+        ->middleware('permission.business:business.view')
+        ->name('tenant.subscription.show');
+
+    Route::post('/tenant/subscription/cancel', [TenantSubscriptionController::class, 'cancel'])
+        ->middleware('permission.business:business.update')
+        ->name('tenant.subscription.cancel');
 
     // Role & Permission Administration (Tenant Surface)
     Route::prefix('tenant')->group(function () {
