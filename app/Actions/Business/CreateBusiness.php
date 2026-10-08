@@ -2,6 +2,7 @@
 
 namespace App\Actions\Business;
 
+use App\Actions\Catalogue\SeedDefaultBusinessUnits;
 use App\Enums\BusinessStatus;
 use App\Enums\MembershipStatus;
 use App\Enums\UserStatus;
@@ -128,7 +129,10 @@ class CreateBusiness
                 'business_id' => $business->id,
             ]);
 
-            // 10. Record immutable audit log
+            // 10. Provision canonical catalogue units
+            (new SeedDefaultBusinessUnits)->execute($business);
+
+            // 11. Record immutable audit log
             AuditLog::create([
                 'business_id' => $business->id,
                 'user_id' => $actor->id,

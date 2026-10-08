@@ -133,14 +133,30 @@
                             <span>Suppliers</span>
                             <span class="text-[9px] text-slate-500">Coming soon</span>
                         </div>
-                        <div class="flex items-center justify-between px-3 py-1.5 rounded text-slate-400 cursor-not-allowed">
-                            <span>Items Catalogue</span>
-                            <span class="text-[9px] text-slate-500">Coming soon</span>
-                        </div>
-                        <div class="flex items-center justify-between px-3 py-1.5 rounded text-slate-400 cursor-not-allowed">
-                            <span>Categories &amp; Brands</span>
-                            <span class="text-[9px] text-slate-500">Coming soon</span>
-                        </div>
+                        <a href="{{ route('owner.catalogue.items.index') }}" class="flex items-center justify-between px-3 py-1.5 rounded transition-colors {{ request()->routeIs('owner.catalogue.items.*') ? 'bg-indigo-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <span class="flex items-center space-x-2">
+                                <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                                <span>Items Catalogue</span>
+                            </span>
+                        </a>
+                        <a href="{{ route('owner.catalogue.categories.index') }}" class="flex items-center justify-between px-3 py-1.5 rounded transition-colors {{ request()->routeIs('owner.catalogue.categories.*') ? 'bg-indigo-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <span class="flex items-center space-x-2">
+                                <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                                <span>Categories</span>
+                            </span>
+                        </a>
+                        <a href="{{ route('owner.catalogue.brands.index') }}" class="flex items-center justify-between px-3 py-1.5 rounded transition-colors {{ request()->routeIs('owner.catalogue.brands.*') ? 'bg-indigo-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <span class="flex items-center space-x-2">
+                                <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                                <span>Brands</span>
+                            </span>
+                        </a>
+                        <a href="{{ route('owner.catalogue.units.index') }}" class="flex items-center justify-between px-3 py-1.5 rounded transition-colors {{ request()->routeIs('owner.catalogue.units.*') ? 'bg-indigo-600 text-white font-medium' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <span class="flex items-center space-x-2">
+                                <svg class="w-3.5 h-3.5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 18h12l3-18H3z"/></svg>
+                                <span>Units</span>
+                            </span>
+                        </a>
                         <div class="flex items-center justify-between px-3 py-1.5 rounded text-slate-400 cursor-not-allowed">
                             <span>Inventory Stock</span>
                             <span class="text-[9px] text-slate-500">Coming soon</span>

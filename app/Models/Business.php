@@ -135,4 +135,24 @@ class Business extends Model
     {
         return $this->status === BusinessStatus::Suspended;
     }
+
+    public function categories(): HasMany
+    {
+        return $this->hasMany(Category::class);
+    }
+
+    public function brands(): HasMany
+    {
+        return $this->hasMany(Brand::class);
+    }
+
+    public function units(): HasMany
+    {
+        return $this->hasMany(Unit::class);
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(Item::class);
+    }
 }
