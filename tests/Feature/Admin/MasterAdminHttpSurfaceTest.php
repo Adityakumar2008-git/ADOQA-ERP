@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Actions\Subscription\ProvisionSubscription;
 use App\Enums\BillingCycle;
 use App\Enums\BusinessStatus;
 use App\Enums\MembershipStatus;
 use App\Enums\SubscriptionStatus;
 use App\Enums\UserStatus;
+use App\Models\AuditLog;
 use App\Models\Business;
 use App\Models\BusinessMember;
 use App\Models\Role;
@@ -144,7 +146,7 @@ class MasterAdminHttpSurfaceTest extends TestCase
         $response->assertSee('Active Tenants');
         $response->assertSee('Platform Users', false);
         $response->assertSee('Total Revenue');
-        $response->assertSee('₹0.00'); // Truthful zero state
+        $response->assertSee('Not available yet'); // Truthful state for future modules
     }
 
     // ==================================================
@@ -263,11 +265,119 @@ class MasterAdminHttpSurfaceTest extends TestCase
 
         $response->assertRedirect(route('admin.businesses.show', $business));
 
-        // Verify subscription provisioned with trial status
+        // 1. Business exists and is active
+        $this->assertEquals(BusinessStatus::Active, $business->status);
+
+        // 2. Owner exists and is linked
+        $owner = User::where('email', 'anil@zenithlogistics.local')->first();
+        $this->assertNotNull($owner);
+        $this->assertFalse($owner->is_platform_admin);
+        $this->assertTrue($business->members()->where('user_id', $owner->id)->where('is_owner', true)->exists());
+
+        // 3. Owner role exists
+        $ownerRole = Role::where('slug', 'owner')->whereNull('business_id')->first();
+        $this->assertNotNull($ownerRole);
+        $this->assertTrue(UserRole::where('business_id', $business->id)->where('user_id', $owner->id)->where('role_id', $ownerRole->id)->exists());
+
+        // 4. Subscription exists with correct plan, trial dates and status
         $sub = $business->activeSubscription;
         $this->assertNotNull($sub);
         $this->assertEquals($plan->id, $sub->plan_id);
         $this->assertEquals(SubscriptionStatus::Trial, $sub->status);
+        $this->assertNotNull($sub->starts_at);
+        $this->assertNotNull($sub->trial_ends_at);
+        $this->assertNotNull($sub->ends_at);
+    }
+
+    public function test_business_and_initial_subscription_provisioning_is_atomic(): void
+    {
+        $plan = SubscriptionPlan::factory()->create([
+            'name' => 'Atomic Enterprise Plan',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->platformAdmin);
+
+        $initialBusinessCount = Business::count();
+        $initialUserCount = User::count();
+        $initialMembershipCount = BusinessMember::count();
+        $initialUserRoleCount = UserRole::count();
+        $initialSubscriptionCount = Subscription::count();
+        $initialAuditLogCount = AuditLog::count();
+
+        // Force ProvisionSubscription to fail during provisioning
+        $this->partialMock(ProvisionSubscription::class, function ($mock) {
+            $mock->shouldReceive('execute')
+                ->once()
+                ->andThrow(new \DomainException('Forced failure during subscription provisioning for atomicity verification.'));
+        });
+
+        $payload = [
+            'name' => 'Atomic Rollback Corp',
+            'slug' => 'atomic-rollback',
+            'business_type' => 'retail',
+            'owner_name' => 'Failed Owner',
+            'owner_email' => 'failedowner@atomic.local',
+            'owner_password' => 'Password123!',
+            'plan_id' => $plan->id,
+            'skip_trial' => false,
+        ];
+
+        // Attempt creation via HTTP POST
+        $response = $this->from(route('admin.businesses.create'))
+            ->post(route('admin.businesses.store'), $payload);
+
+        $response->assertRedirect(route('admin.businesses.create'));
+        $response->assertSessionHas('error', 'Forced failure during subscription provisioning for atomicity verification.');
+
+        // Verify full atomicity: all database counts must be strictly unchanged
+        $this->assertSame($initialBusinessCount, Business::count(), 'Business record was not rolled back.');
+        $this->assertSame($initialUserCount, User::count(), 'Owner user record was not rolled back.');
+        $this->assertSame($initialMembershipCount, BusinessMember::count(), 'Business membership was not rolled back.');
+        $this->assertSame($initialUserRoleCount, UserRole::count(), 'User role assignment was not rolled back.');
+        $this->assertSame($initialSubscriptionCount, Subscription::count(), 'Subscription record was not rolled back.');
+        $this->assertSame($initialAuditLogCount, AuditLog::count(), 'Audit log was not rolled back.');
+
+        // Specific entity absence assertions
+        $this->assertFalse(Business::where('slug', 'atomic-rollback')->exists());
+        $this->assertFalse(User::where('email', 'failedowner@atomic.local')->exists());
+        $this->assertFalse(AuditLog::where('payload->slug', 'atomic-rollback')->exists());
+    }
+
+    public function test_business_and_initial_subscription_provisioning_is_atomic_via_json_request(): void
+    {
+        $plan = SubscriptionPlan::factory()->create([
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($this->platformAdmin);
+
+        $initialBusinessCount = Business::count();
+        $initialUserCount = User::count();
+
+        $this->partialMock(ProvisionSubscription::class, function ($mock) {
+            $mock->shouldReceive('execute')
+                ->once()
+                ->andThrow(new \DomainException('Subscription provisioning failed'));
+        });
+
+        $response = $this->postJson(route('admin.businesses.store'), [
+            'name' => 'Atomic Json Corp',
+            'slug' => 'atomic-json',
+            'owner_name' => 'Json Owner',
+            'owner_email' => 'jsonowner@atomic.local',
+            'owner_password' => 'Password123!',
+            'plan_id' => $plan->id,
+        ]);
+
+        $response->assertStatus(422);
+        $response->assertJson([
+            'message' => 'Subscription provisioning failed',
+        ]);
+
+        $this->assertSame($initialBusinessCount, Business::count());
+        $this->assertSame($initialUserCount, User::count());
+        $this->assertFalse(Business::where('slug', 'atomic-json')->exists());
     }
 
     public function test_business_creation_rejects_invalid_data(): void

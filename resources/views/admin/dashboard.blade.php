@@ -126,7 +126,7 @@
                     <p class="text-xs font-semibold text-slate-500">Total Revenue</p>
                     <span class="text-[10px] font-bold text-slate-500 bg-slate-200/80 px-1.5 py-0.5 rounded">Manual/Offline</span>
                 </div>
-                <p class="text-xl font-bold text-slate-700 mt-2">₹{{ $metrics['total_revenue'] }}</p>
+                <p class="text-sm font-semibold text-slate-500 mt-2 italic">{{ $metrics['total_revenue'] }}</p>
                 <p class="text-[11px] text-slate-500 mt-1">No online gateway; offline collected</p>
             </div>
 
@@ -136,7 +136,7 @@
                     <p class="text-xs font-semibold text-slate-500">Net Platform Profit</p>
                     <span class="text-[10px] font-bold text-slate-500 bg-slate-200/80 px-1.5 py-0.5 rounded">Phase 2</span>
                 </div>
-                <p class="text-xl font-bold text-slate-700 mt-2">₹{{ $metrics['net_profit'] }}</p>
+                <p class="text-sm font-semibold text-slate-500 mt-2 italic">{{ $metrics['net_profit'] }}</p>
                 <p class="text-[11px] text-slate-500 mt-1">Requires financial ledger activation</p>
             </div>
 
@@ -146,7 +146,7 @@
                     <p class="text-xs font-semibold text-slate-500">Sales Partners</p>
                     <span class="text-[10px] font-bold text-slate-500 bg-slate-200/80 px-1.5 py-0.5 rounded">Phase 2+</span>
                 </div>
-                <p class="text-xl font-bold text-slate-700 mt-2">{{ $metrics['sales_partners'] }}</p>
+                <p class="text-sm font-semibold text-slate-500 mt-2 italic">{{ $metrics['sales_partners'] }}</p>
                 <p class="text-[11px] text-slate-500 mt-1">Partner network onboarding pending</p>
             </div>
 
@@ -156,7 +156,7 @@
                     <p class="text-xs font-semibold text-slate-500">Pending Payouts</p>
                     <span class="text-[10px] font-bold text-slate-500 bg-slate-200/80 px-1.5 py-0.5 rounded">Phase 2+</span>
                 </div>
-                <p class="text-xl font-bold text-slate-700 mt-2">{{ $metrics['pending_payouts'] }}</p>
+                <p class="text-sm font-semibold text-slate-500 mt-2 italic">{{ $metrics['pending_payouts'] }}</p>
                 <p class="text-[11px] text-slate-500 mt-1">Agent commissions pending module</p>
             </div>
 
@@ -166,7 +166,7 @@
                     <p class="text-xs font-semibold text-slate-500">Partner Commissions</p>
                     <span class="text-[10px] font-bold text-slate-500 bg-slate-200/80 px-1.5 py-0.5 rounded">Phase 2+</span>
                 </div>
-                <p class="text-xl font-bold text-slate-700 mt-2">₹{{ $metrics['partner_commissions'] }}</p>
+                <p class="text-sm font-semibold text-slate-500 mt-2 italic">{{ $metrics['partner_commissions'] }}</p>
                 <p class="text-[11px] text-slate-500 mt-1">Calculated upon partner activation</p>
             </div>
         </div>

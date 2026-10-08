@@ -38,12 +38,12 @@ class DashboardController extends Controller
             'platform_users' => $platformUsersCount,
             'active_subscriptions' => $activeSubscriptionsCount,
             'active_plans' => $activePlansCount,
-            // Truthful zero states for future domain modules
-            'total_revenue' => '0.00',
-            'net_profit' => '0.00',
-            'sales_partners' => 0,
-            'pending_payouts' => 0,
-            'partner_commissions' => '0.00',
+            // Truthful states for future domain modules (no underlying domain exists in Phase 1)
+            'total_revenue' => 'Not available yet',
+            'net_profit' => 'Not available yet',
+            'sales_partners' => 'Not available yet',
+            'pending_payouts' => 'Not available yet',
+            'partner_commissions' => 'Not available yet',
         ];
 
         if ($request->wantsJson()) {

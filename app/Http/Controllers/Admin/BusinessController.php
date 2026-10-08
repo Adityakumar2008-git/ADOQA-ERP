@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Actions\Business\CreateBusiness;
-use App\Actions\Subscription\ProvisionSubscription;
+use App\Actions\Business\ProvisionBusinessWithSubscription;
 use App\Enums\BusinessStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CreateBusinessRequest;
 use App\Models\AuditLog;
 use App\Models\Business;
 use App\Models\SubscriptionPlan;
+use DomainException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -74,28 +74,35 @@ class BusinessController extends Controller
     /**
      * Store a newly created business in storage.
      * Accessible exclusively to platform administrators.
+     * Atomically coordinates business and optional initial subscription provisioning.
      */
     public function store(
         CreateBusinessRequest $request,
-        CreateBusiness $createBusiness,
-        ProvisionSubscription $provisionSubscription
+        ProvisionBusinessWithSubscription $orchestrator
     ): JsonResponse|RedirectResponse {
-        $business = $createBusiness->execute(
-            actor: $request->user(),
-            data: $request->validated()
-        );
+        $plan = $request->filled('plan_id')
+            ? SubscriptionPlan::findOrFail($request->input('plan_id'))
+            : null;
 
-        // Optional subscription plan assignment during business provisioning
-        if ($request->filled('plan_id')) {
-            $plan = SubscriptionPlan::findOrFail($request->input('plan_id'));
-            $provisionSubscription->execute(
+        try {
+            $business = $orchestrator->execute(
                 actor: $request->user(),
-                business: $business,
+                businessData: $request->safe()->except(['plan_id', 'skip_trial']),
                 plan: $plan,
-                options: [
+                subscriptionOptions: [
                     'skip_trial' => $request->boolean('skip_trial'),
                 ]
             );
+        } catch (DomainException $e) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'message' => $e->getMessage(),
+                ], 422);
+            }
+
+            return redirect()->back()
+                ->withInput()
+                ->with('error', $e->getMessage());
         }
 
         if ($request->wantsJson()) {
