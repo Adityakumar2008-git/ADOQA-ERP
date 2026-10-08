@@ -90,6 +90,22 @@ class Business extends Model
     }
 
     /**
+     * Custom roles defined specifically by this business.
+     */
+    public function customRoles(): HasMany
+    {
+        return $this->hasMany(Role::class);
+    }
+
+    /**
+     * User role assignments in this business context.
+     */
+    public function userRoles(): HasMany
+    {
+        return $this->hasMany(UserRole::class);
+    }
+
+    /**
      * Check if the business is currently suspended.
      */
     public function isSuspended(): bool
