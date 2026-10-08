@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
+use App\Enums\MembershipStatus;
 use App\Enums\UserStatus;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -35,6 +38,29 @@ class User extends Authenticatable
     }
 
     /**
+     * The business membership for an ordinary user account.
+     */
+    public function membership(): HasOne
+    {
+        return $this->hasOne(BusinessMember::class);
+    }
+
+    /**
+     * The business associated with this user through their membership.
+     */
+    public function business(): HasOneThrough
+    {
+        return $this->hasOneThrough(
+            Business::class,
+            BusinessMember::class,
+            'user_id',
+            'id',
+            'id',
+            'business_id'
+        );
+    }
+
+    /**
      * Determine if the user is in active status.
      */
     public function isActive(): bool
@@ -56,5 +82,27 @@ class User extends Authenticatable
     public function isPlatformAdmin(): bool
     {
         return $this->is_platform_admin === true;
+    }
+
+    /**
+     * Check if this user belongs to the specified business.
+     */
+    public function belongsToBusiness(Business|string $business): bool
+    {
+        $businessId = $business instanceof Business ? $business->id : $business;
+
+        return $this->membership?->business_id === $businessId;
+    }
+
+    /**
+     * Retrieve the current active business for this user.
+     */
+    public function currentBusiness(): ?Business
+    {
+        if (! $this->membership || $this->membership->status !== MembershipStatus::Active) {
+            return null;
+        }
+
+        return $this->business;
     }
 }
