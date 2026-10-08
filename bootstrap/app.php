@@ -5,6 +5,7 @@ use App\Http\Middleware\EnsurePermission;
 use App\Http\Middleware\EnsurePlatformAdmin;
 use App\Http\Middleware\EnsurePlatformPermission;
 use App\Http\Middleware\EnsureTenantContext;
+use App\Http\Middleware\PreventBackHistoryCaching;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission.business' => EnsureBusinessPermission::class,
             'tenant' => EnsureTenantContext::class,
             'platform.admin' => EnsurePlatformAdmin::class,
+            'prevent.back.cache' => PreventBackHistoryCaching::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

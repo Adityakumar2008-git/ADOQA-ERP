@@ -219,5 +219,14 @@
             @yield('content')
         </main>
     </div>
+
+    <!-- Back/Forward Cache (bfcache) Security Safeguard -->
+    <script>
+        window.addEventListener('pageshow', function (event) {
+            if (event.persisted) {
+                window.location.reload();
+            }
+        });
+    </script>
 </body>
 </html>

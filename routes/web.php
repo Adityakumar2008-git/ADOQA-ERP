@@ -16,6 +16,7 @@ use App\Http\Controllers\Tenant\RoleController;
 use App\Http\Controllers\Tenant\SubscriptionController as TenantSubscriptionController;
 use App\Http\Middleware\EnsurePlatformAdmin;
 use App\Http\Middleware\EnsureTenantContext;
+use App\Http\Middleware\PreventBackHistoryCaching;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,7 +34,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Platform Admin Routes (Restricted strictly to platform administrators with required platform permissions)
-Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class])->group(function () {
+Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class, PreventBackHistoryCaching::class])->group(function () {
     // System Overview Dashboard
     Route::get('/', [AdminDashboardController::class, 'index'])
         ->middleware('permission.platform:businesses.view')
@@ -97,7 +98,7 @@ Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class])->group(
 });
 
 // Business Owner ERP Surface (Dedicated tenant-scoped operational shell)
-Route::prefix('owner')->middleware(['auth', EnsureTenantContext::class, 'permission.business:business.view'])->group(function () {
+Route::prefix('owner')->middleware(['auth', EnsureTenantContext::class, 'permission.business:business.view', PreventBackHistoryCaching::class])->group(function () {
     Route::get('/', [OwnerDashboardController::class, 'index'])->name('owner.index');
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('owner.dashboard');
 
@@ -144,8 +145,15 @@ Route::prefix('owner')->middleware(['auth', EnsureTenantContext::class, 'permiss
     });
 });
 
+// Staff / Cashier POS Surface (Reserved)
+Route::prefix('app')->middleware(['auth', EnsureTenantContext::class, PreventBackHistoryCaching::class])->group(function () {
+    Route::get('/', function () {
+        return redirect()->route('owner.dashboard');
+    })->name('app.index');
+});
+
 // Business Tenant Surface (Restricted strictly via server-authoritative tenant context)
-Route::middleware(['auth', EnsureTenantContext::class])->group(function () {
+Route::middleware(['auth', EnsureTenantContext::class, PreventBackHistoryCaching::class])->group(function () {
     Route::get('/tenant/current', function (Request $request) {
         $tenant = $request->attributes->get('tenant');
 
