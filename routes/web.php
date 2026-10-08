@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\RoleController as AdminRoleController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Admin\SubscriptionPlanController as AdminSubscriptionPlanController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
 use App\Http\Controllers\Tenant\MemberRoleController;
 use App\Http\Controllers\Tenant\RoleController;
 use App\Http\Controllers\Tenant\SubscriptionController as TenantSubscriptionController;
@@ -89,6 +90,12 @@ Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class])->group(
     Route::post('/subscriptions/{subscription}/transition', [AdminSubscriptionController::class, 'transition'])
         ->middleware('permission.platform:subscriptions.manage')
         ->name('admin.subscriptions.transition');
+});
+
+// Business Owner ERP Surface (Dedicated tenant-scoped operational shell)
+Route::prefix('owner')->middleware(['auth', EnsureTenantContext::class, 'permission.business:business.view'])->group(function () {
+    Route::get('/', [OwnerDashboardController::class, 'index'])->name('owner.index');
+    Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('owner.dashboard');
 });
 
 // Business Tenant Surface (Restricted strictly via server-authoritative tenant context)

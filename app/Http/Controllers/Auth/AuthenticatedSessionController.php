@@ -44,6 +44,10 @@ class AuthenticatedSessionController extends Controller
                 return redirect()->intended('/admin');
             }
 
+            if ($user->membership) {
+                return redirect()->intended('/owner/dashboard');
+            }
+
             return redirect()->intended('/');
         } catch (ValidationException $e) {
             $request->hitRateLimiter();
