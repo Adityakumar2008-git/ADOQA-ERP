@@ -61,6 +61,9 @@ class ReconcileInventoryCommand extends Command
                 foreach ($report['serialized_discrepancies'] as $disc) {
                     $this->error("    Serialized discrepancy: Item {$disc['item_name']}, Units: {$disc['available_units_count']}, Balance: {$disc['balance_quantity']}");
                 }
+                foreach ($report['supplier_payable_discrepancies'] as $disc) {
+                    $this->error("    Supplier discrepancy: Supplier {$disc['supplier_name']} ({$disc['supplier_id']}), Ledger: {$disc['ledger_balance']}, Expected: {$disc['expected_balance']}, Difference: {$disc['difference']}");
+                }
             }
         }
 

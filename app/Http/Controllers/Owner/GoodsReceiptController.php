@@ -143,6 +143,10 @@ class GoodsReceiptController extends Controller
         $tenant = $request->attributes->get('tenant') ?? $this->tenantContext->current();
         $this->authService->authorize($request->user(), 'purchases.receipts.post', $tenant);
 
+        if ($receipt->business_id !== $tenant->id) {
+            abort(404);
+        }
+
         $this->postReceiptAction->execute($request->user(), $tenant, $receipt);
 
         return redirect()->route('owner.purchasing.receipts.show', $receipt)

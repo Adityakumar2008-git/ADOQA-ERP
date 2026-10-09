@@ -116,6 +116,10 @@ class PurchaseOrderController extends Controller
         $tenant = $request->attributes->get('tenant') ?? $this->tenantContext->current();
         $this->authService->authorize($request->user(), 'purchases.approve', $tenant);
 
+        if ($order->business_id !== $tenant->id) {
+            abort(404);
+        }
+
         $this->approveOrder->execute($request->user(), $tenant, $order);
 
         return redirect()->route('owner.purchasing.orders.show', $order)

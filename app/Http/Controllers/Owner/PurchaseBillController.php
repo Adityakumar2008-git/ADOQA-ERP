@@ -121,6 +121,10 @@ class PurchaseBillController extends Controller
         $tenant = $request->attributes->get('tenant') ?? $this->tenantContext->current();
         $this->authService->authorize($request->user(), 'purchases.bills.post', $tenant);
 
+        if ($bill->business_id !== $tenant->id) {
+            abort(404);
+        }
+
         $this->postBillAction->execute($request->user(), $tenant, $bill);
 
         return redirect()->route('owner.purchasing.bills.show', $bill)

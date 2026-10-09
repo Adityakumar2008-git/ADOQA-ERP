@@ -90,6 +90,7 @@ class SupplierPaymentController extends Controller
             'payment_date' => ['nullable', 'date'],
             'payment_mode' => ['required', 'string', 'in:cash,bank_transfer,upi,card,cheque'],
             'reference_number' => ['nullable', 'string', 'max:128'],
+            'idempotency_key' => ['nullable', 'string', 'max:128'],
             'notes' => ['nullable', 'string'],
             'allocations' => ['nullable', 'array'],
             'allocations.*.purchase_bill_id' => ['required', 'string'],
@@ -130,6 +131,10 @@ class SupplierPaymentController extends Controller
         $tenant = $request->attributes->get('tenant') ?? $this->tenantContext->current();
         $this->authService->authorize($request->user(), 'suppliers.payments.post', $tenant);
 
+        if ($payment->business_id !== $tenant->id) {
+            abort(404);
+        }
+
         $validated = $request->validate([
             'reason' => ['nullable', 'string', 'max:255'],
         ]);
@@ -145,6 +150,10 @@ class SupplierPaymentController extends Controller
         /** @var Business $tenant */
         $tenant = $request->attributes->get('tenant') ?? $this->tenantContext->current();
         $this->authService->authorize($request->user(), 'suppliers.payments.post', $tenant);
+
+        if ($payment->business_id !== $tenant->id) {
+            abort(404);
+        }
 
         $validated = $request->validate([
             'purchase_bill_id' => ['required', 'string'],

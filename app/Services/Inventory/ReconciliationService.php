@@ -3,10 +3,13 @@
 namespace App\Services\Inventory;
 
 use App\Enums\InventoryUnitStatus;
+use App\Enums\PurchaseBillStatus;
+use App\Enums\SupplierPaymentStatus;
 use App\Models\Business;
 use App\Models\InventoryBatch;
 use App\Models\InventoryUnit;
 use App\Models\Item;
+use App\Models\PurchaseBill;
 use App\Models\StockBalance;
 use App\Models\StockMovement;
 use App\Models\Supplier;
@@ -165,7 +168,33 @@ class ReconciliationService
     }
 
     /**
-     * Compare supplier outstanding balance with sum of supplier subledger entries.
+     * Compare raw supplier subledger entries against authoritative source documents and open item states.
+     *
+     * Accounting Sign Convention & Domain Model:
+     * - Subledger (SupplierLedgerEntry) representation:
+     *   - Payable liability increases are recorded with POSITIVE amounts (+):
+     *     - BillPosted (+bill total_amount)
+     *     - PaymentReversed (+payment amount restored upon cheque bounce or cancellation)
+     *     - Adjustment (+opening balance configured upon supplier onboarding)
+     *   - Payable settlements (cash outflow to supplier) are recorded with NEGATIVE amounts (-):
+     *     - PaymentPosted (-payment amount, whether allocated immediately or held as advance)
+     *   - Tracking entries have ZERO financial delta (0.00):
+     *     - AdvanceAllocated (0.00, because the cash outflow already reduced the payable at payment creation;
+     *       allocating an advance to an existing bill shifts liability from unapplied advance to bill settlement)
+     *
+     * Authoritative Independent Expected Balance Derivation:
+     * 1. Document-Level Expected Balance:
+     *    Expected Balance = (Supplier Opening Balance)
+     *                     + (Sum of total_amount for all Posted, PartiallyPaid, and Paid Purchase Bills)
+     *                     - (Sum of amount for all active Posted Supplier Payments [excluding Reversed])
+     *
+     * 2. Open Items & Advances Independent Derivation:
+     *    Open Items Balance = (Supplier Opening Balance)
+     *                       + (Sum of unpaid bill balances: total_amount - paid_amount)
+     *                       - (Sum of active unapplied advance balances: advance_amount)
+     *
+     * In an accounting-sound ledger, both derivations are mathematically equal to each other
+     * and equal to the append-only sum of SupplierLedgerEntry records.
      */
     protected function checkSupplierPayableLedger(Business $business): array
     {
@@ -174,15 +203,67 @@ class ReconciliationService
         $suppliers = Supplier::where('business_id', $business->id)->get();
 
         foreach ($suppliers as $supplier) {
-            $ledgerSum = (float) $supplier->ledgerEntries()->sum('amount');
-            $calculatedOutstanding = $supplier->currentOutstanding();
+            $openingBalance = round((float) ($supplier->opening_balance ?? 0.00), 2);
 
-            if (abs($ledgerSum - $calculatedOutstanding) > 0.01) {
+            // Authoritative posted bills total
+            $postedBillsTotal = round((float) $supplier->purchaseBills()
+                ->whereIn('status', [
+                    PurchaseBillStatus::Posted->value,
+                    PurchaseBillStatus::PartiallyPaid->value,
+                    PurchaseBillStatus::Paid->value,
+                ])
+                ->sum('total_amount'), 2);
+
+            // Authoritative active posted payments total (excluding reversed)
+            $activePaymentsTotal = round((float) $supplier->payments()
+                ->where('status', SupplierPaymentStatus::Posted->value)
+                ->sum('amount'), 2);
+
+            // 1. Authoritative expected balance derived from posted source documents
+            $expectedDocumentBalance = round($openingBalance + $postedBillsTotal - $activePaymentsTotal, 2);
+
+            // 2. Authoritative expected balance derived from open unpaid bill items and unapplied advances
+            $unpaidBillsTotal = round((float) $supplier->purchaseBills()
+                ->whereIn('status', [
+                    PurchaseBillStatus::Posted->value,
+                    PurchaseBillStatus::PartiallyPaid->value,
+                    PurchaseBillStatus::Paid->value,
+                ])
+                ->get()
+                ->sum(fn (PurchaseBill $bill) => (float) $bill->outstandingAmount()), 2);
+
+            $unappliedAdvancesTotal = round((float) $supplier->payments()
+                ->where('status', SupplierPaymentStatus::Posted->value)
+                ->sum('advance_amount'), 2);
+
+            $expectedOpenItemsBalance = round($openingBalance + $unpaidBillsTotal - $unappliedAdvancesTotal, 2);
+
+            // 3. Raw append-only subledger sum
+            $ledgerSum = round((float) $supplier->ledgerEntries()->sum('amount'), 2);
+
+            $hasLedgerMismatch = abs($ledgerSum - $expectedDocumentBalance) > 0.005;
+            $hasAllocationMismatch = abs($expectedDocumentBalance - $expectedOpenItemsBalance) > 0.005;
+
+            if ($hasLedgerMismatch || $hasAllocationMismatch) {
+                $difference = round($ledgerSum - $expectedDocumentBalance, 2);
                 $discrepancies[] = [
                     'supplier_id' => $supplier->id,
                     'supplier_name' => $supplier->name,
+                    'ledger_balance' => $ledgerSum,
                     'ledger_sum' => $ledgerSum,
-                    'calculated_outstanding' => $calculatedOutstanding,
+                    'expected_balance' => $expectedDocumentBalance,
+                    'document_balance' => $expectedDocumentBalance,
+                    'calculated_outstanding' => $expectedDocumentBalance,
+                    'open_items_balance' => $expectedOpenItemsBalance,
+                    'difference' => $difference,
+                    'variance' => $difference,
+                    'opening_balance' => $openingBalance,
+                    'posted_bills_total' => $postedBillsTotal,
+                    'active_payments_total' => $activePaymentsTotal,
+                    'unpaid_bills_total' => $unpaidBillsTotal,
+                    'unapplied_advances_total' => $unappliedAdvancesTotal,
+                    'ledger_mismatch' => $hasLedgerMismatch,
+                    'allocation_mismatch' => $hasAllocationMismatch,
                 ];
             }
         }

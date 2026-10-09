@@ -252,4 +252,88 @@ class ProcurementWorkflowTest extends TestCase
             ],
         ]);
     }
+
+    public function test_cross_tenant_purchase_bill_access_is_blocked_with_zero_side_effects(): void
+    {
+        $otherBusiness = Business::factory()->create();
+        $otherOwner = User::factory()->create(['status' => UserStatus::Active]);
+        BusinessMember::create([
+            'business_id' => $otherBusiness->id,
+            'user_id' => $otherOwner->id,
+            'is_owner' => true,
+            'status' => MembershipStatus::Active,
+            'joined_at' => now(),
+        ]);
+        $ownerRole = Role::where('slug', 'owner')->whereNull('business_id')->firstOrFail();
+        UserRole::create([
+            'user_id' => $otherOwner->id,
+            'role_id' => $ownerRole->id,
+            'business_id' => $otherBusiness->id,
+        ]);
+
+        $bill = app(CreatePurchaseBill::class)->execute($this->owner, $this->business, [
+            'supplier_id' => $this->supplier->id,
+            'supplier_invoice_number' => 'BILL-ISOL-01',
+            'lines' => [
+                ['item_id' => $this->item->id, 'quantity' => 5, 'unit_cost' => 100],
+            ],
+        ]);
+
+        // Attempt cross-tenant show
+        $this->actingAs($otherOwner)
+            ->get(route('owner.purchasing.bills.show', $bill))
+            ->assertNotFound();
+
+        // Attempt cross-tenant post
+        $this->actingAs($otherOwner)
+            ->post(route('owner.purchasing.bills.post', $bill))
+            ->assertNotFound();
+
+        // Assert state unchanged
+        $bill->refresh();
+        $this->assertEquals(PurchaseBillStatus::Draft, $bill->status);
+        $this->assertEquals(0, SupplierLedgerEntry::where('business_id', $this->business->id)->count());
+    }
+
+    public function test_cross_tenant_goods_receipt_access_is_blocked_with_zero_side_effects(): void
+    {
+        $otherBusiness = Business::factory()->create();
+        $otherOwner = User::factory()->create(['status' => UserStatus::Active]);
+        BusinessMember::create([
+            'business_id' => $otherBusiness->id,
+            'user_id' => $otherOwner->id,
+            'is_owner' => true,
+            'status' => MembershipStatus::Active,
+            'joined_at' => now(),
+        ]);
+        $ownerRole = Role::where('slug', 'owner')->whereNull('business_id')->firstOrFail();
+        UserRole::create([
+            'user_id' => $otherOwner->id,
+            'role_id' => $ownerRole->id,
+            'business_id' => $otherBusiness->id,
+        ]);
+
+        $receipt = app(CreateGoodsReceipt::class)->execute($this->owner, $this->business, [
+            'supplier_id' => $this->supplier->id,
+            'warehouse_id' => $this->warehouse->id,
+            'lines' => [
+                ['item_id' => $this->item->id, 'accepted_quantity' => 10, 'actual_unit_cost' => 85.00],
+            ],
+        ]);
+
+        // Attempt cross-tenant show
+        $this->actingAs($otherOwner)
+            ->get(route('owner.purchasing.receipts.show', $receipt))
+            ->assertNotFound();
+
+        // Attempt cross-tenant post
+        $this->actingAs($otherOwner)
+            ->post(route('owner.purchasing.receipts.post', $receipt))
+            ->assertNotFound();
+
+        // Assert state unchanged
+        $receipt->refresh();
+        $this->assertEquals(GoodsReceiptStatus::Draft, $receipt->status);
+        $this->assertEquals(0, StockMovement::where('business_id', $this->business->id)->count());
+    }
 }

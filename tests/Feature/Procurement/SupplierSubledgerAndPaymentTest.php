@@ -9,6 +9,7 @@ use App\Actions\Procurement\PostPurchaseBill;
 use App\Actions\Procurement\RecordSupplierPayment;
 use App\Actions\Procurement\ReverseSupplierPayment;
 use App\Enums\MembershipStatus;
+use App\Enums\SupplierLedgerEntryType;
 use App\Enums\SupplierPaymentMode;
 use App\Enums\SupplierPaymentStatus;
 use App\Enums\UserStatus;
@@ -19,6 +20,7 @@ use App\Models\PurchaseBill;
 use App\Models\Role;
 use App\Models\Supplier;
 use App\Models\SupplierLedgerEntry;
+use App\Models\SupplierPayment;
 use App\Models\Unit;
 use App\Models\User;
 use App\Models\UserRole;
@@ -276,5 +278,105 @@ class SupplierSubledgerAndPaymentTest extends TestCase
                 ['purchase_bill_id' => $bill->id, 'amount' => 500.00],
             ],
         ]);
+    }
+
+    public function test_duplicate_idempotency_key_submission_is_rejected_and_causes_no_duplicate_financial_effect(): void
+    {
+        // 1. Post a bill for 1000.00
+        $createBillAction = app(CreatePurchaseBill::class);
+        $bill = $createBillAction->execute($this->owner, $this->business, [
+            'supplier_id' => $this->supplier->id,
+            'supplier_invoice_number' => 'BILL-IDEMP-01',
+            'lines' => [
+                ['item_id' => $this->item->id, 'quantity' => 10, 'unit_cost' => 100.00, 'tax_rate' => 0],
+            ],
+        ]);
+        $bill = app(PostPurchaseBill::class)->execute($this->owner, $this->business, $bill);
+
+        $payload = [
+            'supplier_id' => $this->supplier->id,
+            'amount' => 500.00,
+            'payment_mode' => 'cash',
+            'idempotency_key' => 'IDEMP-PAY-TEST-999',
+            'allocations' => [
+                ['purchase_bill_id' => $bill->id, 'amount' => 500.00],
+            ],
+        ];
+
+        // First submission via HTTP
+        $firstResponse = $this->actingAs($this->owner)->post(route('owner.purchasing.payments.store'), $payload);
+        $firstResponse->assertRedirect();
+
+        $this->assertEquals(1, SupplierPayment::where('business_id', $this->business->id)->count());
+        $this->assertEquals(2, SupplierLedgerEntry::where('business_id', $this->business->id)->count()); // 1 bill + 1 payment
+        $bill->refresh();
+        $this->assertEquals(500.00, (float) $bill->paid_amount);
+        $this->assertEquals(500.00, (float) $this->supplier->currentOutstanding());
+
+        // Duplicate submission with identical idempotency_key via web form
+        $duplicateResponse = $this->actingAs($this->owner)->post(route('owner.purchasing.payments.store'), $payload);
+        $duplicateResponse->assertSessionHasErrors(['idempotency_key']);
+
+        // Duplicate submission via JSON API
+        $duplicateJsonResponse = $this->actingAs($this->owner)->postJson(route('owner.purchasing.payments.store'), $payload);
+        $duplicateJsonResponse->assertStatus(422);
+        $duplicateJsonResponse->assertJsonValidationErrors(['idempotency_key']);
+
+        // Assert NO duplicate financial or database mutations occurred
+        $this->assertEquals(1, SupplierPayment::where('business_id', $this->business->id)->count());
+        $this->assertEquals(2, SupplierLedgerEntry::where('business_id', $this->business->id)->count());
+        $bill->refresh();
+        $this->assertEquals(500.00, (float) $bill->paid_amount);
+        $this->assertEquals(500.00, (float) $this->supplier->currentOutstanding());
+    }
+
+    public function test_cross_tenant_supplier_payment_access_is_blocked_with_zero_state_mutation(): void
+    {
+        // Create second tenant & owner
+        $otherBusiness = Business::factory()->create();
+        $otherOwner = User::factory()->create(['status' => UserStatus::Active]);
+        BusinessMember::create([
+            'business_id' => $otherBusiness->id,
+            'user_id' => $otherOwner->id,
+            'is_owner' => true,
+            'status' => MembershipStatus::Active,
+            'joined_at' => now(),
+        ]);
+        $ownerRole = Role::where('slug', 'owner')->whereNull('business_id')->firstOrFail();
+        UserRole::create([
+            'user_id' => $otherOwner->id,
+            'role_id' => $ownerRole->id,
+            'business_id' => $otherBusiness->id,
+        ]);
+
+        // Create and post payment in Tenant A
+        $payment = app(RecordSupplierPayment::class)->execute($this->owner, $this->business, [
+            'supplier_id' => $this->supplier->id,
+            'amount' => 450.00,
+            'payment_mode' => SupplierPaymentMode::Cash->value,
+        ]);
+
+        // Attempt cross-tenant inspection from Tenant B
+        $this->actingAs($otherOwner)
+            ->get(route('owner.purchasing.payments.show', $payment))
+            ->assertNotFound();
+
+        // Attempt cross-tenant reversal from Tenant B
+        $this->actingAs($otherOwner)
+            ->post(route('owner.purchasing.payments.reverse', $payment), ['reason' => 'Cross-tenant attack'])
+            ->assertNotFound();
+
+        // Attempt cross-tenant advance allocation from Tenant B
+        $this->actingAs($otherOwner)
+            ->post(route('owner.purchasing.payments.allocate_advance', $payment), [
+                'purchase_bill_id' => 'fake-bill-id',
+                'amount' => 100.00,
+            ])
+            ->assertNotFound();
+
+        // Assert Tenant A payment state and subledger remain entirely untampered
+        $payment->refresh();
+        $this->assertEquals(SupplierPaymentStatus::Posted, $payment->status);
+        $this->assertEquals(0, SupplierLedgerEntry::where('business_id', $this->business->id)->where('entry_type', SupplierLedgerEntryType::PaymentReversed)->count());
     }
 }
