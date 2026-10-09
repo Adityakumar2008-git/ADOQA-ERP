@@ -1,9 +1,18 @@
 @extends('layouts.owner')
 
+@inject('authService', 'App\Services\Auth\AuthorizationService')
+@inject('moduleRegistry', 'App\Services\Tenancy\ModuleRegistry')
+
 @section('title', 'Dashboard')
 @section('page_title', 'Dashboard')
 
 @section('content')
+@php
+    $user = auth()->user();
+    $canManageCatalogue = $tenant
+        && $moduleRegistry->isModuleEnabledForBusiness($tenant, \App\Enums\BusinessModule::Catalogue)
+        && $authService->can($user, 'catalogue.manage', $tenant);
+@endphp
 <div class="space-y-8">
     <!-- Page Header -->
     <x-page-header
@@ -231,56 +240,58 @@
                 badge="Upcoming" />
         </x-card>
 
-        <!-- Product Catalogue Available Card -->
-        <x-card title="Product Catalogue" subtitle="Items, categories, brands, and measurement units" badge="Available" badgeVariant="emerald">
-            <div class="space-y-3">
-                <p class="text-xs text-slate-600 leading-relaxed">
-                    Catalogue foundation is active and server-authoritative. Manage master items, classification categories, manufacturer brands, and measurement units.
-                </p>
+        @if ($canManageCatalogue)
+            <!-- Product Catalogue Available Card -->
+            <x-card title="Product Catalogue" subtitle="Items, categories, brands, and measurement units" badge="Available" badgeVariant="emerald">
+                <div class="space-y-3">
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Catalogue foundation is active and server-authoritative. Manage master items, classification categories, manufacturer brands, and measurement units.
+                    </p>
 
-                <div class="grid grid-cols-2 gap-2 pt-1">
-                    <a href="{{ route('owner.catalogue.items.index') }}"
-                       class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Items</span>
-                        </div>
-                        <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
-                    </a>
+                    <div class="grid grid-cols-2 gap-2 pt-1">
+                        <a href="{{ route('owner.catalogue.items.index') }}"
+                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Items</span>
+                            </div>
+                            <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                        </a>
 
-                    <a href="{{ route('owner.catalogue.categories.index') }}"
-                       class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Categories</span>
-                        </div>
-                        <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
-                    </a>
+                        <a href="{{ route('owner.catalogue.categories.index') }}"
+                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Categories</span>
+                            </div>
+                            <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                        </a>
 
-                    <a href="{{ route('owner.catalogue.brands.index') }}"
-                       class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Brands</span>
-                        </div>
-                        <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
-                    </a>
+                        <a href="{{ route('owner.catalogue.brands.index') }}"
+                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Brands</span>
+                            </div>
+                            <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                        </a>
 
-                    <a href="{{ route('owner.catalogue.units.index') }}"
-                       class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
-                        <div class="flex items-center space-x-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                            <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Units</span>
-                        </div>
-                        <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
-                    </a>
+                        <a href="{{ route('owner.catalogue.units.index') }}"
+                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                            <div class="flex items-center space-x-2">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Units</span>
+                            </div>
+                            <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                        </a>
+                    </div>
+
+                    <p class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">
+                        Stock movements, velocity rankings, and POS checkout links will activate with Inventory and Sales modules.
+                    </p>
                 </div>
-
-                <p class="text-[11px] text-slate-500 pt-1 border-t border-slate-100">
-                    Stock movements, velocity rankings, and POS checkout links will activate with Inventory and Sales modules.
-                </p>
-            </div>
-        </x-card>
+            </x-card>
+        @endif
     </div>
 </div>
 @endsection

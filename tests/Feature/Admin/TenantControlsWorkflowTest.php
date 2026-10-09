@@ -213,6 +213,151 @@ class TenantControlsWorkflowTest extends TestCase
         $this->assertTrue($this->authService->can($ownerUserB, 'catalogue.manage', $bizB2));
     }
 
+    public function test_deny_override_can_be_selected_saved_and_persisted(): void
+    {
+        [$business, $user, $role] = $this->createTenantWithStaff('manager');
+        $perm = Permission::where('slug', 'inventory.manage')->firstOrFail();
+
+        // Canonical manager role has inventory.manage
+        $this->assertTrue($this->authService->can($user, 'inventory.manage', $business));
+
+        // 1. Submit DENY override
+        $postResponse = $this->actingAs($this->platformAdmin)
+            ->post(route('admin.tenant-controls.overrides.update'), [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+                'overrides' => [
+                    $perm->id => 'deny',
+                ],
+            ]);
+
+        // Never redirect to blank page: redirects to tenant-controls with business & role context
+        $postResponse->assertRedirect(route('admin.tenant-controls.index', [
+            'business_id' => $business->id,
+            'role_id' => $role->id,
+        ]));
+        $postResponse->assertSessionHas('success');
+
+        // Verify DB persistence
+        $this->assertDatabaseHas('business_role_permission_overrides', [
+            'business_id' => $business->id,
+            'role_id' => $role->id,
+            'permission_id' => $perm->id,
+            'state' => 'deny',
+        ]);
+
+        // Audit log recorded
+        $this->assertDatabaseHas('audit_logs', [
+            'business_id' => $business->id,
+            'user_id' => $this->platformAdmin->id,
+            'action' => 'role.permission_override_set',
+        ]);
+
+        // Backend immediately denies access
+        $this->assertFalse($this->authService->can($user, 'inventory.manage', $business));
+
+        // 2. Reload page and confirm DENIED status and radio persistence
+        $reloadResponse = $this->actingAs($this->platformAdmin)
+            ->get(route('admin.tenant-controls.index', [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+            ]));
+
+        $reloadResponse->assertOk();
+        $reloadResponse->assertSee('DENIED');
+        $reloadResponse->assertSee('value="deny"', false);
+    }
+
+    public function test_inherit_override_deletes_override_record_and_restores_template_default(): void
+    {
+        [$business, $user, $role] = $this->createTenantWithStaff('staff');
+        $perm = Permission::where('slug', 'catalogue.manage')->firstOrFail();
+
+        // First set ALLOW override
+        $this->actingAs($this->platformAdmin)
+            ->post(route('admin.tenant-controls.overrides.update'), [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+                'overrides' => [
+                    $perm->id => 'allow',
+                ],
+            ]);
+        $this->assertTrue($this->authService->can($user, 'catalogue.manage', $business));
+
+        // Now set override back to INHERIT
+        $postResponse = $this->actingAs($this->platformAdmin)
+            ->post(route('admin.tenant-controls.overrides.update'), [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+                'overrides' => [
+                    $perm->id => 'inherit',
+                ],
+            ]);
+
+        $postResponse->assertRedirect(route('admin.tenant-controls.index', [
+            'business_id' => $business->id,
+            'role_id' => $role->id,
+        ]));
+        $postResponse->assertSessionHas('success');
+
+        // Override row deleted from DB
+        $this->assertDatabaseMissing('business_role_permission_overrides', [
+            'business_id' => $business->id,
+            'role_id' => $role->id,
+            'permission_id' => $perm->id,
+        ]);
+
+        // Canonical staff template restored (denied)
+        $this->assertFalse($this->authService->can($user, 'catalogue.manage', $business));
+
+        // Reload page and confirm INHERIT selected
+        $reloadResponse = $this->actingAs($this->platformAdmin)
+            ->get(route('admin.tenant-controls.index', [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+            ]));
+        $reloadResponse->assertOk();
+        $reloadResponse->assertSee('value="inherit"', false);
+    }
+
+    public function test_disabled_module_strictly_preempts_allow_permission_override(): void
+    {
+        [$business, $user, $role] = $this->createTenantWithStaff('staff');
+        $perm = Permission::where('slug', 'catalogue.manage')->firstOrFail();
+
+        // Set ALLOW override for staff
+        $this->actingAs($this->platformAdmin)
+            ->post(route('admin.tenant-controls.overrides.update'), [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+                'overrides' => [
+                    $perm->id => 'allow',
+                ],
+            ]);
+        $this->assertTrue($this->authService->can($user, 'catalogue.manage', $business));
+
+        // Now disable catalogue module for this business
+        $this->actingAs($this->platformAdmin)
+            ->post(route('admin.tenant-controls.modules.update'), [
+                'business_id' => $business->id,
+                'modules' => [
+                    'catalogue' => '0',
+                ],
+            ]);
+
+        // Even though role override is ALLOW, disabled module strictly forces false!
+        $this->assertFalse($this->authService->can($user, 'catalogue.manage', $business));
+
+        // In the UI, the effective state is DENIED
+        $reloadResponse = $this->actingAs($this->platformAdmin)
+            ->get(route('admin.tenant-controls.index', [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+            ]));
+        $reloadResponse->assertOk();
+        $reloadResponse->assertSee('Module Disabled (Denied)');
+    }
+
     public function test_roles_page_contains_prominent_tenant_controls_entry_point(): void
     {
         $response = $this->actingAs($this->platformAdmin)
@@ -223,8 +368,8 @@ class TenantControlsWorkflowTest extends TestCase
         $response->assertSee('Customize permissions for a specific business tenant?');
         $response->assertSee(route('admin.tenant-controls.index'));
 
-        // Confirm misleading button is relabeled accurately
+        // Confirm misleading buttons are not shown on normal frontend
         $response->assertDontSee('JSON Schema API');
-        $response->assertSee('Raw RBAC Data (JSON)');
+        $response->assertDontSee('Raw RBAC Data (JSON)');
     }
 }
