@@ -183,6 +183,143 @@
                         </table>
                     </div>
                 @endif
+            <!-- Tenant Module Controls Card -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-900">Tenant Module Controls</h2>
+                        <p class="text-xs text-slate-500">Enable or disable functional ERP modules for this tenant. Disabled modules deny access on the server.</p>
+                    </div>
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                        {{ count(array_filter($modules ?? [], fn($m) => $m['is_enabled'])) }} / {{ count($modules ?? []) }} Enabled
+                    </span>
+                </div>
+                <form action="{{ route('admin.businesses.modules.update', $business) }}" method="POST" class="p-6">
+                    @csrf
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        @foreach ($modules ?? [] as $module)
+                            <div class="p-3.5 rounded-lg border {{ $module['is_enabled'] ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 bg-slate-50/50' }} flex items-start justify-between space-x-3">
+                                <div class="space-y-1">
+                                    <div class="flex items-center space-x-2">
+                                        <span class="text-xs font-bold text-slate-900">{{ $module['name'] }}</span>
+                                        <span class="font-mono text-[10px] px-1.5 py-0.5 rounded {{ $module['is_enabled'] ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600' }}">
+                                            {{ $module['slug'] }}
+                                        </span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-500 leading-relaxed">{{ $module['description'] }}</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer shrink-0 mt-0.5">
+                                    <input type="hidden" name="modules[{{ $module['slug'] }}]" value="0">
+                                    <input type="checkbox" name="modules[{{ $module['slug'] }}]" value="1" {{ $module['is_enabled'] ? 'checked' : '' }} class="sr-only peer">
+                                    <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-600"></div>
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="mt-5 flex justify-end">
+                        <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg shadow-xs transition-colors">
+                            Save Module Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Tenant Role & Permission Overrides Card -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-900">Tenant Role & Permission Overrides</h2>
+                        <p class="text-xs text-slate-500">Fine-tune canonical role templates for this business without modifying global defaults.</p>
+                    </div>
+                    <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                        {{ count($roleOverrides ?? []) }} Active Overrides
+                    </span>
+                </div>
+
+                <div class="p-6 space-y-6">
+                    <!-- New Override Form -->
+                    <form action="{{ route('admin.businesses.overrides.store', $business) }}" method="POST" class="p-4 bg-slate-50 rounded-xl border border-slate-200">
+                        @csrf
+                        <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3">Configure Role Override</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Business Role</label>
+                                <select name="role_id" required class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="">Select Role...</option>
+                                    @foreach ($businessRoles ?? [] as $bRole)
+                                        <option value="{{ $bRole->id }}">{{ $bRole->name }} ({{ $bRole->slug }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Business Permission</label>
+                                <select name="permission_id" required class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="">Select Permission...</option>
+                                    @foreach ($businessPermissions ?? [] as $bPerm)
+                                        <option value="{{ $bPerm->id }}">{{ $bPerm->name }} [{{ $bPerm->slug }}] ({{ $bPerm->group }})</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-600 mb-1">Override Action</label>
+                                <select name="state" required class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="allow">ALLOW (Explicit Grant)</option>
+                                    <option value="deny">DENY (Explicit Suppress)</option>
+                                    <option value="inherit">INHERIT (Reset to Template)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex justify-end">
+                            <button type="submit" class="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg transition-colors shadow-xs">
+                                Apply Override
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Existing Overrides List -->
+                    @if (($roleOverrides ?? collect())->isEmpty())
+                        <div class="text-center py-6 text-slate-400 text-xs italic bg-slate-50/50 rounded-lg border border-dashed border-slate-200">
+                            No role overrides configured for this tenant. All roles inherit canonical default permissions.
+                        </div>
+                    @else
+                        <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-4 py-2.5">Role</th>
+                                        <th class="px-4 py-2.5">Permission</th>
+                                        <th class="px-4 py-2.5">Override State</th>
+                                        <th class="px-4 py-2.5">Updated</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-slate-100">
+                                    @foreach ($roleOverrides as $ov)
+                                        <tr class="hover:bg-slate-50">
+                                            <td class="px-4 py-2.5 font-semibold text-slate-800">{{ $ov->role?->name }}</td>
+                                            <td class="px-4 py-2.5 font-mono text-slate-700 text-[11px]">{{ $ov->permission?->slug }}</td>
+                                            <td class="px-4 py-2.5">
+                                                @if ($ov->isAllow())
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">
+                                                        ALLOW
+                                                    </span>
+                                                @elseif ($ov->isDeny())
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-rose-100 text-rose-800">
+                                                        DENY
+                                                    </span>
+                                                @else
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-700">
+                                                        INHERIT
+                                                    </span>
+                                                @endif
+                                            </td>
+                                            <td class="px-4 py-2.5 text-slate-500 text-[11px]">{{ $ov->updated_at->format('M d, Y H:i') }}</td>
+                                        </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                    @endif
+                </div>
             </div>
         </div>
 

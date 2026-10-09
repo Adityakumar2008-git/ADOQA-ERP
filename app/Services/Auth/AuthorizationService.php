@@ -2,11 +2,14 @@
 
 namespace App\Services\Auth;
 
+use App\Enums\PermissionOverrideState;
 use App\Enums\RoleScope;
 use App\Models\Business;
+use App\Models\BusinessRolePermissionOverride;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\Tenancy\ModuleRegistry;
 use App\Services\Tenancy\TenantContext;
 use Illuminate\Auth\Access\AuthorizationException;
 
@@ -21,7 +24,8 @@ class AuthorizationService
     protected array $memoizedPermissions = [];
 
     public function __construct(
-        protected TenantContext $tenantContext
+        protected TenantContext $tenantContext,
+        protected ModuleRegistry $moduleRegistry
     ) {}
 
     /**
@@ -113,11 +117,12 @@ class AuthorizationService
     }
 
     /**
-     * Clear memoized authorization cache (useful for testing or after role mutation).
+     * Clear memoized authorization cache (useful for testing or after role/module mutation).
      */
     public function clearMemoized(): void
     {
         $this->memoizedPermissions = [];
+        $this->moduleRegistry->clearCache();
     }
 
     /**
@@ -142,7 +147,7 @@ class AuthorizationService
 
     /**
      * Evaluate business permission.
-     * Requires active user, active membership, active business, and matching business role assignment.
+     * Requires active user, active membership, active business, enabled tenant module, and matching business role/override assignment.
      */
     protected function evaluateBusinessPermission(User $user, Permission $permission, ?Business $business): bool
     {
@@ -153,6 +158,13 @@ class AuthorizationService
         $membership = $user->membership;
 
         if (! $membership || ! $membership->isActive() || $membership->business_id !== $business->id) {
+            return false;
+        }
+
+        // Authoritative Module Registry check:
+        // A disabled tenant module must deny access to its protected operations on the server.
+        $module = $this->moduleRegistry->getModuleForPermission($permission->slug);
+        if ($module !== null && ! $this->moduleRegistry->isModuleEnabledForBusiness($business, $module)) {
             return false;
         }
 
@@ -190,7 +202,8 @@ class AuthorizationService
     }
 
     /**
-     * Load all business-granted permission slugs for the user within the specific business.
+     * Load all business-granted permission slugs for the user within the specific business,
+     * applying per-business, per-role overrides (INHERIT, ALLOW, DENY) without mutating global templates.
      */
     protected function loadBusinessPermissions(User $user, Business $business, string $cacheKey): void
     {
@@ -201,6 +214,23 @@ class AuthorizationService
             ->with(['role.permissions'])
             ->get();
 
+        if ($userRoles->isEmpty()) {
+            return;
+        }
+
+        // Load all active tenant role overrides for this business
+        $overrides = BusinessRolePermissionOverride::query()
+            ->where('business_id', $business->id)
+            ->with('permission')
+            ->get();
+
+        $overridesByRole = [];
+        foreach ($overrides as $override) {
+            if ($override->permission && $override->permission->scope === RoleScope::Business) {
+                $overridesByRole[$override->role_id][$override->permission->slug] = $override->state;
+            }
+        }
+
         foreach ($userRoles as $userRole) {
             $role = $userRole->role;
 
@@ -208,14 +238,44 @@ class AuthorizationService
                 continue;
             }
 
-            // If it's a custom role, it must belong to this business
+            // Custom business role must belong to this business
             if ($role->business_id !== null && $role->business_id !== $business->id) {
                 continue;
             }
 
+            $roleOverrides = $overridesByRole[$role->id] ?? [];
+
+            // 1. Process canonical role permissions
             foreach ($role->permissions as $perm) {
-                if ($perm->scope === RoleScope::Business) {
-                    $this->memoizedPermissions[$cacheKey][$perm->slug] = true;
+                if ($perm->scope !== RoleScope::Business) {
+                    continue;
+                }
+
+                $overrideState = $roleOverrides[$perm->slug] ?? PermissionOverrideState::Inherit;
+
+                // Explicit DENY override on this role suppresses the permission
+                if ($overrideState === PermissionOverrideState::Deny) {
+                    continue;
+                }
+
+                // If module is disabled for this business, do not grant
+                $module = $this->moduleRegistry->getModuleForPermission($perm->slug);
+                if ($module !== null && ! $this->moduleRegistry->isModuleEnabledForBusiness($business, $module)) {
+                    continue;
+                }
+
+                $this->memoizedPermissions[$cacheKey][$perm->slug] = true;
+            }
+
+            // 2. Process explicit ALLOW overrides on this role for permissions not in canonical template
+            foreach ($roleOverrides as $slug => $state) {
+                if ($state === PermissionOverrideState::Allow) {
+                    $module = $this->moduleRegistry->getModuleForPermission($slug);
+                    if ($module !== null && ! $this->moduleRegistry->isModuleEnabledForBusiness($business, $module)) {
+                        continue;
+                    }
+
+                    $this->memoizedPermissions[$cacheKey][$slug] = true;
                 }
             }
         }

@@ -207,4 +207,14 @@ class Business extends Model
     {
         return $this->hasMany(SupplierLedgerEntry::class);
     }
+
+    public function moduleSettings(): HasMany
+    {
+        return $this->hasMany(BusinessModuleSetting::class);
+    }
+
+    public function rolePermissionOverrides(): HasMany
+    {
+        return $this->hasMany(BusinessRolePermissionOverride::class);
+    }
 }

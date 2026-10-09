@@ -5,6 +5,7 @@ namespace App\Providers;
 use App\Models\Business;
 use App\Models\User;
 use App\Services\Auth\AuthorizationService;
+use App\Services\Tenancy\ModuleRegistry;
 use App\Services\Tenancy\TenantContext;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
@@ -20,8 +21,15 @@ class AppServiceProvider extends ServiceProvider
             return new TenantContext;
         });
 
+        $this->app->singleton(ModuleRegistry::class, function () {
+            return new ModuleRegistry;
+        });
+
         $this->app->singleton(AuthorizationService::class, function ($app) {
-            return new AuthorizationService($app->make(TenantContext::class));
+            return new AuthorizationService(
+                $app->make(TenantContext::class),
+                $app->make(ModuleRegistry::class)
+            );
         });
     }
 

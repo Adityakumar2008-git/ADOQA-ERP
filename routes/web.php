@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Admin\BusinessController as AdminBusinessController;
+use App\Http\Controllers\Admin\BusinessModuleController;
+use App\Http\Controllers\Admin\BusinessRoleOverrideController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\RoleController as AdminRoleController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
@@ -19,7 +21,9 @@ use App\Http\Controllers\Owner\SupplierPaymentController;
 use App\Http\Controllers\Owner\UnitController;
 use App\Http\Controllers\Owner\WarehouseController;
 use App\Http\Controllers\Tenant\MemberRoleController;
+use App\Http\Controllers\Tenant\ModuleController;
 use App\Http\Controllers\Tenant\RoleController;
+use App\Http\Controllers\Tenant\RoleOverrideController;
 use App\Http\Controllers\Tenant\SubscriptionController as TenantSubscriptionController;
 use App\Http\Middleware\EnsurePlatformAdmin;
 use App\Http\Middleware\EnsureTenantContext;
@@ -67,6 +71,15 @@ Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class, PreventB
     Route::get('/businesses/{business}', [AdminBusinessController::class, 'show'])
         ->middleware('permission.platform:businesses.view')
         ->name('admin.businesses.show');
+
+    // Business Tenant Module Settings & Overrides
+    Route::post('/businesses/{business}/modules', [BusinessModuleController::class, 'update'])
+        ->middleware('permission.platform:businesses.update')
+        ->name('admin.businesses.modules.update');
+
+    Route::post('/businesses/{business}/overrides', [BusinessRoleOverrideController::class, 'store'])
+        ->middleware('permission.platform:platform.roles.manage')
+        ->name('admin.businesses.overrides.store');
 
     // Platform Roles Inspection (HTML Interface & JSON API)
     Route::get('/roles', [AdminRoleController::class, 'index'])
@@ -298,5 +311,23 @@ Route::middleware(['auth', EnsureTenantContext::class, PreventBackHistoryCaching
         Route::delete('/members/{user}/roles/{role}', [MemberRoleController::class, 'destroy'])
             ->middleware('permission.business:staff.manage')
             ->name('tenant.members.roles.destroy');
+
+        // Tenant Module Controls
+        Route::get('/modules', [ModuleController::class, 'index'])
+            ->middleware('permission.business:business.view')
+            ->name('tenant.modules.index');
+
+        Route::put('/modules', [ModuleController::class, 'update'])
+            ->middleware('permission.business:business.update')
+            ->name('tenant.modules.update');
+
+        // Tenant Role Overrides
+        Route::get('/roles/{role}/overrides', [RoleOverrideController::class, 'index'])
+            ->middleware('permission.business:staff.manage')
+            ->name('tenant.roles.overrides.index');
+
+        Route::post('/roles/{role}/overrides', [RoleOverrideController::class, 'store'])
+            ->middleware('permission.business:staff.manage')
+            ->name('tenant.roles.overrides.store');
     });
 });

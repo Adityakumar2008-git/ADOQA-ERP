@@ -4,11 +4,16 @@ namespace App\Http\Controllers\Admin;
 
 use App\Actions\Business\ProvisionBusinessWithSubscription;
 use App\Enums\BusinessStatus;
+use App\Enums\RoleScope;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CreateBusinessRequest;
 use App\Models\AuditLog;
 use App\Models\Business;
+use App\Models\BusinessRolePermissionOverride;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\SubscriptionPlan;
+use App\Services\Tenancy\ModuleRegistry;
 use DomainException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -129,8 +134,11 @@ class BusinessController extends Controller
     /**
      * Display the specified business / tenant details.
      */
-    public function show(Request $request, Business $business): View|JsonResponse
-    {
+    public function show(
+        Request $request,
+        Business $business,
+        ModuleRegistry $moduleRegistry
+    ): View|JsonResponse {
         $business->load([
             'ownerMembership.user',
             'subscriptions.plan',
@@ -148,10 +156,41 @@ class BusinessController extends Controller
             ->orderBy('price')
             ->get();
 
+        $moduleStates = [];
+        foreach ($moduleRegistry->allModules() as $module) {
+            $moduleStates[] = [
+                'enum' => $module,
+                'slug' => $module->value,
+                'name' => $module->label(),
+                'description' => $module->description(),
+                'is_enabled' => $moduleRegistry->isModuleEnabledForBusiness($business, $module),
+            ];
+        }
+
+        $businessRoles = Role::where('scope', RoleScope::Business)
+            ->where(function ($q) use ($business) {
+                $q->whereNull('business_id')->orWhere('business_id', $business->id);
+            })
+            ->orderBy('is_system', 'desc')
+            ->orderBy('name')
+            ->get();
+
+        $businessPermissions = Permission::where('scope', RoleScope::Business)
+            ->orderBy('group')
+            ->orderBy('name')
+            ->get();
+
+        $roleOverrides = BusinessRolePermissionOverride::where('business_id', $business->id)
+            ->with(['role', 'permission'])
+            ->get();
+
         if ($request->wantsJson()) {
             return response()->json([
                 'business' => $business,
                 'audit_logs' => $auditLogs,
+                'modules' => $moduleStates,
+                'roles' => $businessRoles,
+                'overrides' => $roleOverrides,
             ]);
         }
 
@@ -159,6 +198,10 @@ class BusinessController extends Controller
             'business' => $business,
             'auditLogs' => $auditLogs,
             'availablePlans' => $availablePlans,
+            'modules' => $moduleStates,
+            'businessRoles' => $businessRoles,
+            'businessPermissions' => $businessPermissions,
+            'roleOverrides' => $roleOverrides,
         ]);
     }
 }
