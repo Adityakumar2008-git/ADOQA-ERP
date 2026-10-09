@@ -194,6 +194,14 @@ class TenantControlController extends Controller
         Request $request,
         SyncBusinessRolePermissionOverrides $action
     ): RedirectResponse {
+        if ($request->has('permission_id') && $request->has('state') && ! $request->has('overrides')) {
+            $request->merge([
+                'overrides' => [
+                    $request->input('permission_id') => $request->input('state'),
+                ],
+            ]);
+        }
+
         $validated = $request->validate([
             'business_id' => ['required', 'string', 'exists:businesses,id'],
             'role_id' => ['required', 'string', 'exists:roles,id'],

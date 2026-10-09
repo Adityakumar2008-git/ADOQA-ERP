@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-100">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full bg-slate-100 overflow-hidden">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,7 +9,7 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="h-full antialiased font-sans text-slate-800 bg-slate-100 flex">
+<body class="h-full antialiased font-sans text-slate-800 bg-slate-100 flex overflow-hidden">
     <!-- Sidebar -->
     <aside class="w-64 bg-slate-900 text-slate-300 flex flex-col flex-shrink-0 border-r border-slate-800 select-none">
         <!-- Brand Header -->

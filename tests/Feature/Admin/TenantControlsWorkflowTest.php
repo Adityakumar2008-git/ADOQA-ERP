@@ -372,4 +372,53 @@ class TenantControlsWorkflowTest extends TestCase
         $response->assertDontSee('JSON Schema API');
         $response->assertDontSee('Raw RBAC Data (JSON)');
     }
+
+    public function test_layout_markup_contains_overflow_hidden_and_relative_radio_labels(): void
+    {
+        [$business, , $role] = $this->createTenantWithStaff('manager');
+
+        $response = $this->actingAs($this->platformAdmin)
+            ->get(route('admin.tenant-controls.index', [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+            ]));
+
+        $response->assertOk();
+        // Layout must prevent root document scrolling that triggers white blank page
+        $response->assertSee('overflow-hidden');
+        // Radio labels must be positioned relatively to encapsulate sr-only inputs
+        $response->assertSee('relative cursor-pointer');
+        // Radio controls must support instant auto-saving on click/change
+        $response->assertSee('onchange="this.form.submit()"', false);
+    }
+
+    public function test_single_override_submission_via_permission_id_and_state(): void
+    {
+        [$business, $user, $role] = $this->createTenantWithStaff('staff');
+        $perm = Permission::where('slug', 'catalogue.manage')->firstOrFail();
+
+        // 1. Submit single override via permission_id and state
+        $postResponse = $this->actingAs($this->platformAdmin)
+            ->post(route('admin.tenant-controls.overrides.update'), [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+                'permission_id' => $perm->id,
+                'state' => 'allow',
+            ]);
+
+        $postResponse->assertRedirect(route('admin.tenant-controls.index', [
+            'business_id' => $business->id,
+            'role_id' => $role->id,
+        ]));
+        $postResponse->assertSessionHas('success');
+
+        $this->assertDatabaseHas('business_role_permission_overrides', [
+            'business_id' => $business->id,
+            'role_id' => $role->id,
+            'permission_id' => $perm->id,
+            'state' => 'allow',
+        ]);
+
+        $this->assertTrue($this->authService->can($user, 'catalogue.manage', $business));
+    }
 }

@@ -294,23 +294,26 @@
                                             <!-- 3-Way Override Radio Selector -->
                                             <div class="flex items-center space-x-2 shrink-0">
                                                 <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100/60 text-xs font-medium">
-                                                    <label class="cursor-pointer px-2.5 py-1 rounded-md transition-all flex items-center space-x-1.5 has-checked:bg-white has-checked:shadow-2xs has-checked:text-slate-900 text-slate-500">
+                                                    <label class="relative cursor-pointer px-2.5 py-1 rounded-md transition-all flex items-center space-x-1.5 has-checked:bg-white has-checked:shadow-2xs has-checked:text-slate-900 text-slate-500">
                                                         <input type="radio" name="overrides[{{ $item['permission']->id }}]" value="inherit"
                                                                {{ $item['override_state'] === 'inherit' ? 'checked' : '' }}
+                                                               onchange="this.form.submit()"
                                                                class="sr-only">
                                                         <span class="text-[11px]">INHERIT</span>
                                                     </label>
 
-                                                    <label class="cursor-pointer px-2.5 py-1 rounded-md transition-all flex items-center space-x-1.5 has-checked:bg-emerald-600 has-checked:shadow-2xs has-checked:text-white text-emerald-700">
+                                                    <label class="relative cursor-pointer px-2.5 py-1 rounded-md transition-all flex items-center space-x-1.5 has-checked:bg-emerald-600 has-checked:shadow-2xs has-checked:text-white text-emerald-700">
                                                         <input type="radio" name="overrides[{{ $item['permission']->id }}]" value="allow"
                                                                {{ $item['override_state'] === 'allow' ? 'checked' : '' }}
+                                                               onchange="this.form.submit()"
                                                                class="sr-only">
                                                         <span class="text-[11px] font-bold">ALLOW</span>
                                                     </label>
 
-                                                    <label class="cursor-pointer px-2.5 py-1 rounded-md transition-all flex items-center space-x-1.5 has-checked:bg-rose-600 has-checked:shadow-2xs has-checked:text-white text-rose-700">
+                                                    <label class="relative cursor-pointer px-2.5 py-1 rounded-md transition-all flex items-center space-x-1.5 has-checked:bg-rose-600 has-checked:shadow-2xs has-checked:text-white text-rose-700">
                                                         <input type="radio" name="overrides[{{ $item['permission']->id }}]" value="deny"
                                                                {{ $item['override_state'] === 'deny' ? 'checked' : '' }}
+                                                               onchange="this.form.submit()"
                                                                class="sr-only">
                                                         <span class="text-[11px] font-bold">DENY</span>
                                                     </label>
