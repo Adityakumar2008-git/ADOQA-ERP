@@ -110,6 +110,14 @@
                         Roles & Permissions
                     </a>
 
+                    <a href="{{ route('admin.tenant-controls.index') }}"
+                       class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('admin.tenant-controls.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <svg class="w-4 h-4 mr-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                        </svg>
+                        Tenant Feature & Role Controls
+                    </a>
+
                     <div class="flex items-center justify-between px-3 py-1.5 text-slate-400 opacity-50 cursor-not-allowed">
                         <span>All Users</span>
                         <span class="text-[9px] text-slate-400">Phase 2+</span>

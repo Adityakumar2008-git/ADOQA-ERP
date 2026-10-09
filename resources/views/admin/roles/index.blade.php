@@ -20,12 +20,41 @@
             <p class="text-sm text-slate-500 mt-1">Authoritative platform RBAC directory and system-wide permission registry.</p>
         </div>
         <div class="flex items-center space-x-3">
+            <a href="{{ route('admin.tenant-controls.index') }}"
+               class="inline-flex items-center px-3.5 py-1.5 rounded-lg shadow-2xs text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                </svg>
+                Tenant Feature & Role Controls
+            </a>
             <a href="{{ route('admin.roles.api') }}" target="_blank"
-               class="inline-flex items-center px-3 py-1.5 border border-slate-300 rounded-lg shadow-2xs text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 transition-colors">
+               class="inline-flex items-center px-3 py-1.5 border border-slate-300 rounded-lg shadow-2xs text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 transition-colors"
+               title="Raw RBAC Data API endpoint returning roles and permissions JSON">
                 <svg class="w-3.5 h-3.5 mr-1.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
                 </svg>
-                JSON Schema API
+                Raw RBAC Data (JSON)
+            </a>
+        </div>
+    </div>
+
+    <!-- Prominent Banner for Tenant Feature & Role Controls -->
+    <div class="p-5 rounded-xl bg-gradient-to-r from-indigo-900 to-slate-900 text-white shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4 border border-indigo-800">
+        <div class="space-y-1">
+            <div class="flex items-center space-x-2">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+                    Tenant Governance
+                </span>
+                <h2 class="text-base font-bold text-white">Customize permissions for a specific business tenant?</h2>
+            </div>
+            <p class="text-xs text-slate-300 max-w-2xl leading-relaxed">
+                Global canonical roles below are immutable templates. To enable or disable functional modules (Catalogue, Inventory, Procurement, etc.) or set ALLOW/DENY overrides for an individual business, use Tenant Feature &amp; Role Controls.
+            </p>
+        </div>
+        <div class="shrink-0">
+            <a href="{{ route('admin.tenant-controls.index') }}"
+               class="inline-flex items-center px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-colors shadow-xs">
+                Open Tenant Feature &amp; Role Controls &rarr;
             </a>
         </div>
     </div>

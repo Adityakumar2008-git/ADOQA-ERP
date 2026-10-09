@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\RoleController as AdminRoleController;
 use App\Http\Controllers\Admin\SubscriptionController as AdminSubscriptionController;
 use App\Http\Controllers\Admin\SubscriptionPlanController as AdminSubscriptionPlanController;
+use App\Http\Controllers\Admin\TenantControlController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Owner\BrandController;
 use App\Http\Controllers\Owner\CategoryController;
@@ -80,6 +81,19 @@ Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class, PreventB
     Route::post('/businesses/{business}/overrides', [BusinessRoleOverrideController::class, 'store'])
         ->middleware('permission.platform:platform.roles.manage')
         ->name('admin.businesses.overrides.store');
+
+    // Dedicated Tenant Feature & Role Controls
+    Route::get('/tenant-controls', [TenantControlController::class, 'index'])
+        ->middleware('permission.platform:businesses.view')
+        ->name('admin.tenant-controls.index');
+
+    Route::post('/tenant-controls/modules', [TenantControlController::class, 'updateModules'])
+        ->middleware('permission.platform:businesses.update')
+        ->name('admin.tenant-controls.modules.update');
+
+    Route::post('/tenant-controls/overrides', [TenantControlController::class, 'updateRoleOverrides'])
+        ->middleware('permission.platform:platform.roles.manage')
+        ->name('admin.tenant-controls.overrides.update');
 
     // Platform Roles Inspection (HTML Interface & JSON API)
     Route::get('/roles', [AdminRoleController::class, 'index'])
