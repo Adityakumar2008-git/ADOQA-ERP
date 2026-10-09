@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable([
     'business_id',
@@ -74,5 +75,30 @@ class Item extends Model
     public function isActive(): bool
     {
         return $this->status === ItemStatus::Active;
+    }
+
+    public function stockBalances(): HasMany
+    {
+        return $this->hasMany(StockBalance::class);
+    }
+
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    public function batches(): HasMany
+    {
+        return $this->hasMany(InventoryBatch::class);
+    }
+
+    public function inventoryUnits(): HasMany
+    {
+        return $this->hasMany(InventoryUnit::class);
+    }
+
+    public function currentStock(): float
+    {
+        return (float) $this->stockBalances()->sum('quantity');
     }
 }

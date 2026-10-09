@@ -9,8 +9,15 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Owner\BrandController;
 use App\Http\Controllers\Owner\CategoryController;
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
+use App\Http\Controllers\Owner\GoodsReceiptController;
+use App\Http\Controllers\Owner\InventoryStockController;
 use App\Http\Controllers\Owner\ItemController;
+use App\Http\Controllers\Owner\PurchaseBillController;
+use App\Http\Controllers\Owner\PurchaseOrderController;
+use App\Http\Controllers\Owner\SupplierController;
+use App\Http\Controllers\Owner\SupplierPaymentController;
 use App\Http\Controllers\Owner\UnitController;
+use App\Http\Controllers\Owner\WarehouseController;
 use App\Http\Controllers\Tenant\MemberRoleController;
 use App\Http\Controllers\Tenant\RoleController;
 use App\Http\Controllers\Tenant\SubscriptionController as TenantSubscriptionController;
@@ -142,6 +149,77 @@ Route::prefix('owner')->middleware(['auth', EnsureTenantContext::class, 'permiss
         Route::put('/units/{unit}', [UnitController::class, 'update'])->name('owner.catalogue.units.update');
         Route::patch('/units/{unit}/status', [UnitController::class, 'toggleStatus'])->name('owner.catalogue.units.status');
         Route::delete('/units/{unit}', [UnitController::class, 'destroy'])->name('owner.catalogue.units.destroy');
+    });
+
+    // Warehouses & Locations
+    Route::prefix('warehouses')->group(function () {
+        Route::get('/', [WarehouseController::class, 'index'])->name('owner.inventory.warehouses.index');
+        Route::get('/create', [WarehouseController::class, 'create'])->name('owner.inventory.warehouses.create');
+        Route::post('/', [WarehouseController::class, 'store'])->name('owner.inventory.warehouses.store');
+        Route::get('/{warehouse}/edit', [WarehouseController::class, 'edit'])->name('owner.inventory.warehouses.edit');
+        Route::put('/{warehouse}', [WarehouseController::class, 'update'])->name('owner.inventory.warehouses.update');
+        Route::post('/{warehouse}/locations', [WarehouseController::class, 'storeLocation'])->name('owner.inventory.warehouses.locations.store');
+    });
+
+    // Inventory Stock & Movements
+    Route::prefix('inventory')->group(function () {
+        Route::get('/', fn () => redirect()->route('owner.inventory.stock.index'))->name('owner.inventory.index');
+        Route::get('/stock', [InventoryStockController::class, 'index'])->name('owner.inventory.stock.index');
+        Route::get('/ledger', [InventoryStockController::class, 'ledger'])->name('owner.inventory.stock.ledger');
+        Route::get('/opening-stock', [InventoryStockController::class, 'openingStockForm'])->name('owner.inventory.stock.opening_stock');
+        Route::post('/opening-stock', [InventoryStockController::class, 'storeOpeningStock'])->name('owner.inventory.stock.opening_stock.store');
+        Route::get('/adjustments', [InventoryStockController::class, 'adjustmentsIndex'])->name('owner.inventory.adjustments.index');
+        Route::get('/adjustments/create', [InventoryStockController::class, 'adjustmentForm'])->name('owner.inventory.adjustments.create');
+        Route::post('/adjustments', [InventoryStockController::class, 'storeAdjustment'])->name('owner.inventory.adjustments.store');
+        Route::get('/transfers', [InventoryStockController::class, 'transfersIndex'])->name('owner.inventory.transfers.index');
+        Route::get('/transfers/create', [InventoryStockController::class, 'transferForm'])->name('owner.inventory.transfers.create');
+        Route::post('/transfers', [InventoryStockController::class, 'storeTransfer'])->name('owner.inventory.transfers.store');
+        Route::post('/transfers/{transfer}/dispatch', [InventoryStockController::class, 'dispatchTransfer'])->name('owner.inventory.transfers.dispatch');
+        Route::get('/transfers/{transfer}/receive', [InventoryStockController::class, 'receiveTransferForm'])->name('owner.inventory.transfers.receive');
+        Route::post('/transfers/{transfer}/receive', [InventoryStockController::class, 'storeReceiveTransfer'])->name('owner.inventory.transfers.receive.store');
+        Route::post('/transfers/{transfer}/cancel', [InventoryStockController::class, 'cancelTransfer'])->name('owner.inventory.transfers.cancel');
+        Route::get('/reconcile', [InventoryStockController::class, 'reconcile'])->name('owner.inventory.stock.reconcile');
+    });
+
+    // Procurement & Suppliers
+    Route::prefix('purchasing')->group(function () {
+        Route::get('/', fn () => redirect()->route('owner.purchasing.orders.index'))->name('owner.purchasing.index');
+
+        // Suppliers
+        Route::get('/suppliers', [SupplierController::class, 'index'])->name('owner.purchasing.suppliers.index');
+        Route::get('/suppliers/create', [SupplierController::class, 'create'])->name('owner.purchasing.suppliers.create');
+        Route::post('/suppliers', [SupplierController::class, 'store'])->name('owner.purchasing.suppliers.store');
+        Route::get('/suppliers/{supplier}', [SupplierController::class, 'show'])->name('owner.purchasing.suppliers.show');
+        Route::get('/suppliers/{supplier}/ledger', [SupplierController::class, 'ledger'])->name('owner.purchasing.suppliers.ledger');
+
+        // Purchase Orders
+        Route::get('/orders', [PurchaseOrderController::class, 'index'])->name('owner.purchasing.orders.index');
+        Route::get('/orders/create', [PurchaseOrderController::class, 'create'])->name('owner.purchasing.orders.create');
+        Route::post('/orders', [PurchaseOrderController::class, 'store'])->name('owner.purchasing.orders.store');
+        Route::get('/orders/{order}', [PurchaseOrderController::class, 'show'])->name('owner.purchasing.orders.show');
+        Route::post('/orders/{order}/approve', [PurchaseOrderController::class, 'approve'])->name('owner.purchasing.orders.approve');
+
+        // Purchase Bills
+        Route::get('/bills', [PurchaseBillController::class, 'index'])->name('owner.purchasing.bills.index');
+        Route::get('/bills/create', [PurchaseBillController::class, 'create'])->name('owner.purchasing.bills.create');
+        Route::post('/bills', [PurchaseBillController::class, 'store'])->name('owner.purchasing.bills.store');
+        Route::get('/bills/{bill}', [PurchaseBillController::class, 'show'])->name('owner.purchasing.bills.show');
+        Route::post('/bills/{bill}/post', [PurchaseBillController::class, 'post'])->name('owner.purchasing.bills.post');
+
+        // Goods Receipts
+        Route::get('/receipts', [GoodsReceiptController::class, 'index'])->name('owner.purchasing.receipts.index');
+        Route::get('/receipts/create', [GoodsReceiptController::class, 'create'])->name('owner.purchasing.receipts.create');
+        Route::post('/receipts', [GoodsReceiptController::class, 'store'])->name('owner.purchasing.receipts.store');
+        Route::get('/receipts/{receipt}', [GoodsReceiptController::class, 'show'])->name('owner.purchasing.receipts.show');
+        Route::post('/receipts/{receipt}/post', [GoodsReceiptController::class, 'post'])->name('owner.purchasing.receipts.post');
+
+        // Supplier Payments
+        Route::get('/payments', [SupplierPaymentController::class, 'index'])->name('owner.purchasing.payments.index');
+        Route::get('/payments/create', [SupplierPaymentController::class, 'create'])->name('owner.purchasing.payments.create');
+        Route::post('/payments', [SupplierPaymentController::class, 'store'])->name('owner.purchasing.payments.store');
+        Route::get('/payments/{payment}', [SupplierPaymentController::class, 'show'])->name('owner.purchasing.payments.show');
+        Route::post('/payments/{payment}/reverse', [SupplierPaymentController::class, 'reverse'])->name('owner.purchasing.payments.reverse');
+        Route::post('/payments/{payment}/allocate-advance', [SupplierPaymentController::class, 'allocateAdvance'])->name('owner.purchasing.payments.allocate_advance');
     });
 });
 

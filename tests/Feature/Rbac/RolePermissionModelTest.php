@@ -310,7 +310,7 @@ class RolePermissionModelTest extends TestCase
         $seeder->run();
 
         $this->assertSame(5, Role::whereNull('business_id')->count());
-        $this->assertSame(45, Permission::count());
+        $this->assertSame(61, Permission::count());
 
         $platformAdminRole = Role::where('slug', 'platform_admin')->firstOrFail();
         $this->assertSame(RoleScope::Platform, $platformAdminRole->scope);
@@ -318,13 +318,13 @@ class RolePermissionModelTest extends TestCase
 
         $ownerRole = Role::where('slug', 'owner')->firstOrFail();
         $this->assertSame(RoleScope::Business, $ownerRole->scope);
-        $this->assertSame(30, $ownerRole->permissions()->count());
+        $this->assertSame(46, $ownerRole->permissions()->count());
 
         $managerRole = Role::where('slug', 'manager')->firstOrFail();
-        $this->assertSame(12, $managerRole->permissions()->count());
+        $this->assertSame(28, $managerRole->permissions()->count());
 
         $staffRole = Role::where('slug', 'staff')->firstOrFail();
-        $this->assertSame(6, $staffRole->permissions()->count());
+        $this->assertSame(8, $staffRole->permissions()->count());
 
         $cashierRole = Role::where('slug', 'cashier')->firstOrFail();
         $this->assertSame(6, $cashierRole->permissions()->count());

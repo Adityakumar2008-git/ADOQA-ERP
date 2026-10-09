@@ -8,6 +8,8 @@
     // Role-aware permission resolution
     $canSales = $tenant && ($authService->can($user, 'sales.create', $tenant) || $authService->can($user, 'invoices.view', $tenant));
     $canCommerce = $tenant && ($authService->can($user, 'catalogue.manage', $tenant) || $authService->can($user, 'inventory.view', $tenant) || $authService->can($user, 'customers.manage', $tenant));
+    $canInventory = $tenant && ($authService->can($user, 'inventory.view', $tenant) || $authService->can($user, 'warehouses.view', $tenant));
+    $canPurchasing = $tenant && ($authService->can($user, 'purchases.manage', $tenant) || $authService->can($user, 'suppliers.view', $tenant) || $authService->can($user, 'purchases.create', $tenant));
     $canFinance = $tenant && $authService->can($user, 'finance.manage', $tenant);
     $canPeople = $tenant && ($authService->can($user, 'payroll.manage', $tenant) || $authService->can($user, 'staff.manage', $tenant));
     $canSystem = $tenant && ($authService->can($user, 'settings.manage', $tenant) || $authService->can($user, 'audit.view', $tenant));
@@ -159,24 +161,120 @@
                         </a>
                     </div>
 
-                    <!-- Pending Commerce Modules (Preserved Coming Soon / Phase 4) -->
+                    <!-- Pending Commerce Modules -->
                     <div class="mt-2 pt-2 border-t border-slate-800/60 space-y-0.5 opacity-50 text-[11px] select-none">
                         <div class="flex items-center justify-between px-3 py-1.5 rounded text-slate-400 cursor-not-allowed">
                             <span>Customers</span>
                             <span class="text-[9px] text-slate-500">Coming soon</span>
                         </div>
-                        <div class="flex items-center justify-between px-3 py-1.5 rounded text-slate-400 cursor-not-allowed">
+                    </div>
+                </div>
+            @endif
+
+            <!-- INVENTORY Section (Phase 4 Active) -->
+            @if ($canInventory)
+                <div>
+                    <div class="flex items-center justify-between px-2 mb-1.5">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Inventory</p>
+                    </div>
+                    <div class="space-y-1">
+                        <a href="{{ route('owner.inventory.stock.index') }}"
+                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.stock.index') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.stock.index') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                            <span>Stock Balances</span>
+                        </a>
+
+                        <a href="{{ route('owner.inventory.stock.ledger') }}"
+                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.stock.ledger') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.stock.ledger') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Stock Ledger</span>
+                        </a>
+
+                        <a href="{{ route('owner.inventory.warehouses.index') }}"
+                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.warehouses.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.warehouses.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
+                            </svg>
+                            <span>Warehouses</span>
+                        </a>
+
+                        <a href="{{ route('owner.inventory.adjustments.index') }}"
+                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.adjustments.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.adjustments.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            <span>Adjustments</span>
+                        </a>
+
+                        <a href="{{ route('owner.inventory.transfers.index') }}"
+                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.transfers.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.transfers.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
+                            </svg>
+                            <span>Internal Transfers</span>
+                        </a>
+
+                        <a href="{{ route('owner.inventory.stock.reconcile') }}"
+                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.stock.reconcile') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.stock.reconcile') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                            <span>Reconciliation</span>
+                        </a>
+                    </div>
+                </div>
+            @endif
+
+            <!-- PURCHASING Section (Phase 4 Active) -->
+            @if ($canPurchasing)
+                <div>
+                    <div class="flex items-center justify-between px-2 mb-1.5">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Procurement</p>
+                    </div>
+                    <div class="space-y-1">
+                        <a href="{{ route('owner.purchasing.suppliers.index') }}"
+                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.suppliers.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.suppliers.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
                             <span>Suppliers</span>
-                            <span class="text-[9px] text-slate-500">Coming soon</span>
-                        </div>
-                        <div class="flex items-center justify-between px-3 py-1.5 rounded text-slate-400 cursor-not-allowed">
-                            <span>Inventory Stock</span>
-                            <span class="text-[9px] text-slate-500">Phase 4</span>
-                        </div>
-                        <div class="flex items-center justify-between px-3 py-1.5 rounded text-slate-400 cursor-not-allowed">
-                            <span>Purchases</span>
-                            <span class="text-[9px] text-slate-500">Phase 4</span>
-                        </div>
+                        </a>
+
+                        <a href="{{ route('owner.purchasing.orders.index') }}"
+                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.orders.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.orders.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <span>Purchase Orders</span>
+                        </a>
+
+                        <a href="{{ route('owner.purchasing.bills.index') }}"
+                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.bills.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.bills.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
+                            </svg>
+                            <span>Purchase Bills</span>
+                        </a>
+
+                        <a href="{{ route('owner.purchasing.receipts.index') }}"
+                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.receipts.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.receipts.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                            </svg>
+                            <span>Goods Receipts</span>
+                        </a>
+
+                        <a href="{{ route('owner.purchasing.payments.index') }}"
+                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.payments.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.payments.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            <span>Supplier Payments</span>
+                        </a>
                     </div>
                 </div>
             @endif

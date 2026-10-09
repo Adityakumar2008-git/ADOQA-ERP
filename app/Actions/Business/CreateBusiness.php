@@ -3,6 +3,7 @@
 namespace App\Actions\Business;
 
 use App\Actions\Catalogue\SeedDefaultBusinessUnits;
+use App\Actions\Inventory\InitializeDefaultWarehouse;
 use App\Enums\BusinessStatus;
 use App\Enums\MembershipStatus;
 use App\Enums\UserStatus;
@@ -132,7 +133,10 @@ class CreateBusiness
             // 10. Provision canonical catalogue units
             (new SeedDefaultBusinessUnits)->execute($business);
 
-            // 11. Record immutable audit log
+            // 11. Provision default warehouse and location
+            (new InitializeDefaultWarehouse)->execute($business, $actor);
+
+            // 12. Record immutable audit log
             AuditLog::create([
                 'business_id' => $business->id,
                 'user_id' => $actor->id,

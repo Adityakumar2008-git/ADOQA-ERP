@@ -30,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
     'timezone',
     'tax_number',
     'status',
+    'allow_negative_stock',
 ])]
 class Business extends Model
 {
@@ -45,6 +46,7 @@ class Business extends Model
     {
         return [
             'status' => BusinessStatus::class,
+            'allow_negative_stock' => 'boolean',
         ];
     }
 
@@ -154,5 +156,55 @@ class Business extends Model
     public function items(): HasMany
     {
         return $this->hasMany(Item::class);
+    }
+
+    public function warehouses(): HasMany
+    {
+        return $this->hasMany(Warehouse::class);
+    }
+
+    public function defaultWarehouse(): HasOne
+    {
+        return $this->hasOne(Warehouse::class)->where('is_default', true);
+    }
+
+    public function stockBalances(): HasMany
+    {
+        return $this->hasMany(StockBalance::class);
+    }
+
+    public function stockMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class);
+    }
+
+    public function suppliers(): HasMany
+    {
+        return $this->hasMany(Supplier::class);
+    }
+
+    public function purchaseOrders(): HasMany
+    {
+        return $this->hasMany(PurchaseOrder::class);
+    }
+
+    public function purchaseBills(): HasMany
+    {
+        return $this->hasMany(PurchaseBill::class);
+    }
+
+    public function goodsReceipts(): HasMany
+    {
+        return $this->hasMany(GoodsReceipt::class);
+    }
+
+    public function supplierPayments(): HasMany
+    {
+        return $this->hasMany(SupplierPayment::class);
+    }
+
+    public function supplierLedgerEntries(): HasMany
+    {
+        return $this->hasMany(SupplierLedgerEntry::class);
     }
 }
