@@ -68,10 +68,14 @@ Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class, PreventB
         ->middleware('permission.platform:businesses.view')
         ->name('admin.businesses.show');
 
-    // Platform Roles Inspection
+    // Platform Roles Inspection (HTML Interface & JSON API)
     Route::get('/roles', [AdminRoleController::class, 'index'])
         ->middleware('permission.platform:platform.roles.manage')
         ->name('admin.roles.index');
+
+    Route::get('/roles/data', [AdminRoleController::class, 'api'])
+        ->middleware('permission.platform:platform.roles.manage')
+        ->name('admin.roles.api');
 
     // Subscription Plans Administration
     Route::get('/subscription-plans', [AdminSubscriptionPlanController::class, 'index'])

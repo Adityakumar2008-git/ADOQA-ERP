@@ -510,4 +510,51 @@ class RoleAdministrationTest extends TestCase
 
         $response->assertStatus(403);
     }
+
+    public function test_platform_admin_can_view_platform_roles_html_page(): void
+    {
+        $platformAdmin = User::factory()->withPlatformRole()->create();
+
+        $response = $this->actingAs($platformAdmin)->get('/admin/roles');
+
+        $response->assertStatus(200);
+        $response->assertViewIs('admin.roles.index');
+        $response->assertSee('Roles & Permissions');
+        $response->assertSee('Platform Administrator');
+        $response->assertSee('platform.roles.manage');
+        $response->assertDontSee('{"roles":');
+    }
+
+    public function test_ordinary_business_user_cannot_view_platform_roles_html_page(): void
+    {
+        [$owner] = $this->createMemberWithRole('owner', isOwner: true);
+
+        $response = $this->actingAs($owner)->get('/admin/roles');
+
+        $response->assertStatus(403);
+    }
+
+    public function test_platform_admin_can_access_dedicated_roles_api_endpoint(): void
+    {
+        $platformAdmin = User::factory()->withPlatformRole()->create();
+
+        $response = $this->actingAs($platformAdmin)->get(route('admin.roles.api'));
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure([
+            'roles',
+            'permissions',
+        ]);
+        $roleSlugs = collect($response->json('roles'))->pluck('slug');
+        $this->assertTrue($roleSlugs->contains('platform_admin'));
+    }
+
+    public function test_ordinary_business_user_cannot_access_roles_api_endpoint(): void
+    {
+        [$owner] = $this->createMemberWithRole('owner', isOwner: true);
+
+        $response = $this->actingAs($owner)->get(route('admin.roles.api'));
+
+        $response->assertStatus(403);
+    }
 }
