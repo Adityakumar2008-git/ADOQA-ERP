@@ -1,5 +1,7 @@
 @extends('layouts.owner')
 
+@inject('authService', 'App\Services\Auth\AuthorizationService')
+
 @section('title', 'Goods Receipt: ' . $receipt->receipt_number)
 
 @section('content')
@@ -14,7 +16,7 @@
                     Back to Receipts
                 </x-button>
 
-                @if($receipt->status->value === 'draft')
+                @if($receipt->status->value === 'draft' && $authService->can(auth()->user(), 'purchases.receipts.post', $tenant))
                     <form method="POST" action="{{ route('owner.purchasing.receipts.post', $receipt) }}" class="inline">
                         @csrf
                         <x-button type="submit" variant="primary">

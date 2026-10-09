@@ -21,25 +21,26 @@
 
     // Inventory permissions (granular)
     $canViewStock = $isInventoryEnabled && $authService->can($user, 'inventory.view', $tenant);
-    $canViewWarehouses = $isInventoryEnabled && ($authService->can($user, 'warehouses.view', $tenant) || $authService->can($user, 'warehouses.manage', $tenant));
-    $canAdjustStock = $isInventoryEnabled && ($authService->can($user, 'inventory.adjust', $tenant) || $authService->can($user, 'inventory.manage', $tenant));
-    $canTransferStock = $isInventoryEnabled && ($authService->can($user, 'inventory.transfer', $tenant) || $authService->can($user, 'inventory.manage', $tenant));
-    $canReconcileStock = $isInventoryEnabled && ($authService->can($user, 'inventory.reconcile', $tenant) || $authService->can($user, 'inventory.manage', $tenant));
+    $canViewWarehouses = $isInventoryEnabled && $authService->can($user, 'warehouses.view', $tenant);
+    $canAdjustStock = $isInventoryEnabled && $authService->can($user, 'inventory.view', $tenant) && ($authService->can($user, 'inventory.adjust', $tenant) || $authService->can($user, 'inventory.manage', $tenant));
+    $canTransferStock = $isInventoryEnabled && $authService->can($user, 'inventory.view', $tenant) && ($authService->can($user, 'inventory.transfer', $tenant) || $authService->can($user, 'inventory.manage', $tenant));
+    $canReconcileStock = $isInventoryEnabled && $authService->can($user, 'inventory.reconcile', $tenant);
     $hasAnyInventoryNav = $isInventoryEnabled && ($canViewStock || $canViewWarehouses || $canAdjustStock || $canTransferStock || $canReconcileStock);
 
     // Procurement permissions (granular)
-    $canViewSuppliers = $isProcurementEnabled && ($authService->can($user, 'suppliers.view', $tenant) || $authService->can($user, 'suppliers.manage', $tenant));
-    $canOrders = $isProcurementEnabled && ($authService->can($user, 'purchases.manage', $tenant) || $authService->can($user, 'purchases.create', $tenant) || $authService->can($user, 'purchases.approve', $tenant));
-    $canBills = $isProcurementEnabled && ($authService->can($user, 'purchases.bills.manage', $tenant) || $authService->can($user, 'purchases.bills.post', $tenant) || $authService->can($user, 'purchases.manage', $tenant));
-    $canReceipts = $isProcurementEnabled && ($authService->can($user, 'purchases.receipts.prepare', $tenant) || $authService->can($user, 'purchases.receipts.post', $tenant) || $authService->can($user, 'purchases.manage', $tenant));
-    $canPayments = $isProcurementEnabled && ($authService->can($user, 'suppliers.payments.create', $tenant) || $authService->can($user, 'suppliers.payments.post', $tenant) || $authService->can($user, 'purchases.manage', $tenant));
+    $canViewSuppliers = $isProcurementEnabled && $authService->can($user, 'suppliers.view', $tenant);
+    $canOrders = $isProcurementEnabled && $authService->can($user, 'purchases.manage', $tenant);
+    $canBills = $isProcurementEnabled && $authService->can($user, 'purchases.bills.manage', $tenant);
+    $canReceipts = $isProcurementEnabled && $authService->can($user, 'purchases.receipts.prepare', $tenant);
+    $canPayments = $isProcurementEnabled && $authService->can($user, 'suppliers.payments.create', $tenant);
     $hasAnyProcurementNav = $isProcurementEnabled && ($canViewSuppliers || $canOrders || $canBills || $canReceipts || $canPayments);
 
     // Other role-aware sections
     $canSales = $isSalesEnabled && ($authService->can($user, 'sales.create', $tenant) || $authService->can($user, 'invoices.view', $tenant));
-    $canFinance = $isFinanceEnabled && $authService->can($user, 'finance.manage', $tenant);
-    $canPeople = $isPeopleEnabled && ($authService->can($user, 'payroll.manage', $tenant) || $authService->can($user, 'staff.manage', $tenant));
-    $canSystem = $isSettingsEnabled && ($authService->can($user, 'settings.manage', $tenant) || $authService->can($user, 'audit.view', $tenant));
+    $canCustomers = $isCustomersEnabled && $authService->can($user, 'customers.manage', $tenant);
+    $canFinance = $isFinanceEnabled && ($authService->can($user, 'finance.manage', $tenant) || $authService->can($user, 'expenses.manage', $tenant) || $authService->can($user, 'emi.manage', $tenant));
+    $canPeople = $isPeopleEnabled && ($authService->can($user, 'payroll.manage', $tenant) || $authService->can($user, 'staff.manage', $tenant) || $authService->can($user, 'attendance.manage', $tenant) || $authService->can($user, 'leave.manage', $tenant) || $authService->can($user, 'advances.manage', $tenant) || $authService->can($user, 'performance.view', $tenant));
+    $canSystem = $isSettingsEnabled && ($authService->can($user, 'settings.manage', $tenant) || $authService->can($user, 'audit.view', $tenant) || $authService->can($user, 'reports.view', $tenant));
 
     $activeSub = $tenant?->activeSubscription;
 @endphp
@@ -147,49 +148,51 @@
             @endif
 
             <!-- COMMERCE Section (Role-Aware) -->
-            @if ($canManageCatalogue)
+            @if ($canManageCatalogue || $canCustomers)
                 <div>
                     <div class="flex items-center justify-between px-2 mb-1.5">
                         <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Commerce</p>
                     </div>
 
-                    <!-- Active Phase 3 Catalogue Modules -->
-                    <div class="space-y-1">
-                        <a href="{{ route('owner.catalogue.items.index') }}"
-                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.items.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.items.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
-                            </svg>
-                            <span>Items Catalogue</span>
-                        </a>
+                    @if ($canManageCatalogue)
+                        <!-- Active Phase 3 Catalogue Modules -->
+                        <div class="space-y-1">
+                            <a href="{{ route('owner.catalogue.items.index') }}"
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.items.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.items.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                </svg>
+                                <span>Items Catalogue</span>
+                            </a>
 
-                        <a href="{{ route('owner.catalogue.categories.index') }}"
-                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.categories.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.categories.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
-                            </svg>
-                            <span>Categories</span>
-                        </a>
+                            <a href="{{ route('owner.catalogue.categories.index') }}"
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.categories.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.categories.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                </svg>
+                                <span>Categories</span>
+                            </a>
 
-                        <a href="{{ route('owner.catalogue.brands.index') }}"
-                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.brands.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.brands.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-                            </svg>
-                            <span>Brands</span>
-                        </a>
+                            <a href="{{ route('owner.catalogue.brands.index') }}"
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.brands.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.brands.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                </svg>
+                                <span>Brands</span>
+                            </a>
 
-                        <a href="{{ route('owner.catalogue.units.index') }}"
-                           class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.units.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                            <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.units.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 18h12l3-18H3z"/>
-                            </svg>
-                            <span>Units</span>
-                        </a>
-                    </div>
+                            <a href="{{ route('owner.catalogue.units.index') }}"
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.units.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.units.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 18h12l3-18H3z"/>
+                                </svg>
+                                <span>Units</span>
+                            </a>
+                        </div>
+                    @endif
 
                     <!-- Pending Commerce Modules -->
-                    @if ($isCustomersEnabled)
+                    @if ($canCustomers)
                         <div class="mt-2 pt-2 border-t border-slate-800/60 space-y-0.5 opacity-50 text-[11px] select-none">
                             <div class="flex items-center justify-between px-3 py-1.5 rounded text-slate-400 cursor-not-allowed">
                                 <span>Customers</span>

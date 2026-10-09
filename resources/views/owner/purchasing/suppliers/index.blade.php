@@ -1,5 +1,7 @@
 @extends('layouts.owner')
 
+@inject('authService', 'App\Services\Auth\AuthorizationService')
+
 @section('title', 'Suppliers Directory')
 
 @section('content')
@@ -8,12 +10,14 @@
         title="Supplier Directory"
         subtitle="Manage business vendors, procurement contacts, credit limits, and subledger payables."
     >
-        <x-slot:actions>
-            <x-button variant="primary" :href="route('owner.purchasing.suppliers.create')">
-                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                New Supplier
-            </x-button>
-        </x-slot:actions>
+        @if($authService->can(auth()->user(), 'suppliers.manage', $tenant))
+            <x-slot:actions>
+                <x-button variant="primary" :href="route('owner.purchasing.suppliers.create')">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    New Supplier
+                </x-button>
+            </x-slot:actions>
+        @endif
     </x-page-header>
 
     @if(session('success'))
@@ -54,8 +58,8 @@
             <x-empty-state
                 title="No suppliers found"
                 description="{{ request('search') ? 'No suppliers match your search query.' : 'Create your first supplier to begin raising purchase orders.' }}"
-                actionText="{{ request('search') ? '' : 'Add Supplier' }}"
-                :actionUrl="request('search') ? null : route('owner.purchasing.suppliers.create')"
+                actionText="{{ request('search') || ! $authService->can(auth()->user(), 'suppliers.manage', $tenant) ? '' : 'Add Supplier' }}"
+                :actionUrl="request('search') || ! $authService->can(auth()->user(), 'suppliers.manage', $tenant) ? null : route('owner.purchasing.suppliers.create')"
             />
         @else
             <div class="overflow-x-auto">

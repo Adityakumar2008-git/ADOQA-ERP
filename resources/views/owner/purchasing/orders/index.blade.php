@@ -1,4 +1,5 @@
 @extends('layouts.owner')
+@inject('authService', 'App\Services\Auth\AuthorizationService')
 
 @section('title', 'Purchase Orders')
 
@@ -9,10 +10,12 @@
         subtitle="Procurement orders raised with suppliers, expected deliveries, and order fulfillment status."
     >
         <x-slot:actions>
-            <x-button variant="primary" :href="route('owner.purchasing.orders.create')">
-                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                New Purchase Order
-            </x-button>
+            @if($authService->can(auth()->user(), 'purchases.create', $tenant))
+                <x-button variant="primary" :href="route('owner.purchasing.orders.create')">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    New Purchase Order
+                </x-button>
+            @endif
         </x-slot:actions>
     </x-page-header>
 
@@ -62,8 +65,8 @@
             <x-empty-state
                 title="No purchase orders found"
                 description="Raise purchase orders to authorize inventory procurement from suppliers."
-                actionText="Create Purchase Order"
-                :actionUrl="route('owner.purchasing.orders.create')"
+                :actionText="$authService->can(auth()->user(), 'purchases.create', $tenant) ? 'Create Purchase Order' : null"
+                :actionUrl="$authService->can(auth()->user(), 'purchases.create', $tenant) ? route('owner.purchasing.orders.create') : null"
             />
         @else
             <div class="overflow-x-auto">

@@ -1,5 +1,7 @@
 @extends('layouts.owner')
 
+@inject('authService', 'App\Services\Auth\AuthorizationService')
+
 @section('title', 'Payment: ' . $payment->payment_number)
 
 @section('content')
@@ -14,7 +16,7 @@
                     Back to Payments
                 </x-button>
 
-                @if($payment->status->value === 'posted')
+                @if($payment->status->value === 'posted' && $authService->can(auth()->user(), 'suppliers.payments.post', $tenant))
                     <form method="POST" action="{{ route('owner.purchasing.payments.reverse', $payment) }}" class="inline" onsubmit="return confirm('Are you sure you want to reverse this payment? This will update the subledger and reopen allocated bills.')">
                         @csrf
                         <input type="hidden" name="reason" value="Payment reversal requested by owner">
@@ -122,7 +124,7 @@
     </x-card>
 
     <!-- Allocate Remaining Advance Form -->
-    @if((float) $payment->unallocated_amount > 0 && $payment->status->value === 'posted' && $outstandingBills->isNotEmpty())
+    @if((float) $payment->unallocated_amount > 0 && $payment->status->value === 'posted' && $outstandingBills->isNotEmpty() && $authService->can(auth()->user(), 'suppliers.payments.post', $tenant))
         <x-card title="Allocate Remaining Advance to Outstanding Bill">
             <form method="POST" action="{{ route('owner.purchasing.payments.allocate_advance', $payment) }}" class="grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
                 @csrf

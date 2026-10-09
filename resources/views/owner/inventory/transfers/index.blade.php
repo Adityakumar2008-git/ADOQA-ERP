@@ -1,4 +1,5 @@
 @extends('layouts.owner')
+@inject('authService', 'App\Services\Auth\AuthorizationService')
 
 @section('title', 'Internal Stock Transfers')
 
@@ -9,10 +10,12 @@
         subtitle="Inter-warehouse stock movements, transit tracking, and discrepancy verification."
     >
         <x-slot:actions>
-            <x-button variant="primary" :href="route('owner.inventory.transfers.create')">
-                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                New Transfer
-            </x-button>
+            @if($authService->can(auth()->user(), 'inventory.transfer', $tenant) || $authService->can(auth()->user(), 'inventory.manage', $tenant))
+                <x-button variant="primary" :href="route('owner.inventory.transfers.create')">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    New Transfer
+                </x-button>
+            @endif
         </x-slot:actions>
     </x-page-header>
 
@@ -28,8 +31,8 @@
             <x-empty-state
                 title="No stock transfers found"
                 description="Move goods securely between storage locations with in-transit tracking and receipt validation."
-                actionText="Create Stock Transfer"
-                :actionUrl="route('owner.inventory.transfers.create')"
+                :actionText="($authService->can(auth()->user(), 'inventory.transfer', $tenant) || $authService->can(auth()->user(), 'inventory.manage', $tenant)) ? 'Create Stock Transfer' : null"
+                :actionUrl="($authService->can(auth()->user(), 'inventory.transfer', $tenant) || $authService->can(auth()->user(), 'inventory.manage', $tenant)) ? route('owner.inventory.transfers.create') : null"
             />
         @else
             <div class="overflow-x-auto">
@@ -73,21 +76,25 @@
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 text-right space-x-2">
-                                    @if($tr->status->value === 'draft')
-                                        <form method="POST" action="{{ route('owner.inventory.transfers.dispatch', $tr) }}" class="inline">
-                                            @csrf
-                                            <button type="submit" class="font-semibold text-xs text-indigo-600 hover:text-indigo-800">Dispatch</button>
-                                        </form>
-                                        <form method="POST" action="{{ route('owner.inventory.transfers.cancel', $tr) }}" class="inline">
-                                            @csrf
-                                            <button type="submit" class="font-semibold text-xs text-rose-600 hover:text-rose-800 ml-2">Cancel</button>
-                                        </form>
-                                    @elseif($tr->status->value === 'dispatched')
-                                        <a href="{{ route('owner.inventory.transfers.receive', $tr) }}" class="font-semibold text-xs text-emerald-600 hover:text-emerald-800">
-                                            Receive Depot &rarr;
-                                        </a>
+                                    @if($authService->can(auth()->user(), 'inventory.transfer', $tenant) || $authService->can(auth()->user(), 'inventory.manage', $tenant))
+                                        @if($tr->status->value === 'draft')
+                                            <form method="POST" action="{{ route('owner.inventory.transfers.dispatch', $tr) }}" class="inline">
+                                                @csrf
+                                                <button type="submit" class="font-semibold text-xs text-indigo-600 hover:text-indigo-800">Dispatch</button>
+                                            </form>
+                                            <form method="POST" action="{{ route('owner.inventory.transfers.cancel', $tr) }}" class="inline">
+                                                @csrf
+                                                <button type="submit" class="font-semibold text-xs text-rose-600 hover:text-rose-800 ml-2">Cancel</button>
+                                            </form>
+                                        @elseif($tr->status->value === 'dispatched')
+                                            <a href="{{ route('owner.inventory.transfers.receive', $tr) }}" class="font-semibold text-xs text-emerald-600 hover:text-emerald-800">
+                                                Receive Depot &rarr;
+                                            </a>
+                                        @else
+                                            <span class="text-slate-400 text-xs">Completed</span>
+                                        @endif
                                     @else
-                                        <span class="text-slate-400 text-xs">Completed</span>
+                                        <span class="text-slate-400 text-xs">{{ ucfirst($tr->status->value) }}</span>
                                     @endif
                                 </td>
                             </tr>

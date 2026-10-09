@@ -1,4 +1,5 @@
 @extends('layouts.owner')
+@inject('authService', 'App\Services\Auth\AuthorizationService')
 
 @section('title', 'Warehouses & Locations')
 
@@ -9,10 +10,12 @@
         subtitle="Manage business storage facilities, physical depots, and internal picking locations."
     >
         <x-slot:actions>
-            <x-button variant="primary" :href="route('owner.inventory.warehouses.create')">
-                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                New Warehouse
-            </x-button>
+            @if($authService->can(auth()->user(), 'warehouses.manage', $tenant))
+                <x-button variant="primary" :href="route('owner.inventory.warehouses.create')">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    New Warehouse
+                </x-button>
+            @endif
         </x-slot:actions>
     </x-page-header>
 
@@ -77,9 +80,11 @@
 
                 <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
                     <span class="text-[11px] text-slate-400">Created {{ $warehouse->created_at->format('M d, Y') }}</span>
-                    <a href="{{ route('owner.inventory.warehouses.edit', $warehouse) }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center">
-                        Configure & Locations &rarr;
-                    </a>
+                    @if($authService->can(auth()->user(), 'warehouses.manage', $tenant))
+                        <a href="{{ route('owner.inventory.warehouses.edit', $warehouse) }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center">
+                            Configure & Locations &rarr;
+                        </a>
+                    @endif
                 </div>
             </div>
         @empty
@@ -87,8 +92,8 @@
                 <x-empty-state
                     title="No warehouses found"
                     description="Every business requires at least one default warehouse for receiving and stocking items."
-                    actionText="Create Default Warehouse"
-                    :actionUrl="route('owner.inventory.warehouses.create')"
+                    :actionText="$authService->can(auth()->user(), 'warehouses.manage', $tenant) ? 'Create Default Warehouse' : null"
+                    :actionUrl="$authService->can(auth()->user(), 'warehouses.manage', $tenant) ? route('owner.inventory.warehouses.create') : null"
                 />
             </div>
         @endforelse

@@ -1,5 +1,7 @@
 @extends('layouts.owner')
 
+@inject('authService', 'App\Services\Auth\AuthorizationService')
+
 @section('title', 'Supplier Subledger: ' . $supplier->name)
 
 @section('content')
@@ -13,9 +15,11 @@
                 <x-button variant="secondary" :href="route('owner.purchasing.suppliers.show', $supplier)">
                     Supplier Details
                 </x-button>
-                <x-button variant="primary" :href="route('owner.purchasing.payments.create', ['supplier_id' => $supplier->id])">
-                    Record Payment
-                </x-button>
+                @if($authService->can(auth()->user(), 'suppliers.payments.create', $tenant))
+                    <x-button variant="primary" :href="route('owner.purchasing.payments.create', ['supplier_id' => $supplier->id])">
+                        Record Payment
+                    </x-button>
+                @endif
             </div>
         </x-slot:actions>
     </x-page-header>

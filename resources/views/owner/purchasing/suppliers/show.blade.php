@@ -1,5 +1,7 @@
 @extends('layouts.owner')
 
+@inject('authService', 'App\Services\Auth\AuthorizationService')
+
 @section('title', 'Supplier: ' . $supplier->name)
 
 @section('content')
@@ -10,12 +12,16 @@
     >
         <x-slot:actions>
             <div class="flex items-center space-x-2">
-                <x-button variant="secondary" :href="route('owner.purchasing.suppliers.ledger', $supplier)">
-                    View Subledger
-                </x-button>
-                <x-button variant="primary" :href="route('owner.purchasing.orders.create', ['supplier_id' => $supplier->id])">
-                    Create PO
-                </x-button>
+                @if($authService->can(auth()->user(), 'suppliers.ledger.view', $tenant))
+                    <x-button variant="secondary" :href="route('owner.purchasing.suppliers.ledger', $supplier)">
+                        View Subledger
+                    </x-button>
+                @endif
+                @if($authService->can(auth()->user(), 'purchases.create', $tenant))
+                    <x-button variant="primary" :href="route('owner.purchasing.orders.create', ['supplier_id' => $supplier->id])">
+                        Create PO
+                    </x-button>
+                @endif
             </div>
         </x-slot:actions>
     </x-page-header>
@@ -76,9 +82,13 @@
                         @forelse($bills as $bill)
                             <tr>
                                 <td class="py-2 px-3 font-mono font-bold">
-                                    <a href="{{ route('owner.purchasing.bills.show', $bill) }}" class="text-indigo-600 hover:text-indigo-800">
-                                        {{ $bill->bill_number }}
-                                    </a>
+                                    @if($authService->can(auth()->user(), 'purchases.bills.manage', $tenant))
+                                        <a href="{{ route('owner.purchasing.bills.show', $bill) }}" class="text-indigo-600 hover:text-indigo-800">
+                                            {{ $bill->bill_number }}
+                                        </a>
+                                    @else
+                                        <span class="text-slate-800">{{ $bill->bill_number }}</span>
+                                    @endif
                                 </td>
                                 <td class="py-2 px-3 font-mono text-slate-600">{{ $bill->supplier_invoice_number }}</td>
                                 <td class="py-2 px-3 text-right font-mono font-bold">{{ $tenant->currency }} {{ number_format((float) $bill->total_amount, 2) }}</td>
@@ -114,9 +124,13 @@
                         @forelse($payments as $payment)
                             <tr>
                                 <td class="py-2 px-3 font-mono font-bold">
-                                    <a href="{{ route('owner.purchasing.payments.show', $payment) }}" class="text-indigo-600 hover:text-indigo-800">
-                                        {{ $payment->payment_number }}
-                                    </a>
+                                    @if($authService->can(auth()->user(), 'suppliers.payments.create', $tenant))
+                                        <a href="{{ route('owner.purchasing.payments.show', $payment) }}" class="text-indigo-600 hover:text-indigo-800">
+                                            {{ $payment->payment_number }}
+                                        </a>
+                                    @else
+                                        <span class="text-slate-800">{{ $payment->payment_number }}</span>
+                                    @endif
                                 </td>
                                 <td class="py-2 px-3 capitalize">{{ str_replace('_', ' ', $payment->payment_mode->value) }}</td>
                                 <td class="py-2 px-3 text-right font-mono font-bold text-emerald-600">{{ $tenant->currency }} {{ number_format((float) $payment->amount, 2) }}</td>

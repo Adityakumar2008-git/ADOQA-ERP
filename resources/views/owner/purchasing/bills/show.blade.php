@@ -1,5 +1,7 @@
 @extends('layouts.owner')
 
+@inject('authService', 'App\Services\Auth\AuthorizationService')
+
 @section('title', 'Purchase Bill: ' . $bill->bill_number)
 
 @section('content')
@@ -14,7 +16,7 @@
                     Back to Bills
                 </x-button>
 
-                @if($bill->status->value === 'draft')
+                @if($bill->status->value === 'draft' && $authService->can(auth()->user(), 'purchases.bills.post', $tenant))
                     <form method="POST" action="{{ route('owner.purchasing.bills.post', $bill) }}" class="inline">
                         @csrf
                         <x-button type="submit" variant="primary">
@@ -23,7 +25,7 @@
                     </form>
                 @endif
 
-                @if(in_array($bill->status->value, ['posted', 'partially_paid']))
+                @if(in_array($bill->status->value, ['posted', 'partially_paid']) && $authService->can(auth()->user(), 'suppliers.payments.create', $tenant))
                     <x-button variant="primary" :href="route('owner.purchasing.payments.create', ['supplier_id' => $bill->supplier_id])">
                         Record Payment
                     </x-button>

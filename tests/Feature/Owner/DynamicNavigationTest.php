@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Owner;
 
+use App\Actions\Procurement\CreatePurchaseBill;
+use App\Actions\Procurement\CreateSupplier;
 use App\Actions\Tenancy\SetBusinessRolePermissionOverride;
 use App\Actions\Tenancy\UpdateBusinessModuleSettings;
 use App\Enums\BusinessModule;
@@ -11,8 +13,11 @@ use App\Enums\PermissionOverrideState;
 use App\Enums\UserStatus;
 use App\Models\Business;
 use App\Models\BusinessMember;
+use App\Models\Item;
 use App\Models\Permission;
 use App\Models\Role;
+use App\Models\Supplier;
+use App\Models\Unit;
 use App\Models\User;
 use App\Models\UserRole;
 use App\Services\Auth\AuthorizationService;
@@ -253,5 +258,222 @@ class DynamicNavigationTest extends TestCase
         $respB = $this->actingAs($ownerB)->get(route('owner.dashboard'));
         $respB->assertSee('Items Catalogue');
         $this->actingAs($ownerB)->get(route('owner.catalogue.items.index'))->assertStatus(200);
+    }
+
+    public function test_denied_permission_hides_specific_navigation_link_without_hiding_entire_module(): void
+    {
+        [$business, $owner, $role] = $this->createTenantWithUser('owner');
+        $setOverride = app(SetBusinessRolePermissionOverride::class);
+        $platformAdmin = User::factory()->withPlatformRole()->create();
+
+        // Deny purchases.manage specifically
+        $perm = Permission::where('slug', 'purchases.manage')->firstOrFail();
+        $setOverride->execute(
+            actor: $platformAdmin,
+            business: $business,
+            role: $role,
+            permission: $perm,
+            state: PermissionOverrideState::Deny
+        );
+
+        $response = $this->actingAs($owner)->get(route('owner.dashboard'));
+        $response->assertOk();
+
+        // Purchase Orders navigation link must be hidden
+        $response->assertDontSee(route('owner.purchasing.orders.index'));
+
+        // Direct route access must return 403
+        $this->actingAs($owner)->get(route('owner.purchasing.orders.index'))->assertStatus(403);
+
+        // However, other allowed features in the procurement module (e.g. Suppliers) remain visible
+        $response->assertSee(route('owner.purchasing.suppliers.index'));
+        $response->assertSee('Suppliers');
+    }
+
+    public function test_disabled_module_stays_hidden_even_when_role_has_allow_override(): void
+    {
+        [$business, $manager, $role] = $this->createTenantWithUser('manager');
+        $setOverride = app(SetBusinessRolePermissionOverride::class);
+        $platformAdmin = User::factory()->withPlatformRole()->create();
+
+        // 1. Grant explicit ALLOW override on purchases.manage for manager role
+        $perm = Permission::where('slug', 'purchases.manage')->firstOrFail();
+        $setOverride->execute(
+            actor: $platformAdmin,
+            business: $business,
+            role: $role,
+            permission: $perm,
+            state: PermissionOverrideState::Allow
+        );
+
+        // 2. Disable Procurement module for the business
+        $this->moduleSettingsAction->execute(
+            actor: $platformAdmin,
+            business: $business,
+            modules: [BusinessModule::Procurement->value => false]
+        );
+
+        // 3. Navigation link must remain hidden because module is disabled
+        $response = $this->actingAs($manager)->get(route('owner.dashboard'));
+        $response->assertOk();
+        $response->assertDontSee(route('owner.purchasing.orders.index'));
+
+        // 4. Direct route access must be denied with 403
+        $this->actingAs($manager)->get(route('owner.purchasing.orders.index'))->assertStatus(403);
+    }
+
+    public function test_inherit_reflects_effective_role_permission(): void
+    {
+        [$business, $owner, $role] = $this->createTenantWithUser('owner');
+        $setOverride = app(SetBusinessRolePermissionOverride::class);
+        $platformAdmin = User::factory()->withPlatformRole()->create();
+        $perm = Permission::where('slug', 'inventory.reconcile')->firstOrFail();
+
+        // Baseline: Owner canonically inherits inventory.reconcile -> visible
+        $resp1 = $this->actingAs($owner)->get(route('owner.dashboard'));
+        $resp1->assertSee('Reconciliation');
+        $resp1->assertSee(route('owner.inventory.stock.reconcile'));
+
+        // Override to DENY -> hidden
+        $setOverride->execute(
+            actor: $platformAdmin,
+            business: $business,
+            role: $role,
+            permission: $perm,
+            state: PermissionOverrideState::Deny
+        );
+
+        $resp2 = $this->actingAs($owner)->get(route('owner.dashboard'));
+        $resp2->assertDontSee('Reconciliation');
+        $resp2->assertDontSee(route('owner.inventory.stock.reconcile'));
+        $this->actingAs($owner)->get(route('owner.inventory.stock.reconcile'))->assertStatus(403);
+
+        // Override back to INHERIT -> restored
+        $setOverride->execute(
+            actor: $platformAdmin,
+            business: $business,
+            role: $role,
+            permission: $perm,
+            state: PermissionOverrideState::Inherit
+        );
+
+        $resp3 = $this->actingAs($owner)->get(route('owner.dashboard'));
+        $resp3->assertSee('Reconciliation');
+        $resp3->assertSee(route('owner.inventory.stock.reconcile'));
+        $this->actingAs($owner)->get(route('owner.inventory.stock.reconcile'))->assertStatus(200);
+    }
+
+    public function test_denying_opening_stock_permission_hides_opening_stock_button_on_stock_index(): void
+    {
+        [$business, $owner, $role] = $this->createTenantWithUser('owner');
+        $setOverride = app(SetBusinessRolePermissionOverride::class);
+        $platformAdmin = User::factory()->withPlatformRole()->create();
+
+        // Baseline: Owner sees Opening Stock button
+        $resp1 = $this->actingAs($owner)->get(route('owner.inventory.stock.index'));
+        $resp1->assertOk();
+        $resp1->assertSee('Opening Stock');
+        $resp1->assertSee(route('owner.inventory.stock.opening_stock'));
+
+        // Deny inventory.opening_stock
+        $perm = Permission::where('slug', 'inventory.opening_stock')->firstOrFail();
+        $setOverride->execute(
+            actor: $platformAdmin,
+            business: $business,
+            role: $role,
+            permission: $perm,
+            state: PermissionOverrideState::Deny
+        );
+
+        $resp2 = $this->actingAs($owner)->get(route('owner.inventory.stock.index'));
+        $resp2->assertOk();
+        $resp2->assertDontSee('Record Opening Stock');
+        $resp2->assertDontSee(route('owner.inventory.stock.opening_stock'));
+        // Stock Adjustment remains visible
+        $resp2->assertSee('Stock Adjustment');
+
+        // Direct route access is denied
+        $this->actingAs($owner)->get(route('owner.inventory.stock.opening_stock'))->assertStatus(403);
+    }
+
+    public function test_denying_post_bill_permission_hides_post_button_on_bill_show(): void
+    {
+        [$business, $owner, $role] = $this->createTenantWithUser('owner');
+        $setOverride = app(SetBusinessRolePermissionOverride::class);
+        $platformAdmin = User::factory()->withPlatformRole()->create();
+
+        $supplier = app(CreateSupplier::class)->execute($owner, $business, [
+            'name' => 'Test Supplier',
+        ]);
+        $unit = Unit::factory()->create(['business_id' => $business->id]);
+        $item = Item::factory()->create([
+            'business_id' => $business->id,
+            'unit_id' => $unit->id,
+        ]);
+
+        $bill = app(CreatePurchaseBill::class)->execute($owner, $business, [
+            'supplier_id' => $supplier->id,
+            'supplier_invoice_number' => 'INV-001',
+            'lines' => [
+                [
+                    'item_id' => $item->id,
+                    'quantity' => 10,
+                    'unit_cost' => 50,
+                ],
+            ],
+        ]);
+
+        // Baseline: Post Bill button visible on draft
+        $resp1 = $this->actingAs($owner)->get(route('owner.purchasing.bills.show', $bill));
+        $resp1->assertOk();
+        $resp1->assertSee('Post Bill to Subledger');
+
+        // Deny purchases.bills.post
+        $perm = Permission::where('slug', 'purchases.bills.post')->firstOrFail();
+        $setOverride->execute(
+            actor: $platformAdmin,
+            business: $business,
+            role: $role,
+            permission: $perm,
+            state: PermissionOverrideState::Deny
+        );
+
+        $resp2 = $this->actingAs($owner)->get(route('owner.purchasing.bills.show', $bill));
+        $resp2->assertOk();
+        $resp2->assertDontSee('Post Bill to Subledger');
+
+        // Direct POST mutation is blocked
+        $this->actingAs($owner)->post(route('owner.purchasing.bills.post', $bill))->assertStatus(403);
+    }
+
+    public function test_denying_supplier_manage_hides_new_supplier_button_on_supplier_index(): void
+    {
+        [$business, $owner, $role] = $this->createTenantWithUser('owner');
+        $setOverride = app(SetBusinessRolePermissionOverride::class);
+        $platformAdmin = User::factory()->withPlatformRole()->create();
+
+        // Baseline: New Supplier button visible
+        $resp1 = $this->actingAs($owner)->get(route('owner.purchasing.suppliers.index'));
+        $resp1->assertOk();
+        $resp1->assertSee('New Supplier');
+        $resp1->assertSee(route('owner.purchasing.suppliers.create'));
+
+        // Deny suppliers.manage
+        $perm = Permission::where('slug', 'suppliers.manage')->firstOrFail();
+        $setOverride->execute(
+            actor: $platformAdmin,
+            business: $business,
+            role: $role,
+            permission: $perm,
+            state: PermissionOverrideState::Deny
+        );
+
+        $resp2 = $this->actingAs($owner)->get(route('owner.purchasing.suppliers.index'));
+        $resp2->assertOk();
+        $resp2->assertDontSee('New Supplier');
+        $resp2->assertDontSee(route('owner.purchasing.suppliers.create'));
+
+        // Direct GET access is blocked with 403
+        $this->actingAs($owner)->get(route('owner.purchasing.suppliers.create'))->assertStatus(403);
     }
 }

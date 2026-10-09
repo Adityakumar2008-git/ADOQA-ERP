@@ -1,4 +1,5 @@
 @extends('layouts.owner')
+@inject('authService', 'App\Services\Auth\AuthorizationService')
 
 @section('title', 'PO: ' . $order->order_number)
 
@@ -14,7 +15,7 @@
                     Back to Orders
                 </x-button>
 
-                @if($order->status->value === 'draft')
+                @if($order->status->value === 'draft' && $authService->can(auth()->user(), 'purchases.approve', $tenant))
                     <form method="POST" action="{{ route('owner.purchasing.orders.approve', $order) }}" class="inline">
                         @csrf
                         <x-button type="submit" variant="primary">
@@ -24,12 +25,16 @@
                 @endif
 
                 @if(in_array($order->status->value, ['approved', 'partially_received']))
-                    <x-button variant="secondary" :href="route('owner.purchasing.receipts.create', ['purchase_order_id' => $order->id])">
-                        Prepare Goods Receipt
-                    </x-button>
-                    <x-button variant="secondary" :href="route('owner.purchasing.bills.create', ['purchase_order_id' => $order->id])">
-                        Record Purchase Bill
-                    </x-button>
+                    @if($authService->can(auth()->user(), 'purchases.receipts.prepare', $tenant))
+                        <x-button variant="secondary" :href="route('owner.purchasing.receipts.create', ['purchase_order_id' => $order->id])">
+                            Prepare Goods Receipt
+                        </x-button>
+                    @endif
+                    @if($authService->can(auth()->user(), 'purchases.bills.manage', $tenant))
+                        <x-button variant="secondary" :href="route('owner.purchasing.bills.create', ['purchase_order_id' => $order->id])">
+                            Record Purchase Bill
+                        </x-button>
+                    @endif
                 @endif
             </div>
         </x-slot:actions>

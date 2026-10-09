@@ -1,4 +1,5 @@
 @extends('layouts.owner')
+@inject('authService', 'App\Services\Auth\AuthorizationService')
 
 @section('title', 'Current Stock Balances')
 
@@ -13,12 +14,16 @@
                 <x-button variant="secondary" :href="route('owner.inventory.stock.ledger')">
                     Stock Ledger
                 </x-button>
-                <x-button variant="secondary" :href="route('owner.inventory.stock.opening_stock')">
-                    Opening Stock
-                </x-button>
-                <x-button variant="primary" :href="route('owner.inventory.adjustments.create')">
-                    Stock Adjustment
-                </x-button>
+                @if($authService->can(auth()->user(), 'inventory.opening_stock', $tenant))
+                    <x-button variant="secondary" :href="route('owner.inventory.stock.opening_stock')">
+                        Opening Stock
+                    </x-button>
+                @endif
+                @if($authService->can(auth()->user(), 'inventory.adjust', $tenant) || $authService->can(auth()->user(), 'inventory.manage', $tenant))
+                    <x-button variant="primary" :href="route('owner.inventory.adjustments.create')">
+                        Stock Adjustment
+                    </x-button>
+                @endif
             </div>
         </x-slot:actions>
     </x-page-header>
@@ -73,8 +78,8 @@
             <x-empty-state
                 title="No stock records found"
                 description="{{ request()->hasAny(['search', 'warehouse_id']) ? 'No stock balances match your filter criteria.' : 'Begin by recording opening stock or receiving items through purchase orders.' }}"
-                actionText="{{ request()->hasAny(['search', 'warehouse_id']) ? '' : 'Record Opening Stock' }}"
-                :actionUrl="request()->hasAny(['search', 'warehouse_id']) ? null : route('owner.inventory.stock.opening_stock')"
+                actionText="{{ request()->hasAny(['search', 'warehouse_id']) || ! $authService->can(auth()->user(), 'inventory.opening_stock', $tenant) ? '' : 'Record Opening Stock' }}"
+                :actionUrl="request()->hasAny(['search', 'warehouse_id']) || ! $authService->can(auth()->user(), 'inventory.opening_stock', $tenant) ? null : route('owner.inventory.stock.opening_stock')"
             />
         @else
             <div class="overflow-x-auto">
