@@ -22,8 +22,8 @@
     // Inventory permissions (granular)
     $canViewStock = $isInventoryEnabled && $authService->can($user, 'inventory.view', $tenant);
     $canViewWarehouses = $isInventoryEnabled && $authService->can($user, 'warehouses.view', $tenant);
-    $canAdjustStock = $isInventoryEnabled && $authService->can($user, 'inventory.view', $tenant) && ($authService->can($user, 'inventory.adjust', $tenant) || $authService->can($user, 'inventory.manage', $tenant));
-    $canTransferStock = $isInventoryEnabled && $authService->can($user, 'inventory.view', $tenant) && ($authService->can($user, 'inventory.transfer', $tenant) || $authService->can($user, 'inventory.manage', $tenant));
+    $canAdjustStock = $isInventoryEnabled && $authService->can($user, 'inventory.view', $tenant) && $authService->can($user, 'inventory.adjust', $tenant);
+    $canTransferStock = $isInventoryEnabled && $authService->can($user, 'inventory.view', $tenant) && $authService->can($user, 'inventory.transfer', $tenant);
     $canReconcileStock = $isInventoryEnabled && $authService->can($user, 'inventory.reconcile', $tenant);
     $hasAnyInventoryNav = $isInventoryEnabled && ($canViewStock || $canViewWarehouses || $canAdjustStock || $canTransferStock || $canReconcileStock);
 
@@ -76,11 +76,22 @@
 
         <!-- Business Context Card -->
         <div class="p-3 mx-3 my-3 bg-slate-950/60 rounded-xl border border-slate-800/80 text-xs">
-            <div class="flex items-center justify-between">
-                <p class="font-bold text-white truncate max-w-[140px]" title="{{ $tenant?->name }}">{{ $tenant?->name ?? 'Business Account' }}</p>
-                <span class="w-2 h-2 rounded-full bg-emerald-500" title="Active Business"></span>
+            <div class="flex items-center space-x-2.5">
+                <div class="w-7 h-7 rounded-lg border border-slate-700 bg-slate-900 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    @if ($tenant?->logo_url)
+                        <img src="{{ $tenant->logo_url }}" alt="{{ $tenant->name }}" class="w-full h-full object-contain">
+                    @else
+                        <span class="text-xs font-bold text-indigo-400">{{ strtoupper(substr($tenant?->name ?? 'A', 0, 1)) }}</span>
+                    @endif
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between">
+                        <p class="font-bold text-white truncate max-w-[120px]" title="{{ $tenant?->name }}">{{ $tenant?->name ?? 'Business Account' }}</p>
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0" title="Active Business"></span>
+                    </div>
+                    <p class="text-[10px] text-slate-400 capitalize truncate mt-0.5">{{ $tenant?->business_type ?? 'Commercial' }} &bull; {{ $tenant?->currency ?? 'INR' }}</p>
+                </div>
             </div>
-            <p class="text-[11px] text-slate-400 capitalize mt-0.5">{{ $tenant?->business_type ?? 'Commercial' }} &bull; {{ $tenant?->currency ?? 'INR' }}</p>
 
             <div class="mt-2 pt-2 border-t border-slate-800/60 flex items-center justify-between text-[10px]">
                 <span class="text-slate-400 truncate max-w-[110px]">

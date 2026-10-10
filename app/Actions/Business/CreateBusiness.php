@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\UserRole;
 use App\Services\Auth\AuthorizationService;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -94,6 +95,14 @@ class CreateBusiness
                 'is_platform_admin' => false,
             ]);
 
+            // Handle optional logo upload
+            $logoPath = null;
+            if (isset($data['logo']) && $data['logo'] instanceof UploadedFile) {
+                $logoPath = $data['logo']->store('logos', 'public');
+            } elseif (isset($data['logo_path']) && is_string($data['logo_path'])) {
+                $logoPath = $data['logo_path'];
+            }
+
             // 7. Provision Business in active status
             $business = Business::create([
                 'name' => trim($data['name']),
@@ -111,6 +120,7 @@ class CreateBusiness
                 'currency' => strtoupper($data['currency'] ?? 'INR'),
                 'timezone' => $data['timezone'] ?? 'Asia/Kolkata',
                 'tax_number' => $data['tax_number'] ?? null,
+                'logo_path' => $logoPath,
                 'status' => BusinessStatus::Active,
             ]);
 
@@ -148,6 +158,7 @@ class CreateBusiness
                     'slug' => $business->slug,
                     'owner_id' => $owner->id,
                     'owner_email' => $owner->email,
+                    'has_logo' => (bool) $logoPath,
                     'status' => $business->status->value,
                 ],
             ]);

@@ -73,6 +73,14 @@ Route::prefix('admin')->middleware(['auth', EnsurePlatformAdmin::class, PreventB
         ->middleware('permission.platform:businesses.view')
         ->name('admin.businesses.show');
 
+    Route::get('/businesses/{business}/edit', [AdminBusinessController::class, 'edit'])
+        ->middleware('permission.platform:businesses.update')
+        ->name('admin.businesses.edit');
+
+    Route::put('/businesses/{business}', [AdminBusinessController::class, 'update'])
+        ->middleware('permission.platform:businesses.update')
+        ->name('admin.businesses.update');
+
     // Business Tenant Module Settings & Overrides
     Route::post('/businesses/{business}/modules', [BusinessModuleController::class, 'update'])
         ->middleware('permission.platform:businesses.update')

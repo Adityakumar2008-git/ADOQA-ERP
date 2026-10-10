@@ -38,16 +38,25 @@
     <div class="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-2xl p-6 text-white shadow-xs border border-slate-800">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div class="space-y-2">
-                <div class="flex items-center space-x-3">
-                    <h2 class="text-xl font-bold tracking-tight text-white">{{ $tenant->name }}</h2>
-                    <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
-                        {{ $tenant->status->label() }}
-                    </span>
+                <div class="flex items-center space-x-3.5">
+                    @if ($tenant?->logo_url)
+                        <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/20 p-1 flex items-center justify-center overflow-hidden flex-shrink-0">
+                            <img src="{{ $tenant->logo_url }}" alt="{{ $tenant->name }}" class="w-full h-full object-contain">
+                        </div>
+                    @endif
+                    <div>
+                        <div class="flex items-center space-x-3">
+                            <h2 class="text-xl font-bold tracking-tight text-white">{{ $tenant->name }}</h2>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+                                {{ $tenant->status->label() }}
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-300 max-w-2xl leading-relaxed mt-0.5">
+                            {{ $tenant->legal_name ?? $tenant->name }} &bull; Type: <span class="capitalize font-semibold text-white">{{ $tenant->business_type }}</span> &bull;
+                            Tax ID: <span class="font-mono text-white">{{ $tenant->tax_number ?? 'Not Configured' }}</span>
+                        </p>
+                    </div>
                 </div>
-                <p class="text-xs text-slate-300 max-w-2xl leading-relaxed">
-                    {{ $tenant->legal_name ?? $tenant->name }} &bull; Type: <span class="capitalize font-semibold text-white">{{ $tenant->business_type }}</span> &bull;
-                    Tax ID: <span class="font-mono text-white">{{ $tenant->tax_number ?? 'Not Configured' }}</span>
-                </p>
                 <p class="text-[11px] text-slate-400">
                     Primary Owner: <span class="text-slate-200 font-medium">{{ auth()->user()->name }}</span> ({{ auth()->user()->email }})
                 </p>

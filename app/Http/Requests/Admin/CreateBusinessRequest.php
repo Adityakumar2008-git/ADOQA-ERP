@@ -38,6 +38,7 @@ class CreateBusinessRequest extends FormRequest
             'currency' => ['nullable', 'string', 'max:8'],
             'timezone' => ['nullable', 'string', 'max:64', 'timezone:all'],
             'tax_number' => ['nullable', 'string', 'max:64'],
+            'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp,svg', 'max:2048'],
             'owner_name' => ['required', 'string', 'max:255'],
             'owner_email' => ['required', 'email', 'max:255'],
             'owner_phone' => ['nullable', 'string', 'max:32'],

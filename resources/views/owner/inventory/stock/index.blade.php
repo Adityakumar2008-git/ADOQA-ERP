@@ -19,7 +19,7 @@
                         Opening Stock
                     </x-button>
                 @endif
-                @if($authService->can(auth()->user(), 'inventory.adjust', $tenant) || $authService->can(auth()->user(), 'inventory.manage', $tenant))
+                @if($authService->can(auth()->user(), 'inventory.adjust', $tenant))
                     <x-button variant="primary" :href="route('owner.inventory.adjustments.create')">
                         Stock Adjustment
                     </x-button>

@@ -1,4 +1,5 @@
 @extends('layouts.owner')
+@inject('authService', 'App\Services\Auth\AuthorizationService')
 
 @section('title', 'Supplier Payments')
 
@@ -9,10 +10,12 @@
         subtitle="Disbursement transactions, bank transfers, payment allocations to bills, and vendor advance credits."
     >
         <x-slot:actions>
-            <x-button variant="primary" :href="route('owner.purchasing.payments.create')">
-                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                Record Payment
-            </x-button>
+            @if($authService->can(auth()->user(), 'suppliers.payments.create', $tenant))
+                <x-button variant="primary" :href="route('owner.purchasing.payments.create')">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Record Payment
+                </x-button>
+            @endif
         </x-slot:actions>
     </x-page-header>
 
@@ -28,8 +31,8 @@
             <x-empty-state
                 title="No supplier payments recorded"
                 description="Record disbursements made to vendors against purchase bills or advances."
-                actionText="Record Payment"
-                :actionUrl="route('owner.purchasing.payments.create')"
+                :actionText="$authService->can(auth()->user(), 'suppliers.payments.create', $tenant) ? 'Record Payment' : null"
+                :actionUrl="$authService->can(auth()->user(), 'suppliers.payments.create', $tenant) ? route('owner.purchasing.payments.create') : null"
             />
         @else
             <div class="overflow-x-auto">

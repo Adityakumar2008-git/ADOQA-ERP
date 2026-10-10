@@ -1,4 +1,5 @@
 @extends('layouts.owner')
+@inject('authService', 'App\Services\Auth\AuthorizationService')
 
 @section('title', 'Purchase Bills')
 
@@ -9,10 +10,12 @@
         subtitle="Invoices issued by suppliers that establish legal payable obligations in the supplier subledger."
     >
         <x-slot:actions>
-            <x-button variant="primary" :href="route('owner.purchasing.bills.create')">
-                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                New Purchase Bill
-            </x-button>
+            @if($authService->can(auth()->user(), 'purchases.bills.manage', $tenant))
+                <x-button variant="primary" :href="route('owner.purchasing.bills.create')">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    New Purchase Bill
+                </x-button>
+            @endif
         </x-slot:actions>
     </x-page-header>
 
@@ -62,8 +65,8 @@
             <x-empty-state
                 title="No purchase bills found"
                 description="Record supplier tax invoices and post them to create supplier payable subledger entries."
-                actionText="Create Purchase Bill"
-                :actionUrl="route('owner.purchasing.bills.create')"
+                :actionText="$authService->can(auth()->user(), 'purchases.bills.manage', $tenant) ? 'Create Purchase Bill' : null"
+                :actionUrl="$authService->can(auth()->user(), 'purchases.bills.manage', $tenant) ? route('owner.purchasing.bills.create') : null"
             />
         @else
             <div class="overflow-x-auto">

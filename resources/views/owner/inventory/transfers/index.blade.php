@@ -10,7 +10,7 @@
         subtitle="Inter-warehouse stock movements, transit tracking, and discrepancy verification."
     >
         <x-slot:actions>
-            @if($authService->can(auth()->user(), 'inventory.transfer', $tenant) || $authService->can(auth()->user(), 'inventory.manage', $tenant))
+            @if($authService->can(auth()->user(), 'inventory.transfer', $tenant))
                 <x-button variant="primary" :href="route('owner.inventory.transfers.create')">
                     <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     New Transfer
@@ -31,8 +31,8 @@
             <x-empty-state
                 title="No stock transfers found"
                 description="Move goods securely between storage locations with in-transit tracking and receipt validation."
-                :actionText="($authService->can(auth()->user(), 'inventory.transfer', $tenant) || $authService->can(auth()->user(), 'inventory.manage', $tenant)) ? 'Create Stock Transfer' : null"
-                :actionUrl="($authService->can(auth()->user(), 'inventory.transfer', $tenant) || $authService->can(auth()->user(), 'inventory.manage', $tenant)) ? route('owner.inventory.transfers.create') : null"
+                :actionText="$authService->can(auth()->user(), 'inventory.transfer', $tenant) ? 'Create Stock Transfer' : null"
+                :actionUrl="$authService->can(auth()->user(), 'inventory.transfer', $tenant) ? route('owner.inventory.transfers.create') : null"
             />
         @else
             <div class="overflow-x-auto">
@@ -76,7 +76,7 @@
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 text-right space-x-2">
-                                    @if($authService->can(auth()->user(), 'inventory.transfer', $tenant) || $authService->can(auth()->user(), 'inventory.manage', $tenant))
+                                    @if($authService->can(auth()->user(), 'inventory.transfer', $tenant))
                                         @if($tr->status->value === 'draft')
                                             <form method="POST" action="{{ route('owner.inventory.transfers.dispatch', $tr) }}" class="inline">
                                                 @csrf

@@ -29,7 +29,7 @@
         </div>
     </div>
 
-    <form action="{{ route('admin.businesses.store') }}" method="POST" class="space-y-6">
+    <form action="{{ route('admin.businesses.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
         @csrf
 
         <!-- Section 1: Business Identity -->
@@ -105,6 +105,27 @@
                     @error('phone')
                         <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
                     @enderror
+                </div>
+            </div>
+
+            <!-- Business Logo Upload & Preview -->
+            <div class="pt-4 border-t border-slate-100">
+                <label for="logo" class="block text-xs font-semibold text-slate-700">Business Brand Logo <span class="text-slate-400 font-normal">(Optional — PNG, JPG, JPEG, WebP, SVG up to 2MB)</span></label>
+                <div class="mt-2 flex items-center space-x-4">
+                    <div id="logo-preview-box" class="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 flex items-center justify-center bg-slate-50 overflow-hidden flex-shrink-0">
+                        <img id="logo-preview-img" src="#" alt="Logo Preview" class="w-full h-full object-contain hidden">
+                        <svg id="logo-placeholder-svg" class="w-6 h-6 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <input type="file" name="logo" id="logo" accept="image/png,image/jpeg,image/jpg,image/webp,image/svg+xml"
+                               class="text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        <p class="text-[11px] text-slate-500 mt-1">Uploaded logo displays on Owner ERP navigation header, documents, and tenant cards.</p>
+                        @error('logo')
+                            <p class="mt-1 text-xs text-rose-600">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
             </div>
         </div>
@@ -284,5 +305,26 @@
             </button>
         </div>
     </form>
+
+    <script>
+        document.getElementById('logo')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const previewImg = document.getElementById('logo-preview-img');
+            const placeholderSvg = document.getElementById('logo-placeholder-svg');
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    previewImg.src = evt.target.result;
+                    previewImg.classList.remove('hidden');
+                    placeholderSvg.classList.add('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                previewImg.src = '#';
+                previewImg.classList.add('hidden');
+                placeholderSvg.classList.remove('hidden');
+            }
+        });
+    </script>
 </div>
 @endsection

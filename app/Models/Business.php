@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\Storage;
 
 #[Fillable([
     'name',
@@ -29,6 +30,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
     'currency',
     'timezone',
     'tax_number',
+    'logo_path',
     'status',
     'allow_negative_stock',
 ])]
@@ -48,6 +50,18 @@ class Business extends Model
             'status' => BusinessStatus::class,
             'allow_negative_stock' => 'boolean',
         ];
+    }
+
+    /**
+     * Public storage URL for the business logo.
+     */
+    public function getLogoUrlAttribute(): ?string
+    {
+        if (! $this->logo_path) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->logo_path);
     }
 
     /**

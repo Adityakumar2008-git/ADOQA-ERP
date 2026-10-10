@@ -109,11 +109,22 @@
                         @foreach ($businesses as $business)
                             <tr class="hover:bg-slate-50/80 transition-colors">
                                 <td class="px-5 py-4">
-                                    <div class="font-bold text-slate-900">{{ $business->name }}</div>
-                                    <div class="text-[11px] text-slate-500 font-mono mt-0.5">{{ $business->slug }}</div>
-                                    @if ($business->legal_name && $business->legal_name !== $business->name)
-                                        <div class="text-[11px] text-slate-400 truncate max-w-xs">{{ $business->legal_name }}</div>
-                                    @endif
+                                    <div class="flex items-center space-x-3">
+                                        <div class="w-8 h-8 rounded-lg border border-slate-200 bg-slate-50 flex items-center justify-center overflow-hidden flex-shrink-0">
+                                            @if ($business->logo_url)
+                                                <img src="{{ $business->logo_url }}" alt="{{ $business->name }}" class="w-full h-full object-contain">
+                                            @else
+                                                <span class="text-xs font-bold text-slate-500">{{ strtoupper(substr($business->name, 0, 1)) }}</span>
+                                            @endif
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-slate-900">{{ $business->name }}</div>
+                                            <div class="text-[11px] text-slate-500 font-mono mt-0.5">{{ $business->slug }}</div>
+                                            @if ($business->legal_name && $business->legal_name !== $business->name)
+                                                <div class="text-[11px] text-slate-400 truncate max-w-xs">{{ $business->legal_name }}</div>
+                                            @endif
+                                        </div>
+                                    </div>
                                 </td>
                                 <td class="px-5 py-4">
                                     <div class="font-medium text-slate-800">{{ $business->owner?->name ?? 'No Owner' }}</div>

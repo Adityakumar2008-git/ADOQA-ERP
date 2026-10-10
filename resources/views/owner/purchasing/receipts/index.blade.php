@@ -1,4 +1,5 @@
 @extends('layouts.owner')
+@inject('authService', 'App\Services\Auth\AuthorizationService')
 
 @section('title', 'Goods Receipts')
 
@@ -9,10 +10,12 @@
         subtitle="Physical stock receiving documents, batch validation, serialized item intake, and warehouse arrival."
     >
         <x-slot:actions>
-            <x-button variant="primary" :href="route('owner.purchasing.receipts.create')">
-                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
-                Receive Goods
-            </x-button>
+            @if($authService->can(auth()->user(), 'purchases.receipts.prepare', $tenant))
+                <x-button variant="primary" :href="route('owner.purchasing.receipts.create')">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                    Receive Goods
+                </x-button>
+            @endif
         </x-slot:actions>
     </x-page-header>
 
@@ -28,8 +31,8 @@
             <x-empty-state
                 title="No goods receipts found"
                 description="Record physical deliveries arriving at your warehouses from suppliers."
-                actionText="Receive Goods"
-                :actionUrl="route('owner.purchasing.receipts.create')"
+                :actionText="$authService->can(auth()->user(), 'purchases.receipts.prepare', $tenant) ? 'Receive Goods' : null"
+                :actionUrl="$authService->can(auth()->user(), 'purchases.receipts.prepare', $tenant) ? route('owner.purchasing.receipts.create') : null"
             />
         @else
             <div class="overflow-x-auto">
