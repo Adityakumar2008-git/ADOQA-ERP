@@ -53,7 +53,7 @@
                         @foreach($payments as $p)
                             <tr class="hover:bg-slate-50/60 transition-colors">
                                 <td class="py-3 px-4 font-mono font-bold text-slate-900">
-                                    <a href="{{ route('owner.purchasing.payments.show', $p) }}" class="text-indigo-600 hover:text-indigo-800">
+                                    <a href="{{ route('owner.purchasing.payments.show', $p) }}" class="text-[#1C9640] hover:text-[#13682C]">
                                         {{ $p->payment_number }}
                                     </a>
                                 </td>
@@ -69,7 +69,7 @@
                                 <td class="py-3 px-4 text-right font-mono font-bold text-emerald-600 text-sm">
                                     {{ $tenant->currency }} {{ number_format((float) $p->amount, 2) }}
                                 </td>
-                                <td class="py-3 px-4 text-right font-mono font-bold {{ (float) $p->unallocated_amount > 0 ? 'text-indigo-600' : 'text-slate-400' }}">
+                                <td class="py-3 px-4 text-right font-mono font-bold {{ (float) $p->unallocated_amount > 0 ? 'text-[#1C9640]' : 'text-slate-400' }}">
                                     {{ (float) $p->unallocated_amount > 0 ? $tenant->currency . ' ' . number_format((float) $p->unallocated_amount, 2) : '—' }}
                                 </td>
                                 <td class="py-3 px-4 text-center">
@@ -81,7 +81,7 @@
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 text-right">
-                                    <a href="{{ route('owner.purchasing.payments.show', $p) }}" class="font-semibold text-xs text-indigo-600 hover:text-indigo-800">
+                                    <a href="{{ route('owner.purchasing.payments.show', $p) }}" class="font-semibold text-xs text-[#1C9640] hover:text-[#13682C]">
                                         View Details &rarr;
                                     </a>
                                 </td>

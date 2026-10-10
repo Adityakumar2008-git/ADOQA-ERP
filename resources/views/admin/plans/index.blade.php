@@ -13,7 +13,7 @@
         </div>
         <div>
             <a href="{{ route('admin.subscription-plans.create') }}"
-               class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-xs text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+               class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-xs text-xs font-semibold text-white bg-[#22B14C] hover:bg-[#1E9E44] transition-colors">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
@@ -33,7 +33,7 @@
                 <p class="text-xs text-slate-500 mt-1">Create subscription plans to provision business tenants.</p>
                 <div class="mt-4">
                     <a href="{{ route('admin.subscription-plans.create') }}"
-                       class="inline-flex items-center px-4 py-2 rounded-lg text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700">
+                       class="inline-flex items-center px-4 py-2 rounded-lg text-xs font-semibold text-white bg-[#22B14C] hover:bg-[#1E9E44]">
                         + Create First Plan
                     </a>
                 </div>
@@ -108,7 +108,7 @@
                                 </td>
                                 <td class="px-5 py-4 whitespace-nowrap text-right">
                                     <a href="{{ route('admin.subscription-plans.edit', $plan) }}"
-                                       class="inline-flex items-center px-2.5 py-1.5 border border-slate-200 rounded-md text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 hover:text-indigo-600 transition-colors">
+                                       class="inline-flex items-center px-2.5 py-1.5 border border-slate-200 rounded-md text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 hover:text-[#1C9640] transition-colors">
                                         Edit Plan
                                     </a>
                                 </td>

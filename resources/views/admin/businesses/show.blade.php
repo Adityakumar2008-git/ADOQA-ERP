@@ -45,7 +45,7 @@
 
         <div class="flex items-center space-x-3">
             <a href="{{ route('admin.businesses.edit', $business) }}"
-               class="px-3.5 py-1.5 border border-indigo-200 bg-indigo-50 text-indigo-700 hover:bg-indigo-100 rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5">
+               class="px-3.5 py-1.5 border border-[#22B14C]/30 bg-[#E8F8EE] text-[#0E5C25] hover:bg-[#E8F8EE] rounded-lg text-xs font-semibold transition-colors flex items-center space-x-1.5">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/></svg>
                 <span>Edit Profile & Logo</span>
             </a>
@@ -233,7 +233,7 @@
                         @endforeach
                     </div>
                     <div class="mt-5 flex justify-end">
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg shadow-xs transition-colors">
+                        <button type="submit" class="px-4 py-2 bg-[#22B14C] hover:bg-[#1E9E44] text-white font-semibold text-xs rounded-lg shadow-xs transition-colors">
                             Save Module Settings
                         </button>
                     </div>
@@ -260,7 +260,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Business Role</label>
-                                <select name="role_id" required class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <select name="role_id" required class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#22B14C]">
                                     <option value="">Select Role...</option>
                                     @foreach ($businessRoles ?? [] as $bRole)
                                         <option value="{{ $bRole->id }}">{{ $bRole->name }} ({{ $bRole->slug }})</option>
@@ -269,7 +269,7 @@
                             </div>
                             <div class="sm:col-span-2">
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Business Permission</label>
-                                <select name="permission_id" required class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <select name="permission_id" required class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#22B14C]">
                                     <option value="">Select Permission...</option>
                                     @foreach ($businessPermissions ?? [] as $bPerm)
                                         <option value="{{ $bPerm->id }}">{{ $bPerm->name }} [{{ $bPerm->slug }}] ({{ $bPerm->group }})</option>
@@ -278,7 +278,7 @@
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-600 mb-1">Override Action</label>
-                                <select name="state" required class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <select name="state" required class="w-full text-xs border border-slate-300 rounded-lg px-2.5 py-1.5 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#22B14C]">
                                     <option value="allow">ALLOW (Explicit Grant)</option>
                                     <option value="deny">DENY (Explicit Suppress)</option>
                                     <option value="inherit">INHERIT (Reset to Template)</option>
@@ -345,7 +345,7 @@
             <div class="bg-white rounded-xl border border-slate-200 shadow-2xs overflow-hidden">
                 <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
                     <h2 class="text-sm font-bold text-slate-900">Subscription Status</h2>
-                    <span class="text-[10px] font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded border border-indigo-200">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#0E5C25] bg-[#E8F8EE] px-2 py-0.5 rounded border border-[#22B14C]/30">
                         Offline Model
                     </span>
                 </div>
@@ -447,7 +447,7 @@
                             <div>
                                 <label for="assign_plan_id" class="block text-xs font-semibold text-slate-700">Assign Subscription Plan</label>
                                 <select name="plan_id" id="assign_plan_id" required
-                                        class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                        class="mt-1 block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#22B14C]">
                                     <option value="">Select a Plan...</option>
                                     @foreach ($availablePlans as $plan)
                                         <option value="{{ $plan->id }}">
@@ -459,14 +459,14 @@
 
                             <div class="flex items-center">
                                 <input type="checkbox" name="skip_trial" id="assign_skip_trial" value="1"
-                                       class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
+                                       class="h-4 w-4 text-[#1C9640] focus:ring-[#22B14C] border-slate-300 rounded">
                                 <label for="assign_skip_trial" class="ml-2 block text-xs text-slate-700 font-medium">
                                     Skip trial period
                                 </label>
                             </div>
 
                             <button type="submit"
-                                    class="w-full py-2 px-4 rounded-lg text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors shadow-xs">
+                                    class="w-full py-2 px-4 rounded-lg text-xs font-bold text-white bg-[#22B14C] hover:bg-[#1E9E44] transition-colors shadow-xs">
                                 Provision Subscription
                             </button>
                         </form>

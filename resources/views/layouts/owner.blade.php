@@ -82,7 +82,7 @@
                     @if ($tenant?->logo_url)
                         <img src="{{ $tenant->logo_url }}" alt="{{ $tenant->name }}" class="w-full h-full object-contain">
                     @else
-                        <span class="text-xs font-bold text-indigo-400">{{ strtoupper(substr($tenant?->name ?? 'A', 0, 1)) }}</span>
+                        <span class="text-xs font-bold text-[#B5E61D]">{{ strtoupper(substr($tenant?->name ?? 'A', 0, 1)) }}</span>
                     @endif
                 </div>
                 <div class="flex-1 min-w-0">
@@ -118,8 +118,8 @@
                 <p class="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Primary</p>
                 <div class="space-y-1">
                     <a href="{{ route('owner.dashboard') }}"
-                       class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.dashboard*') || request()->routeIs('owner.index') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                        <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.dashboard*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                       class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.dashboard*') || request()->routeIs('owner.index') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                        <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.dashboard*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                         </svg>
                         Dashboard
@@ -170,32 +170,32 @@
                         <!-- Active Phase 3 Catalogue Modules -->
                         <div class="space-y-1">
                             <a href="{{ route('owner.catalogue.items.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.items.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.items.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.items.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.items.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
                                 </svg>
                                 <span>Items Catalogue</span>
                             </a>
 
                             <a href="{{ route('owner.catalogue.categories.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.categories.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.categories.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.categories.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.categories.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
                                 </svg>
                                 <span>Categories</span>
                             </a>
 
                             <a href="{{ route('owner.catalogue.brands.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.brands.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.brands.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.brands.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.brands.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
                                 </svg>
                                 <span>Brands</span>
                             </a>
 
                             <a href="{{ route('owner.catalogue.units.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.units.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.units.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.catalogue.units.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.catalogue.units.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 18h12l3-18H3z"/>
                                 </svg>
                                 <span>Units</span>
@@ -224,16 +224,16 @@
                     <div class="space-y-1">
                         @if ($canViewStock)
                             <a href="{{ route('owner.inventory.stock.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.stock.index') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.stock.index') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.stock.index') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.stock.index') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
                                 </svg>
                                 <span>Stock Balances</span>
                             </a>
 
                             <a href="{{ route('owner.inventory.stock.ledger') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.stock.ledger') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.stock.ledger') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.stock.ledger') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.stock.ledger') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                 </svg>
                                 <span>Stock Ledger</span>
@@ -242,8 +242,8 @@
 
                         @if ($canViewWarehouses)
                             <a href="{{ route('owner.inventory.warehouses.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.warehouses.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.warehouses.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.warehouses.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.warehouses.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                                 </svg>
                                 <span>Warehouses</span>
@@ -252,8 +252,8 @@
 
                         @if ($canAdjustStock)
                             <a href="{{ route('owner.inventory.adjustments.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.adjustments.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.adjustments.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.adjustments.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.adjustments.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                 </svg>
                                 <span>Adjustments</span>
@@ -262,8 +262,8 @@
 
                         @if ($canTransferStock)
                             <a href="{{ route('owner.inventory.transfers.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.transfers.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.transfers.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.transfers.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.transfers.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/>
                                 </svg>
                                 <span>Internal Transfers</span>
@@ -272,8 +272,8 @@
 
                         @if ($canReconcileStock)
                             <a href="{{ route('owner.inventory.stock.reconcile') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.stock.reconcile') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.stock.reconcile') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.inventory.stock.reconcile') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.inventory.stock.reconcile') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
                                 </svg>
                                 <span>Reconciliation</span>
@@ -292,8 +292,8 @@
                     <div class="space-y-1">
                         @if ($canViewSuppliers)
                             <a href="{{ route('owner.purchasing.suppliers.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.suppliers.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.suppliers.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.suppliers.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.suppliers.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                                 </svg>
                                 <span>Suppliers</span>
@@ -302,8 +302,8 @@
 
                         @if ($canOrders)
                             <a href="{{ route('owner.purchasing.orders.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.orders.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.orders.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.orders.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.orders.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
                                 <span>Purchase Orders</span>
@@ -312,8 +312,8 @@
 
                         @if ($canBills)
                             <a href="{{ route('owner.purchasing.bills.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.bills.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.bills.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.bills.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.bills.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/>
                                 </svg>
                                 <span>Purchase Bills</span>
@@ -322,8 +322,8 @@
 
                         @if ($canReceipts)
                             <a href="{{ route('owner.purchasing.receipts.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.receipts.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.receipts.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.receipts.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.receipts.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
                                 </svg>
                                 <span>Goods Receipts</span>
@@ -332,8 +332,8 @@
 
                         @if ($canPayments)
                             <a href="{{ route('owner.purchasing.payments.index') }}"
-                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.payments.*') ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
-                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.payments.*') ? 'text-indigo-400' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                               class="flex items-center px-3 py-2 rounded-lg font-medium transition-colors {{ request()->routeIs('owner.purchasing.payments.*') ? 'bg-[#22B14C]/15 text-[#B5E61D] border border-[#22B14C]/35' : 'text-slate-300 hover:bg-slate-800 hover:text-white' }}">
+                                <svg class="w-4 h-4 mr-3 {{ request()->routeIs('owner.purchasing.payments.*') ? 'text-[#FFDE2D]' : 'text-slate-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                                 </svg>
                                 <span>Supplier Payments</span>
@@ -495,7 +495,7 @@
 
                 <!-- User Account Profile -->
                 <div class="flex items-center space-x-2">
-                    <div class="w-7 h-7 rounded-full bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center border border-indigo-200 select-none">
+                    <div class="w-7 h-7 rounded-full bg-[#E8F8EE] text-[#1E9E44] font-bold text-xs flex items-center justify-center border border-[#22B14C]/30 select-none">
                         {{ strtoupper(substr($user->name, 0, 1)) }}
                     </div>
                     <form action="{{ route('logout') }}" method="POST" class="inline">

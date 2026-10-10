@@ -52,7 +52,7 @@
                         @foreach($receipts as $gr)
                             <tr class="hover:bg-slate-50/60 transition-colors">
                                 <td class="py-3 px-4 font-mono font-bold text-slate-900">
-                                    <a href="{{ route('owner.purchasing.receipts.show', $gr) }}" class="text-indigo-600 hover:text-indigo-800">
+                                    <a href="{{ route('owner.purchasing.receipts.show', $gr) }}" class="text-[#1C9640] hover:text-[#13682C]">
                                         {{ $gr->receipt_number }}
                                     </a>
                                 </td>
@@ -77,7 +77,7 @@
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 text-right">
-                                    <a href="{{ route('owner.purchasing.receipts.show', $gr) }}" class="font-semibold text-xs text-indigo-600 hover:text-indigo-800">
+                                    <a href="{{ route('owner.purchasing.receipts.show', $gr) }}" class="font-semibold text-xs text-[#1C9640] hover:text-[#13682C]">
                                         View Details &rarr;
                                     </a>
                                 </td>

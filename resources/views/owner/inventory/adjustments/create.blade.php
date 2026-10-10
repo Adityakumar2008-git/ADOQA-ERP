@@ -36,7 +36,7 @@
                         name="warehouse_id"
                         id="warehouse_id"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                         <option value="">-- Choose Warehouse --</option>
                         @foreach($warehouses as $wh)
@@ -55,7 +55,7 @@
                         id="adjustment_date"
                         value="{{ old('adjustment_date', date('Y-m-d')) }}"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
 
@@ -65,7 +65,7 @@
                         name="reason"
                         id="reason"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                         <option value="Periodic physical stock count">Periodic physical stock count</option>
                         <option value="Damaged / broken items">Damaged / broken items</option>
@@ -91,7 +91,7 @@
                             <select
                                 name="lines[0][item_id]"
                                 required
-                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                             >
                                 <option value="">-- Choose Catalogue Item --</option>
                                 @foreach($items as $item)
@@ -111,7 +111,7 @@
                                 min="0"
                                 required
                                 placeholder="Actual count"
-                                class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                                class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                             >
                         </div>
 
@@ -121,7 +121,7 @@
                                 type="text"
                                 name="lines[0][notes]"
                                 placeholder="Shelf recount verification"
-                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                             >
                         </div>
                     </div>
@@ -135,7 +135,7 @@
                     id="notes"
                     rows="2"
                     placeholder="General inspection comments..."
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                 >{{ old('notes') }}</textarea>
             </div>
 

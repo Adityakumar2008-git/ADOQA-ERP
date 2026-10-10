@@ -77,7 +77,7 @@
                     <div>
                         <dt class="font-semibold text-slate-500">Tracking Mode</dt>
                         <dd class="text-slate-900 font-medium mt-1">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-50 text-indigo-700">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold bg-[#E8F8EE] text-[#0E5C25]">
                                 {{ $item->inventory_mode->label() }}
                             </span>
                             <span class="text-[11px] text-slate-400 block mt-0.5">{{ $item->inventory_mode->description() }}</span>
@@ -109,7 +109,7 @@
             <!-- Future Inventory Connection Banner -->
             <div class="p-5 rounded-xl border border-dashed border-slate-200 bg-slate-50/70">
                 <div class="flex items-start space-x-3">
-                    <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0">
+                    <div class="p-2 bg-[#E8F8EE] text-[#1C9640] rounded-lg shrink-0">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                     </div>
                     <div>

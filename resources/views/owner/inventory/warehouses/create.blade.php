@@ -38,7 +38,7 @@
                     value="{{ old('name') }}"
                     placeholder="e.g. Central Depot, Shop Backroom"
                     required
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                 >
             </div>
 
@@ -50,7 +50,7 @@
                     id="code"
                     value="{{ old('code') }}"
                     placeholder="e.g. MAIN, DEPOT-01"
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 font-mono uppercase"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3 font-mono uppercase"
                 >
                 <p class="text-[11px] text-slate-500 mt-1">Leave blank to automatically generate from name.</p>
             </div>
@@ -62,7 +62,7 @@
                     id="address"
                     rows="3"
                     placeholder="Full facility address, floor, or operational notes"
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                 >{{ old('address') }}</textarea>
             </div>
 
@@ -73,7 +73,7 @@
                         name="is_default"
                         value="1"
                         @checked(old('is_default'))
-                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                        class="rounded border-slate-300 text-[#1C9640] focus:ring-[#22B14C]"
                     >
                     <span class="text-xs text-slate-700 font-medium">Set as default warehouse for this business</span>
                 </label>

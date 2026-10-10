@@ -47,7 +47,7 @@
                             id="name"
                             value="{{ old('name', $warehouse->name) }}"
                             required
-                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                         >
                     </div>
 
@@ -60,7 +60,7 @@
                                 id="code"
                                 value="{{ old('code', $warehouse->code) }}"
                                 required
-                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 font-mono uppercase"
+                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3 font-mono uppercase"
                             >
                         </div>
                         <div>
@@ -68,7 +68,7 @@
                             <select
                                 name="status"
                                 id="status"
-                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                             >
                                 <option value="active" @selected(old('status', $warehouse->status->value) === 'active')>Active</option>
                                 <option value="inactive" @selected(old('status', $warehouse->status->value) === 'inactive')>Inactive (Cannot receive stock)</option>
@@ -82,7 +82,7 @@
                             name="address"
                             id="address"
                             rows="3"
-                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                         >{{ old('address', $warehouse->address) }}</textarea>
                     </div>
 
@@ -93,7 +93,7 @@
                                 name="is_default"
                                 value="1"
                                 @checked(old('is_default', $warehouse->is_default))
-                                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                                class="rounded border-slate-300 text-[#1C9640] focus:ring-[#22B14C]"
                             >
                             <span class="text-xs text-slate-700 font-medium">Default warehouse for business</span>
                         </label>
@@ -122,7 +122,7 @@
                             name="name"
                             placeholder="Location name (e.g. Counter)"
                             required
-                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                         >
                     </div>
                     <div>
@@ -130,7 +130,7 @@
                             type="text"
                             name="code"
                             placeholder="Code (optional, e.g. CNTR)"
-                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3 uppercase font-mono"
+                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3 uppercase font-mono"
                         >
                     </div>
                     <x-button type="submit" variant="secondary" size="sm" class="w-full justify-center">

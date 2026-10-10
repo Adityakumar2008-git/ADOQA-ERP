@@ -35,7 +35,7 @@
     </x-page-header>
 
     <!-- Tenant Context & Active Subscription Summary Banner -->
-    <div class="bg-gradient-to-r from-slate-900 to-indigo-950 rounded-2xl p-6 text-white shadow-xs border border-slate-800">
+    <div class="bg-gradient-to-r from-slate-900 to-slate-950 rounded-2xl p-6 text-white shadow-xs border border-slate-800">
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div class="space-y-2">
                 <div class="flex items-center space-x-3.5">
@@ -98,7 +98,7 @@
                 label="Team Members"
                 :value="$metrics['active_members']"
                 subtext="Active tenant memberships"
-                iconVariant="indigo">
+                iconVariant="adoqa-green">
                 <x-slot:icon>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -111,7 +111,7 @@
                 label="Subscription Plan"
                 :value="$metrics['subscription_plan']"
                 :subtext="'Status: ' . $metrics['subscription_status']"
-                iconVariant="purple">
+                iconVariant="adoqa-yellow">
                 <x-slot:icon>
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
@@ -259,39 +259,39 @@
 
                     <div class="grid grid-cols-2 gap-2 pt-1">
                         <a href="{{ route('owner.catalogue.items.index') }}"
-                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-[#E8F8EE] hover:border-[#22B14C]/30 transition-colors group">
                             <div class="flex items-center space-x-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Items</span>
+                                <span class="text-xs font-semibold text-slate-800 group-hover:text-[#1C9640]">Items</span>
                             </div>
-                            <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                            <span class="text-[10px] text-slate-600 group-hover:text-[#1C9640] font-medium">Manage &rarr;</span>
                         </a>
 
                         <a href="{{ route('owner.catalogue.categories.index') }}"
-                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-[#E8F8EE] hover:border-[#22B14C]/30 transition-colors group">
                             <div class="flex items-center space-x-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Categories</span>
+                                <span class="text-xs font-semibold text-slate-800 group-hover:text-[#1C9640]">Categories</span>
                             </div>
-                            <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                            <span class="text-[10px] text-slate-600 group-hover:text-[#1C9640] font-medium">Manage &rarr;</span>
                         </a>
 
                         <a href="{{ route('owner.catalogue.brands.index') }}"
-                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-[#E8F8EE] hover:border-[#22B14C]/30 transition-colors group">
                             <div class="flex items-center space-x-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Brands</span>
+                                <span class="text-xs font-semibold text-slate-800 group-hover:text-[#1C9640]">Brands</span>
                             </div>
-                            <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                            <span class="text-[10px] text-slate-600 group-hover:text-[#1C9640] font-medium">Manage &rarr;</span>
                         </a>
 
                         <a href="{{ route('owner.catalogue.units.index') }}"
-                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 transition-colors group">
+                           class="flex items-center justify-between p-2.5 rounded-lg border border-slate-200 bg-slate-50 hover:bg-[#E8F8EE] hover:border-[#22B14C]/30 transition-colors group">
                             <div class="flex items-center space-x-2">
                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                <span class="text-xs font-semibold text-slate-800 group-hover:text-indigo-600">Units</span>
+                                <span class="text-xs font-semibold text-slate-800 group-hover:text-[#1C9640]">Units</span>
                             </div>
-                            <span class="text-[10px] text-slate-600 group-hover:text-indigo-600 font-medium">Manage &rarr;</span>
+                            <span class="text-[10px] text-slate-600 group-hover:text-[#1C9640] font-medium">Manage &rarr;</span>
                         </a>
                     </div>
 

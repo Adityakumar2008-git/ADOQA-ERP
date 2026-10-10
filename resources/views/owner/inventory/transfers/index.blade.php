@@ -80,7 +80,7 @@
                                         @if($tr->status->value === 'draft')
                                             <form method="POST" action="{{ route('owner.inventory.transfers.dispatch', $tr) }}" class="inline">
                                                 @csrf
-                                                <button type="submit" class="font-semibold text-xs text-indigo-600 hover:text-indigo-800">Dispatch</button>
+                                                <button type="submit" class="font-semibold text-xs text-[#1C9640] hover:text-[#13682C]">Dispatch</button>
                                             </form>
                                             <form method="POST" action="{{ route('owner.inventory.transfers.cancel', $tr) }}" class="inline">
                                                 @csrf

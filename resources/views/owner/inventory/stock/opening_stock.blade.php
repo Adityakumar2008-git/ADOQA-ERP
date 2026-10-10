@@ -36,7 +36,7 @@
                         name="item_id"
                         id="item_id"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                         <option value="">-- Choose Catalogue Item --</option>
                         @foreach($items as $item)
@@ -53,7 +53,7 @@
                         name="warehouse_id"
                         id="warehouse_id"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                         <option value="">-- Choose Warehouse --</option>
                         @foreach($warehouses as $wh)
@@ -76,7 +76,7 @@
                         min="0.0001"
                         value="{{ old('quantity', '1') }}"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 font-mono"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3 font-mono"
                     >
                 </div>
 
@@ -90,7 +90,7 @@
                         min="0"
                         value="{{ old('unit_cost') }}"
                         placeholder="0.00"
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 font-mono"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3 font-mono"
                     >
                 </div>
             </div>
@@ -107,7 +107,7 @@
                             id="batch_number"
                             value="{{ old('batch_number') }}"
                             placeholder="e.g. BATCH-2026-A"
-                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3 font-mono uppercase"
+                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3 font-mono uppercase"
                         >
                     </div>
                     <div>
@@ -117,7 +117,7 @@
                             name="manufacturing_date"
                             id="manufacturing_date"
                             value="{{ old('manufacturing_date') }}"
-                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                         >
                     </div>
                     <div>
@@ -127,7 +127,7 @@
                             name="expiry_date"
                             id="expiry_date"
                             value="{{ old('expiry_date') }}"
-                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                            class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                         >
                     </div>
                 </div>
@@ -144,7 +144,7 @@
                         id="serial_numbers_text"
                         rows="3"
                         placeholder="SN-10001&#10;SN-10002"
-                        class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                        class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                     >{{ old('serial_numbers_text') }}</textarea>
                 </div>
                 <div>
@@ -156,7 +156,7 @@
                         id="imeis_text"
                         rows="3"
                         placeholder="352099001761481,352099001761482&#10;352099001761483"
-                        class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                        class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                     >{{ old('imeis_text') }}</textarea>
                 </div>
             </div>
@@ -168,7 +168,7 @@
                     name="notes"
                     id="notes"
                     value="{{ old('notes', 'Initial stock take upon system setup') }}"
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                 >
             </div>
 

@@ -35,7 +35,7 @@
 
         <x-card>
             <span class="text-xs font-bold uppercase text-slate-500">Unallocated Advance</span>
-            <p class="text-2xl font-bold font-mono text-indigo-600 mt-1">
+            <p class="text-2xl font-bold font-mono text-[#1C9640] mt-1">
                 {{ $tenant->currency }} {{ number_format((float) $supplier->unallocated_advance, 2) }}
             </p>
         </x-card>

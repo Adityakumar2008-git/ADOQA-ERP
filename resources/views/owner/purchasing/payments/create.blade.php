@@ -37,7 +37,7 @@
                         id="supplier_id"
                         required
                         onchange="window.location.href = '{{ route('owner.purchasing.payments.create') }}?supplier_id=' + this.value"
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                         <option value="">-- Choose Vendor --</option>
                         @foreach($suppliers as $s)
@@ -59,7 +59,7 @@
                         value="{{ old('amount') }}"
                         required
                         placeholder="0.00"
-                        class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
 
@@ -71,7 +71,7 @@
                         id="payment_date"
                         value="{{ old('payment_date', date('Y-m-d')) }}"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
             </div>
@@ -83,7 +83,7 @@
                         name="payment_mode"
                         id="payment_mode"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                         <option value="bank_transfer" @selected(old('payment_mode') === 'bank_transfer')>Bank Transfer (NEFT/RTGS/IMPS)</option>
                         <option value="upi" @selected(old('payment_mode') === 'upi')>UPI</option>
@@ -101,7 +101,7 @@
                         id="reference_number"
                         value="{{ old('reference_number') }}"
                         placeholder="e.g. UTR123456789"
-                        class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
             </div>
@@ -144,7 +144,7 @@
                                                 min="0.01"
                                                 max="{{ $balanceDue }}"
                                                 placeholder="0.00"
-                                                class="w-32 text-right font-mono text-xs rounded border-slate-300 py-1 px-2 focus:ring-indigo-500"
+                                                class="w-32 text-right font-mono text-xs rounded border-slate-300 py-1 px-2 focus:ring-[#22B14C]"
                                             >
                                         </td>
                                     </tr>
@@ -162,7 +162,7 @@
                     id="notes"
                     rows="2"
                     placeholder="Disbursement details, recipient remarks..."
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                 >{{ old('notes') }}</textarea>
             </div>
 

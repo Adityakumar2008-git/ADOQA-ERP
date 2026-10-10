@@ -26,7 +26,7 @@
                     id="name"
                     required
                     value="{{ old('name', $brand->name) }}"
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C]"
                 >
                 @error('name')<p class="text-[11px] text-rose-500 mt-1">{{ $message }}</p>@enderror
             </div>
@@ -38,7 +38,7 @@
                     name="slug"
                     id="slug"
                     value="{{ old('slug', $brand->slug) }}"
-                    class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C]"
                 >
                 @error('slug')<p class="text-[11px] text-rose-500 mt-1">{{ $message }}</p>@enderror
             </div>
@@ -49,7 +49,7 @@
                     name="description"
                     id="description"
                     rows="3"
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C]"
                 >{{ old('description', $brand->description) }}</textarea>
                 @error('description')<p class="text-[11px] text-rose-500 mt-1">{{ $message }}</p>@enderror
             </div>

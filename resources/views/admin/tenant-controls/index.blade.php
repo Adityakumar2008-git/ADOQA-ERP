@@ -10,7 +10,7 @@
         <div>
             <div class="flex items-center space-x-2">
                 <h1 class="text-2xl font-bold tracking-tight text-slate-900">Tenant Feature & Role Controls</h1>
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-indigo-500/10 text-indigo-700 border border-indigo-500/20">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-[#E8F8EE]0/10 text-[#0E5C25] border border-[#22B14C]/30">
                     Tenant-Specific Governance
                 </span>
                 <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
@@ -59,7 +59,7 @@
                 </label>
                 <div class="relative">
                     <select id="tenant_select" name="business_id" onchange="this.form.submit()"
-                            class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            class="w-full text-xs border border-slate-300 rounded-lg px-3 py-2 bg-white text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-[#22B14C] focus:border-[#22B14C]">
                         <option value="">-- Choose a Business Tenant --</option>
                         @foreach ($businesses as $b)
                             <option value="{{ $b->id }}" {{ $selectedBusiness && $selectedBusiness->id === $b->id ? 'selected' : '' }}>
@@ -85,7 +85,7 @@
 
     @if (! $selectedBusiness)
         <div class="p-12 text-center bg-white rounded-xl border border-dashed border-slate-300 shadow-2xs space-y-3">
-            <div class="w-12 h-12 rounded-full bg-indigo-50 text-indigo-600 mx-auto flex items-center justify-center font-bold text-lg">
+            <div class="w-12 h-12 rounded-full bg-[#E8F8EE] text-[#1C9640] mx-auto flex items-center justify-center font-bold text-lg">
                 &rarr;
             </div>
             <h2 class="text-base font-bold text-slate-900">Select a Business Tenant to Begin</h2>
@@ -97,7 +97,7 @@
         <!-- Tenant Summary Ribbon -->
         <div class="p-4 bg-slate-900 text-slate-200 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
             <div class="flex items-center space-x-3">
-                <div class="w-9 h-9 rounded-lg bg-indigo-600 text-white flex items-center justify-center font-bold text-sm">
+                <div class="w-9 h-9 rounded-lg bg-[#22B14C] text-white flex items-center justify-center font-bold text-sm">
                     {{ strtoupper(substr($selectedBusiness->name, 0, 1)) }}
                 </div>
                 <div>
@@ -120,7 +120,7 @@
             <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div>
                     <div class="flex items-center space-x-2">
-                        <span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-[10px]">2</span>
+                        <span class="w-5 h-5 rounded-full bg-[#E8F8EE] text-[#0E5C25] flex items-center justify-center font-bold text-[10px]">2</span>
                         <h2 class="text-sm font-bold text-slate-900">Tenant Module Controls</h2>
                     </div>
                     <p class="text-xs text-slate-500 mt-0.5">
@@ -174,7 +174,7 @@
                 </div>
 
                 <div class="mt-6 flex justify-end">
-                    <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs rounded-lg shadow-xs transition-colors">
+                    <button type="submit" class="px-4 py-2 bg-[#22B14C] hover:bg-[#1E9E44] text-white font-semibold text-xs rounded-lg shadow-xs transition-colors">
                         Save Module Configuration
                     </button>
                 </div>
@@ -186,7 +186,7 @@
             <div class="px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <div class="flex items-center space-x-2">
-                        <span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-[10px]">3</span>
+                        <span class="w-5 h-5 rounded-full bg-[#E8F8EE] text-[#0E5C25] flex items-center justify-center font-bold text-[10px]">3</span>
                         <h2 class="text-sm font-bold text-slate-900">Tenant Role-Permission Overrides</h2>
                     </div>
                     <p class="text-xs text-slate-500 mt-0.5">
@@ -199,7 +199,7 @@
                     <input type="hidden" name="business_id" value="{{ $selectedBusiness->id }}">
                     <label for="role_select" class="text-xs font-semibold text-slate-600 shrink-0">Role:</label>
                     <select id="role_select" name="role_id" onchange="this.form.submit()"
-                            class="text-xs border border-slate-300 rounded-lg px-3 py-1.5 bg-white text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            class="text-xs border border-slate-300 rounded-lg px-3 py-1.5 bg-white text-slate-800 font-medium focus:outline-none focus:ring-2 focus:ring-[#22B14C]">
                         @foreach ($businessRoles as $bRole)
                             <option value="{{ $bRole->id }}" {{ $selectedRole && $selectedRole->id === $bRole->id ? 'selected' : '' }}>
                                 {{ $bRole->name }} ({{ $bRole->slug }})
@@ -222,7 +222,7 @@
                     <!-- Active Role Banner -->
                     <div class="mb-6 p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-lg bg-indigo-600/10 text-indigo-700 flex items-center justify-center font-bold text-xs">
+                            <div class="w-8 h-8 rounded-lg bg-[#22B14C]/10 text-[#0E5C25] flex items-center justify-center font-bold text-xs">
                                 {{ strtoupper(substr($selectedRole->name, 0, 2)) }}
                             </div>
                             <div>
@@ -337,7 +337,7 @@
                                                 <button type="button"
                                                         id="reset-btn-{{ $item['permission']->id }}"
                                                         onclick="resetToInherited('{{ $item['permission']->id }}')"
-                                                        class="text-[11px] text-slate-500 hover:text-indigo-600 underline font-medium transition-colors {{ $isOverride ? '' : 'hidden' }}"
+                                                        class="text-[11px] text-slate-500 hover:text-[#1C9640] underline font-medium transition-colors {{ $isOverride ? '' : 'hidden' }}"
                                                         title="Restore inherited role template permission">
                                                     Reset to inherited
                                                 </button>
@@ -349,7 +349,7 @@
                                                             aria-checked="{{ $switchOn ? 'true' : 'false' }}"
                                                             id="toggle-btn-{{ $item['permission']->id }}"
                                                             onclick="togglePermission('{{ $item['permission']->id }}')"
-                                                            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 {{ $switchOn ? ($item['override_state'] === 'inherit' ? 'bg-emerald-400' : 'bg-emerald-600') : ($item['override_state'] === 'inherit' ? 'bg-slate-300' : 'bg-rose-500') }}"
+                                                            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#22B14C] focus:ring-offset-2 {{ $switchOn ? ($item['override_state'] === 'inherit' ? 'bg-emerald-400' : 'bg-emerald-600') : ($item['override_state'] === 'inherit' ? 'bg-slate-300' : 'bg-rose-500') }}"
                                                             title="{{ $item['override_state'] === 'inherit' ? 'Inherited default (' . ($switchOn ? 'Granted' : 'Not Granted') . ') - Click to set override' : ($switchOn ? 'Explicit ALLOW - Click to set explicit DENY' : 'Explicit DENY - Click to set explicit ALLOW') }}">
                                                         <span class="sr-only">Toggle {{ $item['name'] }}</span>
                                                         <span aria-hidden="true"
@@ -456,7 +456,7 @@
 
                         if (toggleBtn && toggleThumb && toggleLabel) {
                             toggleBtn.setAttribute('aria-checked', switchOn ? 'true' : 'false');
-                            toggleBtn.className = 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 ' +
+                            toggleBtn.className = 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#22B14C] focus:ring-offset-2 ' +
                                 (switchOn
                                     ? (overrideState === 'inherit' ? 'bg-emerald-400' : 'bg-emerald-600')
                                     : (overrideState === 'inherit' ? 'bg-slate-300' : 'bg-rose-500'));

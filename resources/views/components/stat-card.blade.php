@@ -4,18 +4,22 @@
     'subtext' => null,
     'badge' => null,
     'badgeVariant' => 'slate',
-    'iconVariant' => 'indigo',
+    'iconVariant' => 'adoqa-green',
     'available' => true,
 ])
 
 @php
     $iconBgClasses = match ($iconVariant) {
-        'emerald' => 'bg-emerald-50 text-emerald-600',
-        'sky' => 'bg-sky-50 text-sky-600',
-        'amber' => 'bg-amber-50 text-amber-600',
-        'purple' => 'bg-purple-50 text-purple-600',
+        'emerald' => 'bg-[#E8F8EE] text-[#22B14C]',
+        'sky' => 'bg-[#EDF9FC] text-[#0284C7]',
+        'amber' => 'bg-[#FFFDE6] text-[#B49600]',
+        'yellow', 'adoqa-yellow' => 'bg-[#FFFDE6] text-[#B49600]',
+        'green', 'adoqa-green' => 'bg-[#E8F8EE] text-[#22B14C]',
+        'lime', 'adoqa-lime' => 'bg-[#F6FCE9] text-[#6B8E0B]',
+        'grey', 'adoqa-grey' => 'bg-[#F1F3F5] text-[#7F7F7F]',
         'rose' => 'bg-rose-50 text-rose-600',
-        default => 'bg-indigo-50 text-indigo-600',
+        'purple' => 'bg-[#F6FCE9] text-[#6B8E0B]',
+        default => 'bg-[#E8F8EE] text-[#22B14C]',
     };
 @endphp
 

@@ -31,7 +31,7 @@
         <form method="GET" action="{{ route('owner.purchasing.bills.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div>
                 <label for="supplier_id" class="block text-xs font-semibold text-slate-600 mb-1">Supplier</label>
-                <select name="supplier_id" id="supplier_id" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2">
+                <select name="supplier_id" id="supplier_id" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2">
                     <option value="">All Suppliers</option>
                     @foreach($suppliers as $s)
                         <option value="{{ $s->id }}" @selected(request('supplier_id') === $s->id)>{{ $s->name }}</option>
@@ -41,7 +41,7 @@
 
             <div>
                 <label for="status" class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-                <select name="status" id="status" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2">
+                <select name="status" id="status" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2">
                     <option value="">All Statuses</option>
                     <option value="draft" @selected(request('status') === 'draft')>Draft</option>
                     <option value="posted" @selected(request('status') === 'posted')>Posted (Payable Active)</option>
@@ -87,7 +87,7 @@
                         @foreach($bills as $bill)
                             <tr class="hover:bg-slate-50/60 transition-colors">
                                 <td class="py-3 px-4 font-mono font-bold text-slate-900">
-                                    <a href="{{ route('owner.purchasing.bills.show', $bill) }}" class="text-indigo-600 hover:text-indigo-800">
+                                    <a href="{{ route('owner.purchasing.bills.show', $bill) }}" class="text-[#1C9640] hover:text-[#13682C]">
                                         {{ $bill->bill_number }}
                                     </a>
                                 </td>
@@ -116,7 +116,7 @@
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 text-right">
-                                    <a href="{{ route('owner.purchasing.bills.show', $bill) }}" class="font-semibold text-xs text-indigo-600 hover:text-indigo-800">
+                                    <a href="{{ route('owner.purchasing.bills.show', $bill) }}" class="font-semibold text-xs text-[#1C9640] hover:text-[#13682C]">
                                         View &rarr;
                                     </a>
                                 </td>

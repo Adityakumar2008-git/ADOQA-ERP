@@ -36,7 +36,7 @@
                         name="supplier_id"
                         id="supplier_id"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                         <option value="">-- Choose Vendor --</option>
                         @foreach($suppliers as $s)
@@ -53,7 +53,7 @@
                         name="warehouse_id"
                         id="warehouse_id"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                         <option value="">-- Select Depot --</option>
                         @foreach($warehouses as $wh)
@@ -72,7 +72,7 @@
                         id="received_date"
                         value="{{ old('received_date', date('Y-m-d')) }}"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
             </div>
@@ -83,7 +83,7 @@
                     <select
                         name="purchase_order_id"
                         id="purchase_order_id"
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 font-mono"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3 font-mono"
                     >
                         <option value="">-- Standalone Receipt --</option>
                         @foreach($orders as $o)
@@ -99,7 +99,7 @@
                     <select
                         name="purchase_bill_id"
                         id="purchase_bill_id"
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 font-mono"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3 font-mono"
                     >
                         <option value="">-- Bill Not Yet Received / Separate --</option>
                         @foreach($bills as $b)
@@ -126,7 +126,7 @@
                                 <select
                                     name="lines[0][item_id]"
                                     required
-                                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                                 >
                                     <option value="">-- Select Item --</option>
                                     @foreach($items as $item)
@@ -146,7 +146,7 @@
                                     min="0.0001"
                                     value="1"
                                     required
-                                    class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                                    class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                                 >
                             </div>
 
@@ -159,7 +159,7 @@
                                     min="0"
                                     required
                                     placeholder="0.00"
-                                    class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                                    class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                                 >
                             </div>
                         </div>
@@ -204,7 +204,7 @@
                     id="notes"
                     rows="2"
                     placeholder="Challan / delivery slip number, vehicle number..."
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                 >{{ old('notes') }}</textarea>
             </div>
 

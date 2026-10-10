@@ -42,7 +42,7 @@
                                 <td class="py-3 px-4 font-bold text-slate-900">
                                     {{ $unit->name }}
                                 </td>
-                                <td class="py-3 px-4 font-mono font-semibold text-indigo-700">
+                                <td class="py-3 px-4 font-mono font-semibold text-[#0E5C25]">
                                     {{ $unit->code }}
                                 </td>
                                 <td class="py-3 px-4 text-center">
@@ -59,7 +59,7 @@
                                 </td>
                                 <td class="py-3 px-4 text-right">
                                     <div class="flex items-center justify-end space-x-2">
-                                        <a href="{{ route('owner.catalogue.units.edit', $unit) }}" class="text-indigo-600 hover:text-indigo-800 font-medium">Edit</a>
+                                        <a href="{{ route('owner.catalogue.units.edit', $unit) }}" class="text-[#1C9640] hover:text-[#13682C] font-medium">Edit</a>
                                         <form method="POST" action="{{ route('owner.catalogue.units.status', $unit) }}" class="inline">
                                             @csrf
                                             @method('PATCH')

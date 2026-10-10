@@ -36,7 +36,7 @@
                         name="supplier_id"
                         id="supplier_id"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                         <option value="">-- Choose Supplier --</option>
                         @foreach($suppliers as $s)
@@ -56,7 +56,7 @@
                         value="{{ old('supplier_invoice_number') }}"
                         required
                         placeholder="e.g. INV-2026-904"
-                        class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
 
@@ -65,7 +65,7 @@
                     <select
                         name="purchase_order_id"
                         id="purchase_order_id"
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3 font-mono"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3 font-mono"
                     >
                         <option value="">-- None / Standalone Bill --</option>
                         @foreach($orders as $o)
@@ -86,7 +86,7 @@
                         id="bill_date"
                         value="{{ old('bill_date', date('Y-m-d')) }}"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
 
@@ -97,7 +97,7 @@
                         name="due_date"
                         id="due_date"
                         value="{{ old('due_date') }}"
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
             </div>
@@ -116,7 +116,7 @@
                             <select
                                 name="lines[0][item_id]"
                                 required
-                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                             >
                                 <option value="">-- Choose Item --</option>
                                 @foreach($items as $item)
@@ -136,7 +136,7 @@
                                 min="0.0001"
                                 value="1"
                                 required
-                                class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                                class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                             >
                         </div>
 
@@ -149,7 +149,7 @@
                                 min="0"
                                 required
                                 placeholder="0.00"
-                                class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                                class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                             >
                         </div>
                     </div>
@@ -163,7 +163,7 @@
                     id="notes"
                     rows="2"
                     placeholder="Invoice terms, remarks..."
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                 >{{ old('notes') }}</textarea>
             </div>
 

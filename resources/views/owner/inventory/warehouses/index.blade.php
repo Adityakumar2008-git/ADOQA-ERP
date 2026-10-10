@@ -35,7 +35,7 @@
                             <div class="flex items-center space-x-2">
                                 <h3 class="font-bold text-slate-900 text-base">{{ $warehouse->name }}</h3>
                                 @if($warehouse->is_default)
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-[#E8F8EE] text-[#0E5C25] border border-[#22B14C]/30">
                                         Default
                                     </span>
                                 @endif
@@ -81,7 +81,7 @@
                 <div class="mt-5 pt-3 border-t border-slate-100 flex items-center justify-between">
                     <span class="text-[11px] text-slate-400">Created {{ $warehouse->created_at->format('M d, Y') }}</span>
                     @if($authService->can(auth()->user(), 'warehouses.manage', $tenant))
-                        <a href="{{ route('owner.inventory.warehouses.edit', $warehouse) }}" class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center">
+                        <a href="{{ route('owner.inventory.warehouses.edit', $warehouse) }}" class="text-xs font-semibold text-[#1C9640] hover:text-[#13682C] flex items-center">
                             Configure & Locations &rarr;
                         </a>
                     @endif

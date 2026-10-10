@@ -25,13 +25,13 @@
         </x-alert>
     @endif
 
-    <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-xs flex items-center justify-between text-indigo-900">
+    <div class="bg-[#E8F8EE] border border-[#22B14C]/30 rounded-xl p-4 text-xs flex items-center justify-between text-slate-900">
         <div>
             <span class="font-bold">Dispatched from:</span> {{ $transfer->sourceWarehouse->name }}
             <span class="mx-2">&rarr;</span>
             <span class="font-bold">Receiving at:</span> {{ $transfer->destinationWarehouse->name }}
         </div>
-        <div class="font-mono text-indigo-700">
+        <div class="font-mono text-[#0E5C25]">
             Dispatched on {{ $transfer->dispatched_at?->format('d M Y H:i') }}
         </div>
     </div>
@@ -58,7 +58,7 @@
                                     <span class="font-bold text-slate-900 block">{{ $line->item->name }}</span>
                                     <span class="text-[11px] text-slate-500 font-mono">{{ $line->item->sku }}</span>
                                     @if($line->batch)
-                                        <span class="text-[10px] text-indigo-600 font-mono block">Batch: {{ $line->batch->batch_number }}</span>
+                                        <span class="text-[10px] text-[#1C9640] font-mono block">Batch: {{ $line->batch->batch_number }}</span>
                                     @endif
                                 </td>
                                 <td class="py-3 px-3 text-right font-mono font-bold text-slate-800">
@@ -72,7 +72,7 @@
                                         min="0"
                                         value="{{ old("receipts.{$line->id}.received_quantity", (float) $line->quantity) }}"
                                         required
-                                        class="w-24 text-right font-mono text-xs rounded border-slate-300 py-1 px-2 focus:ring-indigo-500"
+                                        class="w-24 text-right font-mono text-xs rounded border-slate-300 py-1 px-2 focus:ring-[#22B14C]"
                                     >
                                 </td>
                                 <td class="py-3 px-3 text-right">

@@ -38,7 +38,7 @@
                     value="{{ old('name') }}"
                     required
                     placeholder="e.g. Apex Electronics Ltd"
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                 >
             </div>
 
@@ -51,7 +51,7 @@
                         id="code"
                         value="{{ old('code') }}"
                         placeholder="e.g. SUP-001"
-                        class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                     <p class="text-[11px] text-slate-500 mt-1">Leave empty to auto-generate.</p>
                 </div>
@@ -64,7 +64,7 @@
                         id="gst_number"
                         value="{{ old('gst_number') }}"
                         placeholder="22AAAAA0000A1Z5"
-                        class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
             </div>
@@ -78,7 +78,7 @@
                         id="phone"
                         value="{{ old('phone') }}"
                         placeholder="+91 98765 43210"
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
 
@@ -90,7 +90,7 @@
                         id="email"
                         value="{{ old('email') }}"
                         placeholder="orders@vendor.com"
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
             </div>
@@ -106,7 +106,7 @@
                         min="0"
                         value="{{ old('credit_limit') }}"
                         placeholder="0.00"
-                        class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
 
@@ -118,7 +118,7 @@
                         id="opening_balance"
                         step="0.01"
                         value="{{ old('opening_balance', '0.00') }}"
-                        class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
             </div>
@@ -130,7 +130,7 @@
                     id="address"
                     rows="2"
                     placeholder="Billing and factory address"
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                 >{{ old('address') }}</textarea>
             </div>
 
@@ -142,7 +142,7 @@
                     id="notes"
                     value="{{ old('notes') }}"
                     placeholder="Bank account terms, discount agreement..."
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                 >
             </div>
 

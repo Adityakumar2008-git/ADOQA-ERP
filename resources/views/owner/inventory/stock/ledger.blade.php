@@ -27,7 +27,7 @@
                         id="search"
                         value="{{ request('search') }}"
                         placeholder="Search item or SKU..."
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 pl-8 py-2"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] pl-8 py-2"
                     >
                     <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
@@ -35,7 +35,7 @@
 
             <div>
                 <label for="warehouse_id" class="block text-xs font-semibold text-slate-600 mb-1">Warehouse</label>
-                <select name="warehouse_id" id="warehouse_id" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2">
+                <select name="warehouse_id" id="warehouse_id" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2">
                     <option value="">All Warehouses</option>
                     @foreach($warehouses as $wh)
                         <option value="{{ $wh->id }}" @selected(request('warehouse_id') === $wh->id)>{{ $wh->name }}</option>
@@ -45,7 +45,7 @@
 
             <div>
                 <label for="movement_type" class="block text-xs font-semibold text-slate-600 mb-1">Movement Type</label>
-                <select name="movement_type" id="movement_type" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2">
+                <select name="movement_type" id="movement_type" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2">
                     <option value="">All Types</option>
                     <option value="opening_balance" @selected(request('movement_type') === 'opening_balance')>Opening Balance</option>
                     <option value="purchase_receipt" @selected(request('movement_type') === 'purchase_receipt')>Purchase Receipt</option>
@@ -121,7 +121,7 @@
                                         <div class="font-mono text-[11px]">Batch: {{ $m->batch->batch_number }}</div>
                                     @endif
                                     @if($m->unit)
-                                        <div class="font-mono text-[11px] text-indigo-600">
+                                        <div class="font-mono text-[11px] text-[#1C9640]">
                                             {{ $m->unit->serial_number ? 'S/N: ' . $m->unit->serial_number : 'IMEI: ' . $m->unit->imei1 }}
                                         </div>
                                     @endif

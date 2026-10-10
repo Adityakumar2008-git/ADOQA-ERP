@@ -31,7 +31,7 @@
         <form method="GET" action="{{ route('owner.purchasing.orders.index') }}" class="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div>
                 <label for="supplier_id" class="block text-xs font-semibold text-slate-600 mb-1">Supplier</label>
-                <select name="supplier_id" id="supplier_id" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2">
+                <select name="supplier_id" id="supplier_id" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2">
                     <option value="">All Suppliers</option>
                     @foreach($suppliers as $s)
                         <option value="{{ $s->id }}" @selected(request('supplier_id') === $s->id)>{{ $s->name }}</option>
@@ -41,7 +41,7 @@
 
             <div>
                 <label for="status" class="block text-xs font-semibold text-slate-600 mb-1">Status</label>
-                <select name="status" id="status" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2">
+                <select name="status" id="status" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2">
                     <option value="">All Statuses</option>
                     <option value="draft" @selected(request('status') === 'draft')>Draft</option>
                     <option value="approved" @selected(request('status') === 'approved')>Approved</option>
@@ -86,7 +86,7 @@
                         @foreach($orders as $order)
                             <tr class="hover:bg-slate-50/60 transition-colors">
                                 <td class="py-3 px-4 font-mono font-bold text-slate-900">
-                                    <a href="{{ route('owner.purchasing.orders.show', $order) }}" class="text-indigo-600 hover:text-indigo-800">
+                                    <a href="{{ route('owner.purchasing.orders.show', $order) }}" class="text-[#1C9640] hover:text-[#13682C]">
                                         {{ $order->order_number }}
                                     </a>
                                 </td>
@@ -104,7 +104,7 @@
                                 </td>
                                 <td class="py-3 px-4 text-center">
                                     <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
-                                        @if($order->status->value === 'approved') bg-indigo-50 text-indigo-700 border border-indigo-200
+                                        @if($order->status->value === 'approved') bg-[#E8F8EE] text-[#0E5C25] border border-[#22B14C]/30
                                         @elseif($order->status->value === 'received') bg-emerald-50 text-emerald-700 border border-emerald-200
                                         @elseif($order->status->value === 'partially_received') bg-amber-50 text-amber-700 border border-amber-200
                                         @elseif($order->status->value === 'cancelled') bg-rose-50 text-rose-700 border border-rose-200
@@ -113,7 +113,7 @@
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 text-right">
-                                    <a href="{{ route('owner.purchasing.orders.show', $order) }}" class="font-semibold text-xs text-indigo-600 hover:text-indigo-800">
+                                    <a href="{{ route('owner.purchasing.orders.show', $order) }}" class="font-semibold text-xs text-[#1C9640] hover:text-[#13682C]">
                                         View Details &rarr;
                                     </a>
                                 </td>

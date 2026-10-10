@@ -39,7 +39,7 @@
                         id="search"
                         value="{{ request('search') }}"
                         placeholder="Search by vendor name, code, phone..."
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 pl-8 py-2"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] pl-8 py-2"
                     >
                     <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
@@ -79,7 +79,7 @@
                         @foreach($suppliers as $supplier)
                             <tr class="hover:bg-slate-50/60 transition-colors">
                                 <td class="py-3 px-4">
-                                    <a href="{{ route('owner.purchasing.suppliers.show', $supplier) }}" class="font-bold text-slate-900 hover:text-indigo-600 block">
+                                    <a href="{{ route('owner.purchasing.suppliers.show', $supplier) }}" class="font-bold text-slate-900 hover:text-[#1C9640] block">
                                         {{ $supplier->name }}
                                     </a>
                                     <span class="text-[11px] text-slate-500 font-mono">{{ $supplier->code }}</span>
@@ -109,7 +109,7 @@
                                     </span>
                                 </td>
                                 <td class="py-3 px-4 text-right space-x-2">
-                                    <a href="{{ route('owner.purchasing.suppliers.show', $supplier) }}" class="font-semibold text-xs text-indigo-600 hover:text-indigo-800">
+                                    <a href="{{ route('owner.purchasing.suppliers.show', $supplier) }}" class="font-semibold text-xs text-[#1C9640] hover:text-[#13682C]">
                                         View
                                     </a>
                                     <a href="{{ route('owner.purchasing.suppliers.ledger', $supplier) }}" class="font-semibold text-xs text-slate-600 hover:text-slate-800">

@@ -38,7 +38,7 @@
                 <div class="mt-1">
                     <input id="email" name="email" type="email" autocomplete="email" required
                         value="{{ old('email') }}"
-                        class="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                        class="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#22B14C] focus:border-[#22B14C] text-sm">
                 </div>
             </div>
 
@@ -46,21 +46,21 @@
                 <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
                 <div class="mt-1">
                     <input id="password" name="password" type="password" autocomplete="current-password" required
-                        class="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                        class="appearance-none block w-full px-3 py-2 border border-slate-300 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#22B14C] focus:border-[#22B14C] text-sm">
                 </div>
             </div>
 
             <div class="flex items-center justify-between">
                 <div class="flex items-center">
                     <input id="remember" name="remember" type="checkbox" value="1"
-                        class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-slate-300 rounded">
+                        class="h-4 w-4 text-[#22B14C] focus:ring-[#22B14C] border-slate-300 rounded">
                     <label for="remember" class="ml-2 block text-sm text-slate-600">Remember this device</label>
                 </div>
             </div>
 
             <div>
                 <button type="submit" id="login-submit"
-                    class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                    class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-[#22B14C] hover:bg-[#1E9E44] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#22B14C] transition-colors">
                     Sign in
                 </button>
             </div>

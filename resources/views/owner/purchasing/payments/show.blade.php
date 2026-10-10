@@ -54,7 +54,7 @@
 
         <x-card>
             <span class="text-xs font-bold uppercase text-slate-500">Unapplied Advance Balance</span>
-            <p class="text-2xl font-bold font-mono text-indigo-600 mt-1">
+            <p class="text-2xl font-bold font-mono text-[#1C9640] mt-1">
                 {{ $tenant->currency }} {{ number_format((float) $payment->unallocated_amount, 2) }}
             </p>
         </x-card>
@@ -103,7 +103,7 @@
                     @forelse($payment->allocations as $alloc)
                         <tr>
                             <td class="py-2.5 px-3 font-mono font-bold">
-                                <a href="{{ route('owner.purchasing.bills.show', $alloc->bill) }}" class="text-indigo-600 hover:text-indigo-800">
+                                <a href="{{ route('owner.purchasing.bills.show', $alloc->bill) }}" class="text-[#1C9640] hover:text-[#13682C]">
                                     {{ $alloc->bill->bill_number }}
                                 </a>
                             </td>

@@ -26,7 +26,7 @@
                     id="name"
                     required
                     value="{{ old('name', $unit->name) }}"
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C]"
                 >
                 @error('name')<p class="text-[11px] text-rose-500 mt-1">{{ $message }}</p>@enderror
             </div>
@@ -39,7 +39,7 @@
                     id="code"
                     required
                     value="{{ old('code', $unit->code) }}"
-                    class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C]"
                 >
                 @error('code')<p class="text-[11px] text-rose-500 mt-1">{{ $message }}</p>@enderror
             </div>

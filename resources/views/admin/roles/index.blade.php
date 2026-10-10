@@ -21,7 +21,7 @@
         </div>
         <div class="flex items-center space-x-3">
             <a href="{{ route('admin.tenant-controls.index') }}"
-               class="inline-flex items-center px-3.5 py-1.5 rounded-lg shadow-2xs text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+               class="inline-flex items-center px-3.5 py-1.5 rounded-lg shadow-2xs text-xs font-semibold text-white bg-[#22B14C] hover:bg-[#1E9E44] transition-colors">
                 <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
                 </svg>
@@ -31,10 +31,10 @@
     </div>
 
     <!-- Tenant Feature & Role Controls Callout Banner -->
-    <div class="p-5 rounded-xl bg-gradient-to-r from-indigo-900 to-slate-900 text-white shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4 border border-indigo-800">
+    <div class="p-5 rounded-xl bg-gradient-to-r from-slate-900 to-slate-900 text-white shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4 border border-slate-800">
         <div class="space-y-1">
             <div class="flex items-center space-x-2">
-                <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-indigo-500/30 text-indigo-200 border border-indigo-400/30">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-[#E8F8EE]0/30 text-emerald-200 border border-[#22B14C]/40">
                     Tenant Governance
                 </span>
                 <h2 class="text-base font-bold text-white">Customize permissions for a specific business tenant?</h2>
@@ -45,7 +45,7 @@
         </div>
         <div class="shrink-0">
             <a href="{{ route('admin.tenant-controls.index') }}"
-               class="inline-flex items-center px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs transition-colors shadow-xs">
+               class="inline-flex items-center px-4 py-2 rounded-lg bg-[#22B14C] hover:bg-[#1E9E44] text-white font-semibold text-xs transition-colors shadow-xs">
                 Open Tenant Feature &amp; Role Controls &rarr;
             </a>
         </div>
@@ -58,7 +58,7 @@
                 <h2 class="text-sm font-bold text-slate-900">Platform-Scoped Roles</h2>
                 <p class="text-xs text-slate-500 mt-0.5">Roles controlling platform operations, tenant provisioning, and system-wide administration.</p>
             </div>
-            <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">
+            <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-[#E8F8EE] text-[#0E5C25] border border-[#22B14C]/30">
                 System Immutable
             </span>
         </div>
@@ -68,7 +68,7 @@
                 <div class="p-5 space-y-3">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-lg bg-indigo-600/10 text-indigo-700 flex items-center justify-center font-bold text-xs">
+                            <div class="w-8 h-8 rounded-lg bg-[#22B14C]/10 text-[#0E5C25] flex items-center justify-center font-bold text-xs">
                                 PR
                             </div>
                             <div>

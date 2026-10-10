@@ -106,4 +106,27 @@ class BrandingFoundationTest extends TestCase
         $this->assertStringContainsString('.adoqa-glass-card', $css);
         $this->assertStringContainsString('@media (prefers-reduced-motion: reduce)', $css);
     }
+
+    public function test_no_legacy_indigo_classes_in_operational_views(): void
+    {
+        $dir = resource_path('views');
+        $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
+        $found = [];
+
+        foreach ($it as $f) {
+            if ($f->isDir()) {
+                continue;
+            }
+            if (str_contains($f->getPathname(), 'welcome.blade.php')) {
+                continue;
+            }
+
+            $content = file_get_contents($f->getPathname());
+            if (preg_match('/(?:bg-indigo-600|text-indigo-600|focus:ring-indigo-500|focus:border-indigo-500|bg-indigo-50|text-indigo-700)/', $content, $m)) {
+                $found[] = $f->getPathname().' ('.$m[0].')';
+            }
+        }
+
+        $this->assertEmpty($found, 'Legacy indigo classes were found in: '.implode(', ', $found));
+    }
 }

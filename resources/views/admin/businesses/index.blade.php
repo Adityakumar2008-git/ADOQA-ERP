@@ -13,7 +13,7 @@
         </div>
         <div>
             <a href="{{ route('admin.businesses.create') }}"
-               class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-xs text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+               class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-xs text-xs font-semibold text-white bg-[#22B14C] hover:bg-[#1E9E44] transition-colors">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
@@ -33,12 +33,12 @@
                 </div>
                 <input type="text" name="search" value="{{ $currentSearch }}"
                        placeholder="Search by business name, slug, email, or phone..."
-                       class="block w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                       class="block w-full pl-9 pr-3 py-2 border border-slate-300 rounded-lg text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#22B14C] focus:border-[#22B14C]">
             </div>
 
             <div class="sm:w-48">
                 <select name="status"
-                        class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        class="block w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#22B14C] focus:border-[#22B14C]">
                     <option value="">All Statuses</option>
                     <option value="active" {{ $currentStatus === 'active' ? 'selected' : '' }}>Active</option>
                     <option value="suspended" {{ $currentStatus === 'suspended' ? 'selected' : '' }}>Suspended</option>
@@ -84,7 +84,7 @@
                         </a>
                     @else
                         <a href="{{ route('admin.businesses.create') }}"
-                           class="inline-flex items-center px-4 py-2 rounded-lg text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700">
+                           class="inline-flex items-center px-4 py-2 rounded-lg text-xs font-semibold text-white bg-[#22B14C] hover:bg-[#1E9E44]">
                             + Provision First Business
                         </a>
                     @endif
@@ -186,7 +186,7 @@
                                 </td>
                                 <td class="px-5 py-4 whitespace-nowrap text-right">
                                     <a href="{{ route('admin.businesses.show', $business) }}"
-                                       class="inline-flex items-center px-2.5 py-1.5 border border-slate-200 rounded-md text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 hover:text-indigo-600 transition-colors">
+                                       class="inline-flex items-center px-2.5 py-1.5 border border-slate-200 rounded-md text-xs font-semibold text-slate-700 bg-white hover:bg-slate-50 hover:text-[#1C9640] transition-colors">
                                         View Details
                                     </a>
                                 </td>

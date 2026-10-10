@@ -52,7 +52,7 @@
         <div>
             <span class="text-xs text-slate-500 block uppercase font-semibold">Current State</span>
             <span class="text-sm font-bold uppercase tracking-wider
-                @if($order->status->value === 'approved') text-indigo-600
+                @if($order->status->value === 'approved') text-[#1C9640]
                 @elseif($order->status->value === 'received') text-emerald-600
                 @elseif($order->status->value === 'partially_received') text-amber-600
                 @elseif($order->status->value === 'cancelled') text-rose-600
@@ -110,7 +110,7 @@
                 <tfoot>
                     <tr class="border-t-2 border-slate-200 font-bold bg-slate-50">
                         <td colspan="5" class="py-3 px-3 text-right uppercase text-slate-700">Order Grand Total:</td>
-                        <td class="py-3 px-3 text-right font-mono text-base text-indigo-700">
+                        <td class="py-3 px-3 text-right font-mono text-base text-[#0E5C25]">
                             {{ $tenant->currency }} {{ number_format((float) $order->total_amount, 2) }}
                         </td>
                     </tr>

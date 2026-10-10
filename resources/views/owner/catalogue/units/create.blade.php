@@ -26,7 +26,7 @@
                     required
                     value="{{ old('name') }}"
                     placeholder="e.g. Kilogram, Piece, Bag, Meter, Pack..."
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C]"
                 >
                 @error('name')<p class="text-[11px] text-rose-500 mt-1">{{ $message }}</p>@enderror
             </div>
@@ -40,7 +40,7 @@
                     required
                     value="{{ old('code') }}"
                     placeholder="e.g. KG, PCS, BAG, MTR, PKT..."
-                    class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500"
+                    class="w-full text-xs font-mono uppercase rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C]"
                 >
                 <p class="text-[11px] text-slate-400 mt-1">Short standardized abbreviation shown on invoices and receipts.</p>
                 @error('code')<p class="text-[11px] text-rose-500 mt-1">{{ $message }}</p>@enderror

@@ -36,7 +36,7 @@
                         name="source_warehouse_id"
                         id="source_warehouse_id"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                         <option value="">-- Select Source Depot --</option>
                         @foreach($warehouses as $wh)
@@ -53,7 +53,7 @@
                         name="destination_warehouse_id"
                         id="destination_warehouse_id"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                         <option value="">-- Select Destination Depot --</option>
                         @foreach($warehouses as $wh)
@@ -72,7 +72,7 @@
                         id="transfer_date"
                         value="{{ old('transfer_date', date('Y-m-d')) }}"
                         required
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                     >
                 </div>
             </div>
@@ -91,7 +91,7 @@
                             <select
                                 name="lines[0][item_id]"
                                 required
-                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                                class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                             >
                                 <option value="">-- Select Item --</option>
                                 @foreach($items as $item)
@@ -111,7 +111,7 @@
                                 min="0.0001"
                                 required
                                 placeholder="Qty"
-                                class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-1.5 px-3"
+                                class="w-full text-xs font-mono rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-1.5 px-3"
                             >
                         </div>
                     </div>
@@ -125,7 +125,7 @@
                     id="notes"
                     rows="2"
                     placeholder="Vehicle details, transfer manifest notes..."
-                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2 px-3"
+                    class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2 px-3"
                 >{{ old('notes') }}</textarea>
             </div>
 

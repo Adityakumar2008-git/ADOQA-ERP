@@ -13,7 +13,7 @@
         </div>
         <div class="flex items-center space-x-3">
             <a href="{{ route('admin.businesses.create') }}"
-               class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-xs text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 transition-colors">
+               class="inline-flex items-center px-4 py-2 border border-transparent rounded-lg shadow-xs text-xs font-semibold text-white bg-[#22B14C] hover:bg-[#1E9E44] transition-colors">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
@@ -49,7 +49,7 @@
                 </div>
                 <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                     <span class="text-emerald-700 font-medium">Database Verified</span>
-                    <a href="{{ route('admin.businesses.index') }}" class="text-indigo-600 hover:text-indigo-800 font-semibold">View all &rarr;</a>
+                    <a href="{{ route('admin.businesses.index') }}" class="text-[#1C9640] hover:text-[#13682C] font-semibold">View all &rarr;</a>
                 </div>
             </div>
 
@@ -57,7 +57,7 @@
             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
                 <div class="flex items-center justify-between">
                     <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tenant Users</p>
-                    <span class="p-2 rounded-lg bg-indigo-50 text-indigo-600">
+                    <span class="p-2 rounded-lg bg-[#E8F8EE] text-[#1C9640]">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
                         </svg>
@@ -88,7 +88,7 @@
                 </div>
                 <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                     <span class="text-slate-500">State machine active</span>
-                    <a href="{{ route('admin.subscription-plans.index') }}" class="text-indigo-600 hover:text-indigo-800 font-semibold">Plans &rarr;</a>
+                    <a href="{{ route('admin.subscription-plans.index') }}" class="text-[#1C9640] hover:text-[#13682C] font-semibold">Plans &rarr;</a>
                 </div>
             </div>
 
@@ -96,7 +96,7 @@
             <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-2xs">
                 <div class="flex items-center justify-between">
                     <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Configured Plans</p>
-                    <span class="p-2 rounded-lg bg-purple-50 text-purple-600">
+                    <span class="p-2 rounded-lg bg-[#F6FCE9] text-[#6B8E0B]">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                         </svg>
@@ -173,14 +173,14 @@
     </div>
 
     <!-- Architectural Information & Empty State Note -->
-    <div class="bg-indigo-50/70 border border-indigo-200/80 rounded-xl p-5 text-indigo-950">
+    <div class="bg-[#EDF9FC] border border-[#99D9EA]/60 rounded-xl p-5 text-slate-900">
         <div class="flex items-start">
-            <svg class="w-5 h-5 text-indigo-600 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="w-5 h-5 text-[#1C9640] mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
             <div class="text-xs space-y-1">
-                <p class="font-bold text-sm text-indigo-900">Subscription Billing Model Specification (Phase 1D-C Baseline)</p>
-                <p class="text-indigo-800">
+                <p class="font-bold text-sm text-slate-900">Subscription Billing Model Specification (Phase 1D-C Baseline)</p>
+                <p class="text-slate-700">
                     ADOQA does not charge subscriptions online. No Razorpay/Stripe webhooks or card checkouts exist. Subscription assignments and billing cycles are managed manually and authoritatively by platform administrators. Financial trend tracking and ledger summaries will be connected in Phase 2.
                 </p>
             </div>
@@ -195,7 +195,7 @@
                 <p class="text-xs text-slate-500 mt-0.5">Most recent tenants created through Master Admin surface.</p>
             </div>
             <a href="{{ route('admin.businesses.index') }}"
-               class="text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+               class="text-xs font-semibold text-[#1C9640] hover:text-[#13682C]">
                 View all tenants &rarr;
             </a>
         </div>
@@ -204,7 +204,7 @@
             <div class="p-8 text-center">
                 <p class="text-sm text-slate-500">No businesses have been provisioned yet.</p>
                 <div class="mt-3">
-                    <a href="{{ route('admin.businesses.create') }}" class="inline-flex items-center text-xs font-semibold text-indigo-600 hover:text-indigo-800">
+                    <a href="{{ route('admin.businesses.create') }}" class="inline-flex items-center text-xs font-semibold text-[#1C9640] hover:text-[#13682C]">
                         + Provision your first business
                     </a>
                 </div>
@@ -267,7 +267,7 @@
                                 </td>
                                 <td class="px-5 py-3.5 whitespace-nowrap text-right">
                                     <a href="{{ route('admin.businesses.show', $business) }}"
-                                       class="font-semibold text-indigo-600 hover:text-indigo-800">
+                                       class="font-semibold text-[#1C9640] hover:text-[#13682C]">
                                         Inspect
                                     </a>
                                 </td>

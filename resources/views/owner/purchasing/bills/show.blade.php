@@ -134,7 +134,7 @@
                         @foreach($bill->allocations as $alloc)
                             <tr>
                                 <td class="py-2 px-3 font-mono font-bold">
-                                    <a href="{{ route('owner.purchasing.payments.show', $alloc->payment) }}" class="text-indigo-600 hover:text-indigo-800">
+                                    <a href="{{ route('owner.purchasing.payments.show', $alloc->payment) }}" class="text-[#1C9640] hover:text-[#13682C]">
                                         {{ $alloc->payment->payment_number }}
                                     </a>
                                 </td>

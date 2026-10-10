@@ -29,7 +29,7 @@
                         id="search"
                         value="{{ request('search') }}"
                         placeholder="Search by name, SKU, barcode..."
-                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 pl-8 py-2"
+                        class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] pl-8 py-2"
                     >
                     <svg class="w-4 h-4 text-slate-400 absolute left-2.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </div>
@@ -38,7 +38,7 @@
             <!-- Category -->
             <div>
                 <label for="category_id" class="block text-xs font-semibold text-slate-600 mb-1">Category</label>
-                <select name="category_id" id="category_id" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2">
+                <select name="category_id" id="category_id" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2">
                     <option value="">All Categories</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" @selected(request('category_id') === $category->id)>{{ $category->name }}</option>
@@ -49,7 +49,7 @@
             <!-- Brand -->
             <div>
                 <label for="brand_id" class="block text-xs font-semibold text-slate-600 mb-1">Brand</label>
-                <select name="brand_id" id="brand_id" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-indigo-500 focus:ring-indigo-500 py-2">
+                <select name="brand_id" id="brand_id" class="w-full text-xs rounded-lg border-slate-300 shadow-2xs focus:border-[#22B14C] focus:ring-[#22B14C] py-2">
                     <option value="">All Brands</option>
                     @foreach($brands as $brand)
                         <option value="{{ $brand->id }}" @selected(request('brand_id') === $brand->id)>{{ $brand->name }}</option>
@@ -95,7 +95,7 @@
                         @foreach($items as $item)
                             <tr class="hover:bg-slate-50/60 transition-colors">
                                 <td class="py-3 px-4">
-                                    <a href="{{ route('owner.catalogue.items.show', $item) }}" class="font-bold text-slate-900 hover:text-indigo-600 block">
+                                    <a href="{{ route('owner.catalogue.items.show', $item) }}" class="font-bold text-slate-900 hover:text-[#1C9640] block">
                                         {{ $item->name }}
                                     </a>
                                     <div class="flex items-center space-x-2 text-[11px] text-slate-500 mt-0.5">
@@ -134,7 +134,7 @@
                                 </td>
                                 <td class="py-3 px-4 text-right">
                                     <div class="flex items-center justify-end space-x-2">
-                                        <a href="{{ route('owner.catalogue.items.show', $item) }}" class="text-indigo-600 hover:text-indigo-800 font-medium">View</a>
+                                        <a href="{{ route('owner.catalogue.items.show', $item) }}" class="text-[#1C9640] hover:text-[#13682C] font-medium">View</a>
                                         <a href="{{ route('owner.catalogue.items.edit', $item) }}" class="text-slate-600 hover:text-slate-900">Edit</a>
                                         <form method="POST" action="{{ route('owner.catalogue.items.status', $item) }}" class="inline">
                                             @csrf
