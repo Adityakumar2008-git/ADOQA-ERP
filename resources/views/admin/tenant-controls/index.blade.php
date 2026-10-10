@@ -259,17 +259,26 @@
 
                                 <div class="divide-y divide-slate-100">
                                     @foreach ($group['permissions'] as $item)
-                                        <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/50 transition-colors">
-                                            <div class="space-y-1 max-w-lg">
+                                        @php
+                                            $isOverride = $item['override_state'] !== 'inherit';
+                                            $switchOn = $item['override_state'] === 'allow' || ($item['override_state'] === 'inherit' && $item['has_template']);
+                                        @endphp
+                                        <div class="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-slate-50/70 transition-colors"
+                                             id="row-perm-{{ $item['permission']->id }}"
+                                             data-perm-id="{{ $item['permission']->id }}"
+                                             data-has-template="{{ $item['has_template'] ? '1' : '0' }}"
+                                             data-module-enabled="{{ $group['is_enabled'] ? '1' : '0' }}"
+                                             data-override-state="{{ $item['override_state'] }}">
+                                            <div class="space-y-1.5 max-w-lg">
                                                 <div class="flex items-center space-x-2">
                                                     <span class="text-xs font-bold text-slate-900">{{ $item['name'] }}</span>
                                                     <code class="text-[10px] font-mono text-slate-500">{{ $item['slug'] }}</code>
                                                 </div>
-                                                <div class="flex items-center space-x-2 text-[11px]">
-                                                    <span class="text-slate-400">Template default:</span>
+                                                <div class="flex flex-wrap items-center gap-2 text-[11px]">
+                                                    <span class="text-slate-400">Template:</span>
                                                     @if ($item['has_template'])
                                                         <span class="inline-flex items-center text-emerald-700 font-semibold text-[10px]">
-                                                            &check; Granted by Template
+                                                            &check; Granted
                                                         </span>
                                                     @else
                                                         <span class="inline-flex items-center text-slate-400 text-[10px]">
@@ -278,46 +287,86 @@
                                                     @endif
 
                                                     <span class="text-slate-300">&bull;</span>
-                                                    <span class="text-slate-400">Effective:</span>
-                                                    @if ($item['effective'])
-                                                        <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+
+                                                    <!-- Override State Badge -->
+                                                    <span id="override-badge-{{ $item['permission']->id }}"
+                                                          class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border {{ $item['override_state'] === 'allow' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : ($item['override_state'] === 'deny' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-slate-100 text-slate-600 border-slate-200') }}">
+                                                        @if ($item['override_state'] === 'allow')
+                                                            Explicit: ALLOW
+                                                        @elseif ($item['override_state'] === 'deny')
+                                                            Explicit: DENY
+                                                        @else
+                                                            Inherited
+                                                        @endif
+                                                    </span>
+
+                                                    <span class="text-slate-300">&bull;</span>
+
+                                                    <!-- Effective Evaluation Badge -->
+                                                    <span id="effective-badge-{{ $item['permission']->id }}"
+                                                          class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold {{ ! $group['is_enabled'] ? 'bg-amber-100 text-amber-800 border border-amber-300' : ($item['effective'] ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600') }}"
+                                                          title="{{ ! $group['is_enabled'] ? 'Module disabled: protected operations blocked regardless of override' : ($item['effective'] ? 'Effective permission is PERMITTED' : 'Effective permission is DENIED') }}">
+                                                        @if (! $group['is_enabled'])
+                                                            BLOCKED BY MODULE
+                                                        @elseif ($item['effective'])
                                                             PERMITTED
-                                                        </span>
-                                                    @else
-                                                        <span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold bg-slate-100 text-slate-600">
+                                                        @else
                                                             DENIED
-                                                        </span>
-                                                    @endif
+                                                        @endif
+                                                    </span>
                                                 </div>
+                                                @if (! $group['is_enabled'])
+                                                    <p class="text-[10px] text-amber-600 font-medium">
+                                                        Parent module is disabled for this business tenant. Operations are blocked at runtime.
+                                                    </p>
+                                                @endif
                                             </div>
 
-                                            <!-- 3-Way Override Radio Selector -->
-                                            <div class="flex items-center space-x-2 shrink-0">
-                                                <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100/60 text-xs font-medium">
-                                                    <label class="relative cursor-pointer px-2.5 py-1 rounded-md transition-all flex items-center space-x-1.5 has-checked:bg-white has-checked:shadow-2xs has-checked:text-slate-900 text-slate-500">
-                                                        <input type="radio" name="overrides[{{ $item['permission']->id }}]" value="inherit"
-                                                               {{ $item['override_state'] === 'inherit' ? 'checked' : '' }}
-                                                               onchange="this.form.submit()"
-                                                               class="sr-only">
-                                                        <span class="text-[11px]">INHERIT</span>
-                                                    </label>
+                                            <!-- Toggle Controls -->
+                                            <div class="flex items-center space-x-3 shrink-0">
+                                                <!-- Toast / Save Feedback -->
+                                                <span id="save-feedback-{{ $item['permission']->id }}"
+                                                      class="text-[11px] font-medium text-emerald-600 transition-opacity duration-300 opacity-0 flex items-center space-x-1">
+                                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                                    </svg>
+                                                    <span>Saved</span>
+                                                </span>
 
-                                                    <label class="relative cursor-pointer px-2.5 py-1 rounded-md transition-all flex items-center space-x-1.5 has-checked:bg-emerald-600 has-checked:shadow-2xs has-checked:text-white text-emerald-700">
-                                                        <input type="radio" name="overrides[{{ $item['permission']->id }}]" value="allow"
-                                                               {{ $item['override_state'] === 'allow' ? 'checked' : '' }}
-                                                               onchange="this.form.submit()"
-                                                               class="sr-only">
-                                                        <span class="text-[11px] font-bold">ALLOW</span>
-                                                    </label>
+                                                <!-- Reset to Inherited Button -->
+                                                <button type="button"
+                                                        id="reset-btn-{{ $item['permission']->id }}"
+                                                        onclick="resetToInherited('{{ $item['permission']->id }}')"
+                                                        class="text-[11px] text-slate-500 hover:text-indigo-600 underline font-medium transition-colors {{ $isOverride ? '' : 'hidden' }}"
+                                                        title="Restore inherited role template permission">
+                                                    Reset to inherited
+                                                </button>
 
-                                                    <label class="relative cursor-pointer px-2.5 py-1 rounded-md transition-all flex items-center space-x-1.5 has-checked:bg-rose-600 has-checked:shadow-2xs has-checked:text-white text-rose-700">
-                                                        <input type="radio" name="overrides[{{ $item['permission']->id }}]" value="deny"
-                                                               {{ $item['override_state'] === 'deny' ? 'checked' : '' }}
-                                                               onchange="this.form.submit()"
-                                                               class="sr-only">
-                                                        <span class="text-[11px] font-bold">DENY</span>
-                                                    </label>
+                                                <!-- Toggle Switch Button -->
+                                                <div class="flex items-center space-x-2">
+                                                    <button type="button"
+                                                            role="switch"
+                                                            aria-checked="{{ $switchOn ? 'true' : 'false' }}"
+                                                            id="toggle-btn-{{ $item['permission']->id }}"
+                                                            onclick="togglePermission('{{ $item['permission']->id }}')"
+                                                            class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 {{ $switchOn ? ($item['override_state'] === 'inherit' ? 'bg-emerald-400' : 'bg-emerald-600') : ($item['override_state'] === 'inherit' ? 'bg-slate-300' : 'bg-rose-500') }}"
+                                                            title="{{ $item['override_state'] === 'inherit' ? 'Inherited default (' . ($switchOn ? 'Granted' : 'Not Granted') . ') - Click to set override' : ($switchOn ? 'Explicit ALLOW - Click to set explicit DENY' : 'Explicit DENY - Click to set explicit ALLOW') }}">
+                                                        <span class="sr-only">Toggle {{ $item['name'] }}</span>
+                                                        <span aria-hidden="true"
+                                                              id="toggle-thumb-{{ $item['permission']->id }}"
+                                                              class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out {{ $switchOn ? 'translate-x-5' : 'translate-x-0' }}"></span>
+                                                    </button>
+                                                    <span id="toggle-label-{{ $item['permission']->id }}"
+                                                          class="text-[11px] font-bold w-12 select-none {{ $switchOn ? 'text-emerald-700' : 'text-slate-600' }}">
+                                                        {{ $item['override_state'] === 'inherit' ? ($switchOn ? 'ON*' : 'OFF*') : ($switchOn ? 'ALLOW' : 'DENY') }}
+                                                    </span>
                                                 </div>
+
+                                                <!-- Hidden input for standard POST fallback -->
+                                                <input type="hidden"
+                                                       name="overrides[{{ $item['permission']->id }}]"
+                                                       id="hidden-input-{{ $item['permission']->id }}"
+                                                       value="{{ $item['override_state'] }}">
                                             </div>
                                         </div>
                                     @endforeach
@@ -331,6 +380,154 @@
                             Save Role Overrides
                         </button>
                     </div>
+
+                <script>
+                    const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                    const BATCH_OVERRIDE_URL = "{{ route('admin.tenant-controls.overrides.update') }}";
+                    const BUSINESS_ID = "{{ $selectedBusiness->id }}";
+                    const ROLE_ID = "{{ $selectedRole->id }}";
+
+                    async function sendOverrideUpdate(permissionId, newState) {
+                        const toggleBtn = document.getElementById('toggle-btn-' + permissionId);
+                        const resetBtn = document.getElementById('reset-btn-' + permissionId);
+                        const feedback = document.getElementById('save-feedback-' + permissionId);
+
+                        if (toggleBtn) toggleBtn.disabled = true;
+                        if (resetBtn) resetBtn.disabled = true;
+
+                        try {
+                            const response = await fetch(BATCH_OVERRIDE_URL, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                                },
+                                body: JSON.stringify({
+                                    business_id: BUSINESS_ID,
+                                    role_id: ROLE_ID,
+                                    permission_id: permissionId,
+                                    state: newState,
+                                }),
+                            });
+
+                            if (!response.ok) {
+                                const errData = await response.json();
+                                alert(errData.error || 'Failed to update permission override.');
+                                return;
+                            }
+
+                            const data = await response.json();
+                            applyStateToRow(permissionId, data.override_state, data.has_template, data.effective, data.module_enabled);
+
+                            if (feedback) {
+                                feedback.classList.remove('opacity-0');
+                                setTimeout(() => {
+                                    feedback.classList.add('opacity-0');
+                                }, 1500);
+                            }
+                        } catch (err) {
+                            console.error('Network error updating override:', err);
+                            alert('A network error occurred. Please refresh the page.');
+                        } finally {
+                            if (toggleBtn) toggleBtn.disabled = false;
+                            if (resetBtn) resetBtn.disabled = false;
+                        }
+                    }
+
+                    function applyStateToRow(permissionId, overrideState, hasTemplate, effective, moduleEnabled) {
+                        const row = document.getElementById('row-perm-' + permissionId);
+                        const toggleBtn = document.getElementById('toggle-btn-' + permissionId);
+                        const toggleThumb = document.getElementById('toggle-thumb-' + permissionId);
+                        const toggleLabel = document.getElementById('toggle-label-' + permissionId);
+                        const overrideBadge = document.getElementById('override-badge-' + permissionId);
+                        const effectiveBadge = document.getElementById('effective-badge-' + permissionId);
+                        const resetBtn = document.getElementById('reset-btn-' + permissionId);
+                        const hiddenInput = document.getElementById('hidden-input-' + permissionId);
+
+                        if (row) {
+                            row.setAttribute('data-override-state', overrideState);
+                        }
+                        if (hiddenInput) {
+                            hiddenInput.value = overrideState;
+                        }
+
+                        const switchOn = overrideState === 'allow' || (overrideState === 'inherit' && hasTemplate);
+
+                        if (toggleBtn && toggleThumb && toggleLabel) {
+                            toggleBtn.setAttribute('aria-checked', switchOn ? 'true' : 'false');
+                            toggleBtn.className = 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2 ' +
+                                (switchOn
+                                    ? (overrideState === 'inherit' ? 'bg-emerald-400' : 'bg-emerald-600')
+                                    : (overrideState === 'inherit' ? 'bg-slate-300' : 'bg-rose-500'));
+
+                            toggleThumb.className = 'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ' +
+                                (switchOn ? 'translate-x-5' : 'translate-x-0');
+
+                            toggleLabel.className = 'text-[11px] font-bold w-12 select-none ' + (switchOn ? 'text-emerald-700' : 'text-slate-600');
+                            toggleLabel.textContent = overrideState === 'inherit'
+                                ? (switchOn ? 'ON*' : 'OFF*')
+                                : (switchOn ? 'ALLOW' : 'DENY');
+                        }
+
+                        if (overrideBadge) {
+                            if (overrideState === 'allow') {
+                                overrideBadge.className = 'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200';
+                                overrideBadge.textContent = 'Explicit: ALLOW';
+                            } else if (overrideState === 'deny') {
+                                overrideBadge.className = 'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-rose-50 text-rose-700 border-rose-200';
+                                overrideBadge.textContent = 'Explicit: DENY';
+                            } else {
+                                overrideBadge.className = 'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-slate-100 text-slate-600 border-slate-200';
+                                overrideBadge.textContent = 'Inherited';
+                            }
+                        }
+
+                        if (effectiveBadge) {
+                            if (!moduleEnabled) {
+                                effectiveBadge.className = 'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300';
+                                effectiveBadge.textContent = 'BLOCKED BY MODULE';
+                            } else if (effective) {
+                                effectiveBadge.className = 'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800';
+                                effectiveBadge.textContent = 'PERMITTED';
+                            } else {
+                                effectiveBadge.className = 'inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-600';
+                                effectiveBadge.textContent = 'DENIED';
+                            }
+                        }
+
+                        if (resetBtn) {
+                            if (overrideState !== 'inherit') {
+                                resetBtn.classList.remove('hidden');
+                            } else {
+                                resetBtn.classList.add('hidden');
+                            }
+                        }
+                    }
+
+                    function togglePermission(permissionId) {
+                        const row = document.getElementById('row-perm-' + permissionId);
+                        if (!row) return;
+
+                        const currentState = row.getAttribute('data-override-state');
+                        const hasTemplate = row.getAttribute('data-has-template') === '1';
+
+                        let targetState;
+                        if (currentState === 'allow') {
+                            targetState = 'deny';
+                        } else if (currentState === 'deny') {
+                            targetState = 'allow';
+                        } else {
+                            targetState = hasTemplate ? 'deny' : 'allow';
+                        }
+
+                        sendOverrideUpdate(permissionId, targetState);
+                    }
+
+                    function resetToInherited(permissionId) {
+                        sendOverrideUpdate(permissionId, 'inherit');
+                    }
+                </script>
                 </form>
             @endif
         </div>

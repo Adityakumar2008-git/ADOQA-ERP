@@ -445,7 +445,7 @@
     </aside>
 
     <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-y-auto">
+    <div id="main-scroll-viewport" class="flex-1 flex flex-col min-w-0 overflow-y-auto">
         <!-- Top Bar -->
         <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-6 sm:px-8 sticky top-0 z-10 shadow-2xs">
             <div class="flex items-center space-x-3 text-sm">
@@ -534,6 +534,30 @@
                 window.location.reload();
             }
         });
+    </script>
+
+    <!-- Viewport Scroll Restoration Safeguard -->
+    <script>
+        (function() {
+            const viewport = document.getElementById('main-scroll-viewport');
+            if (!viewport) return;
+            const storageKey = 'adoqa_owner_scroll_' + window.location.pathname + window.location.search;
+            const saved = sessionStorage.getItem(storageKey);
+            if (saved !== null) {
+                viewport.scrollTop = parseInt(saved, 10);
+                sessionStorage.removeItem(storageKey);
+            }
+            let scrollTimer;
+            viewport.addEventListener('scroll', function() {
+                clearTimeout(scrollTimer);
+                scrollTimer = setTimeout(function() {
+                    sessionStorage.setItem(storageKey, viewport.scrollTop);
+                }, 100);
+            }, { passive: true });
+            window.addEventListener('beforeunload', function() {
+                sessionStorage.setItem(storageKey, viewport.scrollTop);
+            });
+        })();
     </script>
 </body>
 </html>

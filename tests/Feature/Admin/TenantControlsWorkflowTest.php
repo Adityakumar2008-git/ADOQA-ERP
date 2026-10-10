@@ -373,7 +373,7 @@ class TenantControlsWorkflowTest extends TestCase
         $response->assertDontSee('Raw RBAC Data (JSON)');
     }
 
-    public function test_layout_markup_contains_overflow_hidden_and_relative_radio_labels(): void
+    public function test_layout_markup_contains_overflow_hidden_main_scroll_viewport_and_toggle_switch_controls(): void
     {
         [$business, , $role] = $this->createTenantWithStaff('manager');
 
@@ -384,12 +384,15 @@ class TenantControlsWorkflowTest extends TestCase
             ]));
 
         $response->assertOk();
-        // Layout must prevent root document scrolling that triggers white blank page
+        // Layout must prevent root document scrolling that causes viewport reset
         $response->assertSee('overflow-hidden');
-        // Radio labels must be positioned relatively to encapsulate sr-only inputs
-        $response->assertSee('relative cursor-pointer');
-        // Radio controls must support instant auto-saving on click/change
-        $response->assertSee('onchange="this.form.submit()"', false);
+        // Layout includes dedicated scroll viewport ID and restoration script
+        $response->assertSee('id="main-scroll-viewport"', false);
+        $response->assertSee('Viewport Scroll Restoration Safeguard');
+        // Accessible toggle switches instead of 3-way radio buttons
+        $response->assertSee('role="switch"', false);
+        $response->assertSee('Reset to inherited');
+        $response->assertSee('sendOverrideUpdate');
     }
 
     public function test_single_override_submission_via_permission_id_and_state(): void
@@ -420,5 +423,188 @@ class TenantControlsWorkflowTest extends TestCase
         ]);
 
         $this->assertTrue($this->authService->can($user, 'catalogue.manage', $business));
+    }
+
+    public function test_json_toggle_on_saves_explicit_allow_override_without_page_reload(): void
+    {
+        [$business, $user, $role] = $this->createTenantWithStaff('staff');
+        $perm = Permission::where('slug', 'catalogue.manage')->firstOrFail();
+
+        $this->assertFalse($this->authService->can($user, 'catalogue.manage', $business));
+
+        $response = $this->actingAs($this->platformAdmin)
+            ->postJson(route('admin.tenant-controls.overrides.update'), [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+                'permission_id' => $perm->id,
+                'state' => 'allow',
+            ]);
+
+        $response->assertOk()
+            ->assertJson([
+                'success' => true,
+                'permission_id' => $perm->id,
+                'override_state' => 'allow',
+                'effective' => true,
+                'module_enabled' => true,
+            ]);
+
+        $this->assertDatabaseHas('business_role_permission_overrides', [
+            'business_id' => $business->id,
+            'role_id' => $role->id,
+            'permission_id' => $perm->id,
+            'state' => 'allow',
+        ]);
+
+        $this->assertTrue($this->authService->can($user, 'catalogue.manage', $business));
+    }
+
+    public function test_json_toggle_off_saves_explicit_deny_override_without_page_reload(): void
+    {
+        [$business, $user, $role] = $this->createTenantWithStaff('manager');
+        $perm = Permission::where('slug', 'inventory.manage')->firstOrFail();
+
+        $this->assertTrue($this->authService->can($user, 'inventory.manage', $business));
+
+        $response = $this->actingAs($this->platformAdmin)
+            ->postJson(route('admin.tenant-controls.overrides.update'), [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+                'permission_id' => $perm->id,
+                'state' => 'deny',
+            ]);
+
+        $response->assertOk()
+            ->assertJson([
+                'success' => true,
+                'permission_id' => $perm->id,
+                'override_state' => 'deny',
+                'effective' => false,
+                'module_enabled' => true,
+            ]);
+
+        $this->assertDatabaseHas('business_role_permission_overrides', [
+            'business_id' => $business->id,
+            'role_id' => $role->id,
+            'permission_id' => $perm->id,
+            'state' => 'deny',
+        ]);
+
+        $this->assertFalse($this->authService->can($user, 'inventory.manage', $business));
+    }
+
+    public function test_json_reset_restores_inherited_template_default(): void
+    {
+        [$business, $user, $role] = $this->createTenantWithStaff('staff');
+        $perm = Permission::where('slug', 'catalogue.manage')->firstOrFail();
+
+        // 1. Set explicit allow
+        $this->actingAs($this->platformAdmin)
+            ->postJson(route('admin.tenant-controls.overrides.update'), [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+                'permission_id' => $perm->id,
+                'state' => 'allow',
+            ])->assertOk();
+
+        $this->assertTrue($this->authService->can($user, 'catalogue.manage', $business));
+
+        // 2. Reset to inherited
+        $response = $this->actingAs($this->platformAdmin)
+            ->postJson(route('admin.tenant-controls.overrides.update'), [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+                'permission_id' => $perm->id,
+                'state' => 'inherit',
+            ]);
+
+        $response->assertOk()
+            ->assertJson([
+                'success' => true,
+                'permission_id' => $perm->id,
+                'override_state' => 'inherit',
+                'effective' => false, // staff template does not have catalogue.manage
+                'module_enabled' => true,
+            ]);
+
+        $this->assertDatabaseMissing('business_role_permission_overrides', [
+            'business_id' => $business->id,
+            'role_id' => $role->id,
+            'permission_id' => $perm->id,
+        ]);
+
+        $this->assertFalse($this->authService->can($user, 'catalogue.manage', $business));
+    }
+
+    public function test_json_toggle_on_returns_blocked_by_module_when_module_is_disabled(): void
+    {
+        [$business, $user, $role] = $this->createTenantWithStaff('staff');
+        $perm = Permission::where('slug', 'catalogue.manage')->firstOrFail();
+
+        // Disable catalogue module
+        $this->actingAs($this->platformAdmin)
+            ->postJson(route('admin.tenant-controls.modules.update'), [
+                'business_id' => $business->id,
+                'modules' => [
+                    'catalogue' => '0',
+                ],
+            ])->assertOk();
+
+        // Turn toggle ON (ALLOW) for catalogue.manage
+        $response = $this->actingAs($this->platformAdmin)
+            ->postJson(route('admin.tenant-controls.overrides.update'), [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+                'permission_id' => $perm->id,
+                'state' => 'allow',
+            ]);
+
+        $response->assertOk()
+            ->assertJson([
+                'success' => true,
+                'permission_id' => $perm->id,
+                'override_state' => 'allow',
+                'effective' => false,
+                'module_enabled' => false,
+            ]);
+
+        // Authorization strictly denies even though override is ALLOW
+        $this->assertFalse($this->authService->can($user, 'catalogue.manage', $business));
+    }
+
+    public function test_unauthorized_user_cannot_update_tenant_controls_via_json(): void
+    {
+        [$business, $user, $role] = $this->createTenantWithStaff('staff');
+        $perm = Permission::where('slug', 'catalogue.manage')->firstOrFail();
+
+        $response = $this->actingAs($user)
+            ->postJson(route('admin.tenant-controls.overrides.update'), [
+                'business_id' => $business->id,
+                'role_id' => $role->id,
+                'permission_id' => $perm->id,
+                'state' => 'allow',
+            ]);
+
+        $response->assertForbidden();
+    }
+
+    public function test_repeated_toggle_updates_do_not_create_duplicate_records(): void
+    {
+        [$business, $user, $role] = $this->createTenantWithStaff('staff');
+        $perm = Permission::where('slug', 'catalogue.manage')->firstOrFail();
+
+        // Toggle ALLOW 3 times consecutively
+        for ($i = 0; $i < 3; $i++) {
+            $this->actingAs($this->platformAdmin)
+                ->postJson(route('admin.tenant-controls.overrides.update'), [
+                    'business_id' => $business->id,
+                    'role_id' => $role->id,
+                    'permission_id' => $perm->id,
+                    'state' => 'allow',
+                ])->assertOk();
+        }
+
+        // Exactly 1 record exists in the database
+        $this->assertDatabaseCount('business_role_permission_overrides', 1);
     }
 }

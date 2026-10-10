@@ -13,6 +13,7 @@ use App\Models\Permission;
 use App\Models\Role;
 use App\Services\Tenancy\ModuleRegistry;
 use DomainException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -157,7 +158,7 @@ class TenantControlController extends Controller
     public function updateModules(
         Request $request,
         UpdateBusinessModuleSettings $action
-    ): RedirectResponse {
+    ): RedirectResponse|JsonResponse {
         $validated = $request->validate([
             'business_id' => ['required', 'string', 'exists:businesses,id'],
             'modules' => ['nullable', 'array'],
@@ -178,7 +179,22 @@ class TenantControlController extends Controller
                 modules: $modules
             );
         } catch (DomainException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => $e->getMessage(),
+                ], 422);
+            }
+
             return redirect()->back()->with('error', $e->getMessage());
+        }
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Module configurations for '{$business->name}' updated successfully.",
+                'modules' => $modules,
+            ]);
         }
 
         return redirect()->route('admin.tenant-controls.index', [
@@ -193,7 +209,7 @@ class TenantControlController extends Controller
     public function updateRoleOverrides(
         Request $request,
         SyncBusinessRolePermissionOverrides $action
-    ): RedirectResponse {
+    ): RedirectResponse|JsonResponse {
         if ($request->has('permission_id') && $request->has('state') && ! $request->has('overrides')) {
             $request->merge([
                 'overrides' => [
@@ -220,7 +236,51 @@ class TenantControlController extends Controller
                 overrides: $validated['overrides']
             );
         } catch (DomainException $e) {
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => false,
+                    'error' => $e->getMessage(),
+                ], 422);
+            }
+
             return redirect()->back()->with('error', $e->getMessage());
+        }
+
+        if ($request->expectsJson()) {
+            $singlePermissionId = $request->input('permission_id');
+            $responsePayload = [
+                'success' => true,
+                'message' => "Role overrides for '{$role->name}' in '{$business->name}' persisted successfully.",
+                'overrides' => $validated['overrides'],
+            ];
+
+            if ($singlePermissionId && isset($validated['overrides'][$singlePermissionId])) {
+                $overrideState = $validated['overrides'][$singlePermissionId];
+                $perm = Permission::find($singlePermissionId);
+                $moduleRegistry = app(ModuleRegistry::class);
+                $module = $perm ? $moduleRegistry->getModuleForPermission($perm->slug) : null;
+                $moduleEnabled = $module ? $moduleRegistry->isModuleEnabledForBusiness($business, $module) : true;
+                $hasTemplate = $perm ? $role->permissions()->where('permissions.id', $perm->id)->exists() : false;
+
+                $effective = false;
+                if ($moduleEnabled) {
+                    if ($overrideState === 'allow') {
+                        $effective = true;
+                    } elseif ($overrideState === 'deny') {
+                        $effective = false;
+                    } else {
+                        $effective = $hasTemplate;
+                    }
+                }
+
+                $responsePayload['permission_id'] = $singlePermissionId;
+                $responsePayload['override_state'] = $overrideState;
+                $responsePayload['effective'] = $effective;
+                $responsePayload['module_enabled'] = $moduleEnabled;
+                $responsePayload['has_template'] = $hasTemplate;
+            }
+
+            return response()->json($responsePayload);
         }
 
         return redirect()->route('admin.tenant-controls.index', [
