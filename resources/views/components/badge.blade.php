@@ -18,6 +18,11 @@
         'rose' => 'bg-rose-50 text-rose-700 border-rose-200',
         'indigo' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
         'purple' => 'bg-purple-50 text-purple-700 border-purple-200',
+        'adoqa-yellow' => 'bg-[#FFFDE6] text-amber-950 border-[#FFDE2D]/60',
+        'adoqa-grey' => 'bg-[#F1F3F5] text-slate-700 border-[#7F7F7F]/40',
+        'adoqa-green' => 'bg-[#E8F8EE] text-emerald-950 border-[#22B14C]/50',
+        'adoqa-lime' => 'bg-[#F6FCE9] text-lime-950 border-[#B5E61D]/60',
+        'adoqa-sky' => 'bg-[#EDF9FC] text-sky-950 border-[#99D9EA]/60',
         default => 'bg-slate-100 text-slate-700 border-slate-200',
     };
 
@@ -28,6 +33,11 @@
         'rose' => 'bg-rose-500',
         'indigo' => 'bg-indigo-500',
         'purple' => 'bg-purple-500',
+        'adoqa-yellow' => 'bg-[#FFDE2D]',
+        'adoqa-grey' => 'bg-[#7F7F7F]',
+        'adoqa-green' => 'bg-[#22B14C]',
+        'adoqa-lime' => 'bg-[#B5E61D]',
+        'adoqa-sky' => 'bg-[#99D9EA]',
         default => 'bg-slate-400',
     };
 @endphp

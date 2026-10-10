@@ -6,6 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>@yield('title', 'Master Admin') — {{ config('app.name', 'ADOQA ERP') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/adoqa-logo.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -15,12 +16,12 @@
         <!-- Brand Header -->
         <div class="h-16 flex items-center px-6 border-b border-slate-800 justify-between">
             <div class="flex items-center space-x-3">
-                <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-sm tracking-wider shadow-sm">
-                    A
+                <div class="w-8 h-8 rounded-lg bg-white p-1 flex items-center justify-center shadow-sm flex-shrink-0">
+                    <img src="{{ asset('images/adoqa-logo.png') }}" alt="ADOQA Logo" class="w-full h-full object-contain">
                 </div>
                 <div>
                     <span class="text-base font-bold text-white tracking-tight">ADOQA</span>
-                    <span class="text-xs text-indigo-400 font-semibold uppercase tracking-wider block -mt-1">Master Admin</span>
+                    <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider block -mt-1">Master Admin</span>
                 </div>
             </div>
             <span class="px-2 py-0.5 rounded text-[10px] font-bold tracking-wider uppercase bg-amber-500/20 text-amber-300 border border-amber-500/30">
@@ -157,7 +158,7 @@
     <!-- Main Content Area -->
     <div id="main-scroll-viewport" class="flex-1 flex flex-col min-w-0 overflow-y-auto">
         <!-- Top Bar -->
-        <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 sticky top-0 z-10 shadow-2xs">
+        <header class="h-16 adoqa-glass-header bg-white/95 flex items-center justify-between px-8 sticky top-0 z-10 shadow-2xs">
             <div class="flex items-center space-x-3 text-sm">
                 <span class="font-semibold text-slate-800 tracking-tight">@yield('page_title', 'System Overview')</span>
                 <span class="text-slate-300">/</span>

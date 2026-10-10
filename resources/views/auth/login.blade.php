@@ -6,14 +6,15 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>{{ config('app.name', 'ADOQA ERP') }} — Login</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/adoqa-logo.png') }}">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 text-slate-800 antialiased font-sans">
-    <div class="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-sm border border-slate-200">
+    <div class="max-w-md w-full space-y-8 bg-white adoqa-glass-card p-8 rounded-xl shadow-sm border border-slate-200">
         <div class="text-center">
-            <div class="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-indigo-600 text-white font-bold text-xl mb-3 shadow-sm">
-                A
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-xl bg-white p-2 mb-3 shadow-sm border border-slate-200">
+                <img src="{{ asset('images/adoqa-logo.png') }}" alt="ADOQA Logo" class="w-full h-full object-contain">
             </div>
             <h1 class="text-2xl font-bold tracking-tight text-slate-900">Sign in to ADOQA ERP</h1>
             <p class="mt-2 text-sm text-slate-500">Commercial Operations & Management Platform</p>
